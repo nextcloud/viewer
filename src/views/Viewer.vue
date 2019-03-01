@@ -132,14 +132,37 @@ export default {
 			}
 			return ''
 		},
+		/**
+		 * Map the FIles action to a usable action vue component object
+		 *
+		 * @returns {Object[]} the list of actions
+		 */
+		actionsAll() {
+			return this.fileList[this.currentIndex]
+				? Object.values(OCA.Files.App.fileList.fileActions.actions.all)
+					.filter(action => !action.render)
+					.map(action => {
+						return this.mapFileAction(action, this.fileList[this.currentIndex])
+					})
+				: []
+		},
+		actionsCurrent() {
+			const actions = OCA.Files.App.fileList.fileActions.actions[this.currentFile.mime]
+			return actions && this.fileList[this.currentIndex]
+				? Object.values(actions)
+					.filter(action => !action.render)
+					.map(action => {
+						return this.mapFileAction(action, this.fileList[this.currentIndex])
+					})
+				: []
+		},
 		actions() {
-			return [
-				{
-					text: t('viewer', 'Share'),
-					icon: 'icon-share-white-forced',
-					action: this.showSharingSidebar
-				}
-			]
+			const defaultAction = OCA.Files.App.fileList.fileActions.defaults[this.currentFile.mime]
+			return this.actionsAll.concat(this.actionsCurrent)
+				.filter(name => name.id !== defaultAction)
+				.sort((actionA, actionB) => {
+					return actionA.order - actionB.order
+				})
 		}
 	},
 
@@ -158,6 +181,25 @@ export default {
 			})
 		})
 
+		const showAppsSidebar = OC.Apps.showAppSidebar
+		OC.Apps.showAppSidebar = () => {
+			showAppsSidebar()
+			const sidebar = document.getElementById('app-sidebar')
+			if (sidebar) {
+				sidebar.style.zIndex = 10001
+				this.openedSidebar = true
+			}
+		}
+
+		const hideAppSidebar = OC.Apps.hideAppSidebar
+		OC.Apps.hideAppSidebar = () => {
+			const sidebar = document.getElementById('app-sidebar')
+			if (sidebar) {
+				sidebar.style.zIndex = null
+				this.openedSidebar = false
+			}
+			hideAppSidebar()
+		}
 	},
 
 	methods: {
@@ -190,8 +232,10 @@ export default {
 			// retrieve and store file List
 			this.fileList = await FileList(OC.getCurrentUser().uid, fileInfo.dir, mimes)
 
+			console.debug(this.fileList)
+
 			// store current position
-			this.currentIndex = this.fileList.findIndex(file => decodeURI(file['d:href'][0]) === this.root + relativePath)
+			this.currentIndex = this.fileList.findIndex(file => decodeURI(file.href) === this.root + relativePath)
 
 			this.updatePreviousNext()
 		},
@@ -202,7 +246,7 @@ export default {
 		 * @param {Object} fileInfo the opened file info
 		 */
 		openFileFromList(fileInfo) {
-			const path = fileInfo['d:href'][0]
+			const path = fileInfo.href
 			const mime = this.getMime(path)
 			const modal = this.components[mime]
 
@@ -214,9 +258,9 @@ export default {
 					failed: false
 				}
 
-				// if the sidebar is already opened, change the current file
+				// if the sidebar is already opened, hide it
 				if (this.openedSidebar) {
-					OCA.Files.App.fileList.showDetailsView(this.currentFileName, 'shareTabView')
+					OCA.Apps.hideAppSidebar()
 				}
 			}
 
@@ -232,7 +276,7 @@ export default {
 			const next = this.fileList[this.currentIndex + 1]
 
 			if (prev) {
-				const path = prev['d:href'][0]
+				const path = prev.href
 				const mime = this.getMime(path)
 				const modal = this.components[mime]
 
@@ -250,7 +294,7 @@ export default {
 			}
 
 			if (next) {
-				const path = next['d:href'][0]
+				const path = next.href
 				const mime = this.getMime(path)
 				const modal = this.components[mime]
 
@@ -413,23 +457,48 @@ export default {
 		},
 
 		/**
-		 * Show the sharing sidebar
+		 * Map an OCA.Files.App action to a usable vue action object
+		 *
+		 * @param {Object} data the action object
+		 * @param {String} data.action the action
+		 * @param {String} data.altText altText property
+		 * @param {String} data.displayName the displayName of the action
+		 * @param {String} data.name the id of the action
+		 * @param {String} data.iconClass the icon class
+		 * @param {Int} data.order the order
+		 * @param {OCA.Files.FileInfo} currentFileInfo the current file Infos
+		 * @returns {Object}
 		 */
+		mapFileAction({ action, altText, displayName, name, iconClass, order }, currentFileInfo) {
+			const fileInfoModel = new OCA.Files.FileInfoModel(currentFileInfo)
+			const $file = $(document.querySelector(`[data-file="${currentFileInfo.name}"]`))
+			const context = {
+				fileActions: OCA.Files.App.fileList.fileActions,
+				fileList: OCA.Files.App.fileList,
+				$file,
+				fileInfoModel,
+				dir: fileInfoModel.get('path')
+			}
 
-		showSharingSidebar() {
-			// Open the sidebar sharing tab
-			OCA.Files.App.fileList.showDetailsView(this.currentFileName, 'shareTabView')
+			let text = typeof displayName === 'function'
+				? displayName(context)
+				: displayName
 
-			const sidebar = document.getElementById('app-sidebar')
-			const closeButton = sidebar.querySelector('.icon-close')
+			if (!text) {
+				text = altText
+			}
 
-			// Sidebar above the modal
-			sidebar.style.zIndex = 10001
-			this.openedSidebar = true
-			closeButton.addEventListener('click', e => {
-				sidebar.style.zIndex = null
-				this.openedSidebar = false
-			})
+			return {
+				text,
+				id: name,
+				icon: typeof iconClass === 'function'
+					? iconClass(currentFileInfo.name, context)
+					: iconClass,
+				action: function() {
+					OCA.Files.App.fileList.fileActions.triggerAction(name, fileInfoModel, OCA.Files.App.fileList)
+				},
+				order
+			}
 		}
 	}
 }
