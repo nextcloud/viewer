@@ -426,6 +426,8 @@ export default {
 #modal-mask #modal-container {
 	display: flex !important;
 	width: auto !important;
+	justify-content: center;
+	align-items: center;
 }
 
 .component-fade-enter-active, .component-fade-leave-active {
