@@ -65,7 +65,7 @@
 			:active="true"
 			:can-swipe.sync="canSwipe"
 			:sidebar-shown="showSidebar"
-			class="file-view"
+			class="file-view active"
 			:loaded.sync="currentFile.loaded"
 			@error="currentFailed" />
 		<error
@@ -121,7 +121,7 @@ export default {
 
 		fileList: [],
 
-		isMobile: window.outerWidth < 768,
+		isMobile: document.documentElement.clientWidth < 768,
 		isLoaded: false,
 
 		showSidebar: false,
@@ -424,7 +424,7 @@ export default {
 
 		getPath(fileInfo) {
 			if (fileInfo.hasPreview) {
-				return generateUrl(`/core/preview?fileId=${fileInfo.id}&x=${window.outerWidth}&y=${window.outerHeight}&a=true`)
+				return generateUrl(`/core/preview?fileId=${fileInfo.id}&x=${document.documentElement.clientWidth}&y=${document.documentElement.clientHeight}&a=true`)
 			}
 			return fileInfo.path
 		},
@@ -521,7 +521,7 @@ export default {
 
 		onResize(event) {
 			// Update mobile mode
-			this.isMobile = window.outerWidth < 768
+			this.isMobile = document.documentElement.clientWidth < 768
 			// update sidebar width
 			const sidebar = document.getElementById('app-sidebar')
 			if (sidebar) {
