@@ -122,6 +122,8 @@ export default {
 		fileList: [],
 
 		isMobile: window.outerWidth < 768,
+		isLoaded: false,
+
 		showSidebar: false,
 		sidebarWidth: 0,
 
@@ -160,7 +162,12 @@ export default {
 	watch: {
 		// make sure any late external app can register handlers
 		handlers: function() {
-			this.registerHandler(this.handlers[this.handlers.length - 1])
+			// make sure the viewer is done registering handlers
+			// so we only register handlers added AFTER the init
+			// of the viewer
+			if (this.isLoaded) {
+				this.registerHandler(this.handlers[this.handlers.length - 1])
+			}
 		}
 	},
 
@@ -171,6 +178,7 @@ export default {
 				this.registerHandler(handler)
 			})
 		})
+		this.isLoaded = true
 
 		window.addEventListener('resize', this.onResize)
 	},
