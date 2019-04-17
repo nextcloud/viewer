@@ -173,7 +173,7 @@ t.exports=function(t){return null!=t&&(n(t)||function(t){return"function"==typeo
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-var V=function(){function t(){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),Object.defineProperty(this,X,{writable:!0,value:void 0}),W(this,X)[X]=[],this.registerHandler(z),this.registerHandler(H),console.debug("OCA.Viewer initialized")}var e,n,i;return e=t,(n=[{key:"registerHandler",value:function(t){W(this,X)[X].push(t)}},{key:"availableHandlers",get:function(){return W(this,X)[X]}}])&&Y(e.prototype,n),i&&Y(e,i),t}(),X="__private_"+Z+++"_"+"mimetypes";
+var V=function(){function t(){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),Object.defineProperty(this,X,{writable:!0,value:void 0}),W(this,X)[X]=[],this.registerHandler(z),this.registerHandler(H),console.debug("OCA.Viewer initialized")}var e,n,i;return e=t,(n=[{key:"registerHandler",value:function(t){W(this,X)[X].push(t)}},{key:"availableHandlers",get:function(){return W(this,X)[X]}}])&&Y(e.prototype,n),i&&Y(e,i),t}(),X="__private_"+Z+++"_"+"handlers";
 /**
  * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
  *
