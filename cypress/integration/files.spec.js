@@ -38,6 +38,7 @@ describe('Files default view', function() {
 
 	it('Capture the app viewer version', function() {
 		cy.visit('/settings/apps/enabled/viewer')
+		cy.get('#app-sidebar > div > h2').should('contain', 'Viewer')
 		cy.screenshot()
 	})
 })

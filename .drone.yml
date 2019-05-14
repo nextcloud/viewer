@@ -64,15 +64,6 @@ steps:
     depends_on:
       - build
       - wait-on-server
-    # avoid memory process crash
-    # https://docs.cypress.io/guides/references/error-messages.html#The-Chromium-Renderer-process-just-crashed
-    resources:
-      limits:
-        cpu: 3
-        memory: 800Mi
-      requests:
-        cpu: 0.5
-        memory: 500Mi
     volumes:
       - name: cache
         path: /root/.cache
@@ -92,15 +83,6 @@ steps:
     depends_on:
       - build
       - wait-on-server
-    # avoid memory process crash
-    # https://docs.cypress.io/guides/references/error-messages.html#The-Chromium-Renderer-process-just-crashed
-    resources:
-      limits:
-        cpu: 3
-        memory: 800Mi
-      requests:
-        cpu: 0.5
-        memory: 500Mi
     volumes:
       - name: cache
         path: /root/.cache
@@ -120,15 +102,6 @@ steps:
     depends_on:
       - build
       - wait-on-server
-    # avoid memory process crash
-    # https://docs.cypress.io/guides/references/error-messages.html#The-Chromium-Renderer-process-just-crashed
-    resources:
-      limits:
-        cpu: 3
-        memory: 800Mi
-      requests:
-        cpu: 0.5
-        memory: 500Mi
     volumes:
       - name: cache
         path: /root/.cache
@@ -148,15 +121,6 @@ steps:
     depends_on:
       - build
       - wait-on-server
-    # avoid memory process crash
-    # https://docs.cypress.io/guides/references/error-messages.html#The-Chromium-Renderer-process-just-crashed
-    resources:
-      limits:
-        cpu: 3
-        memory: 800Mi
-      requests:
-        cpu: 0.5
-        memory: 500Mi
     volumes:
       - name: cache
         path: /root/.cache
