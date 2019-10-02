@@ -21,40 +21,46 @@
  -->
 
 <template>
-	<video
-		v-if="path"
-		:autoplay="active"
-		:controls="visibleControls"
-		:poster="livePhotoPath"
-		:playsinline="true"
-		:preload="true"
-		:src="davPath"
-		:style="{
-			height: height + 'px',
-			width: width + 'px'
-		}"
-		@ended="donePlaying"
-		@click.prevent="playPause"
-		@dblclick.prevent="toggleFullScreen"
-		@canplay="doneLoading"
-		@mouseenter="showControls"
-		@mouseleave="hideControls"
-		@loadedmetadata="onLoadedMetadata"
-		@volumechange="saveVolume">
+	<vue-plyr v-if="path" ref="plyr" :options="options">
+		<video
+			ref="video"
+			:autoplay="active"
+			:playsinline="true"
+			:poster="livePhotoPath"
+			:src="davPath"
+			:style="{
+				height: height + 'px',
+				width: width + 'px'
+			}"
+			preload="metadata"
+			@ended="donePlaying"
+			@click.prevent="playPause"
+			@dblclick.prevent="toggleFullScreen"
+			@canplay="doneLoading"
+			@loadedmetadata="onLoadedMetadata"
+			@volumechange="saveVolume">
 
-		<!-- Omitting `type` on purpose because most of the
-			browsers auto detect the appropriate codec.
-			Having it set force the browser to comply to
-			the provided mime instead of detecting a potential
-			compatibility. -->
+			<!-- Omitting `type` on purpose because most of the
+				browsers auto detect the appropriate codec.
+				Having it set force the browser to comply to
+				the provided mime instead of detecting a potential
+				compatibility. -->
 
-		{{ t('viewer', 'Your browser does not support the video tag.') }}
-	</video>
+			{{ t('viewer', 'Your browser does not support the video tag.') }}
+		</video>
+	</vue-plyr>
 </template>
 
 <script>
-import Mime from 'Mixins/Mime'
-import PreviewUrl from 'Mixins/PreviewUrl'
+import { generateFilePath } from 'nextcloud-router'
+import Vue from 'vue'
+import VuePlyr from 'vue-plyr'
+import 'vue-plyr/dist/vue-plyr.css'
+
+import Mime from '../mixins/Mime'
+import PreviewUrl from '../mixins/PreviewUrl'
+
+Vue.use(VuePlyr)
 
 const liveExt = ['jpg', 'jpeg', 'png']
 
@@ -64,9 +70,7 @@ export default {
 	mixins: [Mime, PreviewUrl],
 
 	data() {
-		return {
-			visibleControls: false
-		}
+		return {}
 	},
 
 	computed: {
@@ -80,6 +84,15 @@ export default {
 		},
 		livePhotoPath() {
 			return this.livePhoto && this.getPreviewIfAny(this.livePhoto)
+		},
+		player() {
+			return this.$refs.plyr.player
+		},
+		options() {
+			return {
+				controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
+				iconUrl: generateFilePath('viewer', 'img', 'plyr.svg')
+			}
 		}
 	},
 
@@ -87,11 +100,11 @@ export default {
 		active: function(val, old) {
 			// the item was hidden before and is now the current view
 			if (val === true && old === false) {
-				this.$el.play()
+				this.player.play()
 
 			// the item was playing before and is now hidden
 			} else if (val === false && old === true) {
-				this.$el.pause()
+				this.player.pause()
 			}
 		}
 	},
@@ -99,39 +112,31 @@ export default {
 	methods: {
 		// Updates the dimensions of the modal
 		updateVideoSize() {
-			this.naturalHeight = this.$el.videoHeight
-			this.naturalWidth = this.$el.videoWidth
+			this.naturalHeight = this.$refs.video.videoHeight
+			this.naturalWidth = this.$refs.video.videoWidth
 			this.updateHeightWidth()
-		},
-
-		// Show/hide video controls
-		showControls() {
-			this.visibleControls = true
-		},
-		hideControls() {
-			this.visibleControls = false
 		},
 
 		// Toggle play/pause
 		playPause() {
 			if (this.$el.paused) {
-				this.$el.play()
+				this.player.play()
 			} else {
-				this.$el.pause()
+				this.player.pause()
 			}
 		},
 
 		donePlaying() {
 			// reset and show poster after play
-			this.$el.autoplay = false
-			this.$el.load()
+			this.player.autoplay = false
+			this.player.load()
 		},
 
 		// Save video player's volume and mute status
 		saveVolume() {
 			let videoVolume = {
-				volume: this.$el.volume,
-				muted: this.$el.muted
+				volume: this.player.volume,
+				muted: this.player.muted
 			}
 			// try to store volume settings in localStorage for persistent storage
 			try {
@@ -170,7 +175,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 video {
 	background-color: black;
 	max-width: 100%;
@@ -179,5 +184,30 @@ video {
 	justify-self: center;
 	/* over arrows in tiny screens */
 	z-index: 20050;
+}
+
+::v-deep {
+	.plyr__progress__container {
+		flex: 1 1;
+	}
+	.plyr__volume {
+		min-width: 80px;
+	}
+
+	// plyr buttons style
+	.plyr--video .plyr__progress__buffer,
+	.plyr--video .plyr__control {
+		&.plyr__tab-focus,
+		&:hover,
+		&[aria-expanded=true] {
+			background-color: var(--color-primary-element);
+			color: var(--color-primary-text);
+			box-shadow: none !important;
+		}
+	}
+	// plyr volume control
+	.plyr--full-ui input[type=range] {
+		color: var(--color-primary-element);
+	}
 }
 </style>

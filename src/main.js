@@ -23,7 +23,7 @@ import Vue from 'vue'
 import ViewerComponent from 'Views/Viewer'
 import ViewerService from 'Services/Viewer'
 
-import { generateFilePath } from 'nextcloud-server/dist/router'
+import { generateFilePath } from 'nextcloud-router'
 
 Vue.prototype.$ = $
 

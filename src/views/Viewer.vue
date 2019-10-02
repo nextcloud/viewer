@@ -113,7 +113,7 @@ import Vue from 'vue'
 
 import isMobile from 'nextcloud-vue/dist/Mixins/isMobile'
 import isFullscreen from 'nextcloud-vue/dist/Mixins/isFullscreen'
-import { generateRemoteUrl } from 'nextcloud-server/dist/router'
+import { generateRemoteUrl } from 'nextcloud-router'
 
 import Error from 'Components/Error'
 import PreviewUrl from 'Mixins/PreviewUrl'

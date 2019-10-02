@@ -21,7 +21,7 @@
  */
 
 import axios from 'axios'
-import { generateRemoteUrl } from 'nextcloud-server/dist/router'
+import { generateRemoteUrl } from 'nextcloud-router'
 
 /**
  *

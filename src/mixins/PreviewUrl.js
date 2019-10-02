@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import { generateUrl } from 'nextcloud-server/dist/router'
+import { generateUrl } from 'nextcloud-router'
 
 export default {
 	methods: {
