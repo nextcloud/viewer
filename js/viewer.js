@@ -396,5 +396,5 @@ var Nt=function(){function t(){!function(t,e){if(!(t instanceof e))throw new Typ
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-o.default.prototype.t=t,o.default.prototype.n=n,o.default.prototype.OC=OC,o.default.prototype.OCA=OCA,i.nc=btoa(OC.requestToken),i.p=Object(a.generateFilePath)("viewer","","js/"),window.OCA&&(Object.assign(window.OCA,{Viewer:new Nt}),OCA.Viewer.version="1.2.0");var Dt=document.createElement("div");Dt.id="viewer",document.body.appendChild(Dt);r.default=new o.default({el:"#viewer",name:"ViewerRoot",render:function(t){return t(W)}})}]);
+o.default.prototype.t=t,o.default.prototype.n=n,o.default.prototype.OC=OC,o.default.prototype.OCA=OCA,i.nc=btoa(OC.requestToken),i.p=Object(a.generateFilePath)("viewer","","js/"),window.OCA&&(Object.assign(window.OCA,{Viewer:new Nt}),OCA.Viewer.version="1.3.0");var Dt=document.createElement("div");Dt.id="viewer",document.body.appendChild(Dt);r.default=new o.default({el:"#viewer",name:"ViewerRoot",render:function(t){return t(W)}})}]);
 //# sourceMappingURL=viewer.js.map
