@@ -21,7 +21,6 @@
  */
 
 import client from './DavClient'
-import { encodePath } from '@nextcloud/paths'
 import { genFileInfo } from '../utils/fileUtils'
 
 /**
@@ -32,7 +31,7 @@ import { genFileInfo } from '../utils/fileUtils'
  * @returns {Array} the file list
  */
 export default async function(path, options) {
-	const response = await client.stat(encodePath(path), Object.assign({
+	const response = await client.stat(path, Object.assign({
 		data: `<?xml version="1.0"?>
 			<d:propfind  xmlns:d="DAV:"
 				xmlns:oc="http://owncloud.org/ns"
