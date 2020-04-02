@@ -51,10 +51,7 @@
     "webdav": "^3.2.0"
   },
   "browserslist": [
-    "last 2 versions",
-    "ie >= 11",
-    "firefox ESR",
-    "not dead"
+    "extends @nextcloud/browserslist-config"
   ],
   "engines": {
     "node": ">=10.0.0"
@@ -69,7 +66,6 @@
     "@nextcloud/eslint-plugin": "^1.1.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
-    "browserslist-config-nextcloud": "0.1.0",
     "css-loader": "^3.4.2",
     "cypress": "^3.8.3",
     "cypress-image-snapshot": "^3.1.1",
