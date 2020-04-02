@@ -38,7 +38,7 @@ module.exports = {
 			{
 				test: /\.js$/,
 				loader: 'babel-loader',
-				exclude: /node_modules/,
+				exclude: /node_modules(?!(\/|\\)(camelcase|fast-xml-parser|hot-patcher|webdav)(\/|\\))/,
 			},
 			{
 				test: /\.(png|jpg|gif|svg)$/,
