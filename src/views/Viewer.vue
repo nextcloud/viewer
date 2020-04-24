@@ -43,7 +43,7 @@
 		<template #actions>
 			<ActionButton
 				v-if="Sidebar && !isSidebarShown"
-				icon="icon-info-white-forced"
+				icon="icon-menu-sidebar-white-forced"
 				@click="showSidebar">
 				{{ t('viewer', 'Open sidebar') }}
 			</ActionButton>
@@ -694,8 +694,8 @@ export default {
 }
 
 // force white icon
-.icon-info-white-forced {
-	background-image: url('~Assets/info-white.svg');
+.icon-menu-sidebar-white-forced {
+	background-image: url('~Assets/menu-sidebar-white.svg');
 }
 
 .file-view {
