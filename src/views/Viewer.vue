@@ -329,7 +329,7 @@ export default {
 			const title = document.getElementsByTagName('head')[0].getElementsByTagName('title')[0]
 			if (title && !title.dataset.old) {
 				title.dataset.old = document.title
-				document.title = `${fileName} - ${OC.theme.title}`
+				title.dataset.oldQuery = location.search
 			}
 
 			try {
@@ -598,6 +598,10 @@ export default {
 			if (title && title.dataset.old) {
 				document.title = title.dataset.old
 				delete title.dataset.old
+			}
+			if (title && title.dataset.oldQuery) {
+				OC.Util.History.pushState(title.dataset.oldQuery)
+				delete title.dataset.oldQuery
 			}
 		},
 

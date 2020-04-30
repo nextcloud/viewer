@@ -102,6 +102,14 @@ export default {
 		ext() {
 			return parsePath(this.basename).ext
 		},
+		queryString() {
+			const params = OC.Util.History.parseUrlQuery()
+			const dir = params.dir
+			delete params.dir
+			delete params.fileid
+			params.openfile = this.fileid
+			return 'dir=' + OC.encodePath(dir) + '&' + OC.buildQueryString(params)
+		},
 	},
 
 	watch: {
@@ -112,6 +120,8 @@ export default {
 				if (this.isLoaded) {
 					this.doneLoading()
 				}
+				OC.Util.History.pushState(this.queryString)
+				document.title = `${this.basename} - ${OC.theme.title}`
 			}
 		},
 		// update image size on sidebar toggle
@@ -132,6 +142,10 @@ export default {
 		window.addEventListener('resize', debounce(() => {
 			this.updateHeightWidth()
 		}, 100))
+		if (this.active) {
+			OC.Util.History.pushState(this.queryString)
+			document.title = `${this.basename} - ${OC.theme.title}`
+		}
 	},
 
 	methods: {
