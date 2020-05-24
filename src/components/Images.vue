@@ -94,6 +94,8 @@ export default {
 				return this.getBase64FromImage()
 			case 'image/gif':
 				return this.davPath
+			case 'image/jpeg':
+				return this.davPath
 			default:
 				return this.previewpath
 			}
