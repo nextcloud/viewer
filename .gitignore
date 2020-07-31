@@ -19,3 +19,4 @@ coverage/
 
 cypress/screenshots
 cypress/snapshots
+vendor
