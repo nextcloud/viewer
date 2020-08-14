@@ -48,6 +48,12 @@
 				@click="showSidebar">
 				{{ t('viewer', 'Open sidebar') }}
 			</ActionButton>
+			<ActionButton
+				v-if="Sidebar && !isSidebarShown"
+				icon="icon-delete-white"
+				@click="onDelete">
+				{{ t('viewer', 'Delete') }}
+			</ActionButton>
 		</template>
 
 		<!-- PREVIOUS -->
@@ -712,6 +718,13 @@ export default {
 
 		onClose() {
 			this.Viewer.onClose()
+		},
+
+		async onDelete() {
+			// let fileInfo = await fileRequest(this.file)
+			let fileInfo = this.fileList[this.currentIndex]
+
+			console.log(fileInfo)
 		},
 	},
 }
