@@ -117,7 +117,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen'
 import isMobile from '@nextcloud/vue/dist/Mixins/isMobile'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
-
+import axios from '@nextcloud/axios'
 import { extractFilePaths, sortCompare } from '../utils/fileUtils'
 import { getRootPath } from '../utils/davUtils'
 import cancelableRequest from '../utils/CancelableRequest'
@@ -721,10 +721,10 @@ export default {
 		},
 
 		async onDelete() {
-			// let fileInfo = await fileRequest(this.file)
-			let fileInfo = this.fileList[this.currentIndex]
-
-			console.log(fileInfo)
+			const url = this.root + this.currentFile.filename
+			await axios.delete(url)
+			this.previous()
+			// this.close()
 		},
 	},
 }
