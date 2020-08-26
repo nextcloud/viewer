@@ -44,13 +44,13 @@
 		<template #actions>
 			<ActionButton
 				v-if="Sidebar && !isSidebarShown"
-				icon="icon-menu-sidebar-white-forced"
+				icon="icon-menu-sidebar"
 				@click="showSidebar">
 				{{ t('viewer', 'Open sidebar') }}
 			</ActionButton>
 			<ActionButton
-				v-if="Sidebar && !isSidebarShown"
-				icon="icon-delete-white"
+				v-if="canDelete"
+				icon="icon-delete"
 				@click="onDelete">
 				{{ t('viewer', 'Delete') }}
 			</ActionButton>
@@ -176,6 +176,9 @@ export default {
 	}),
 
 	computed: {
+		canDelete() {
+			return true
+		},
 		hasPrevious() {
 			return this.fileList.length > 1
 		},
