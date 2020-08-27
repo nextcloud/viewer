@@ -177,7 +177,7 @@ export default {
 
 	computed: {
 		canDelete() {
-			return true
+			return this.currentFile.permissions.includes('D')
 		},
 		hasPrevious() {
 			return this.fileList.length > 1
