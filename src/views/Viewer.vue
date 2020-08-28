@@ -51,6 +51,7 @@
 			<ActionButton
 				v-if="canDelete"
 				icon="icon-delete"
+				class="btn_delete"
 				@click="onDelete">
 				{{ t('viewer', 'Delete') }}
 			</ActionButton>
