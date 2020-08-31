@@ -46,6 +46,8 @@ describe('Open image.png in viewer', function() {
 	})
 
     it('Delete', function() {
+		cy.get('.action-item__menutoggle').click()
+        cy.wait(1000)
         cy.get('.btn_delete').click()
         cy.wait(2000)
         cy.get('.icon-close').click()
