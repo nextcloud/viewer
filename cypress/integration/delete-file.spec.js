@@ -56,11 +56,7 @@ describe('Open image.png in viewer', function() {
     })
     
     it('Check that the file is gone', function() {
-        
+		cy.get('#fileList tr[data-file="image.png"]', { timeout: 10000 })
+			.should('not.contain', 'image.png')
 	})
-
-    
-
-    
-	
 })
