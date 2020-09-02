@@ -35,6 +35,11 @@ test-coverage:
 
 test-cypress:
 	./cypress/start.sh
+	npm run cypress
+	./cypress/stop.sh
+
+test-cypress-gui:
+	./cypress/start.sh
 	npm run cypress:gui
 	./cypress/stop.sh
 

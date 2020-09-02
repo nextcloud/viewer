@@ -24,6 +24,11 @@ const config = {
 					'toastify-js',
 				]),
 			},
+			{
+				// for cypress roboto import
+				test: /\.(woff2?)$/,
+				loader: 'url-loader',
+			},
 		],
 	},
 	plugins: [

@@ -42,6 +42,12 @@ __webpack_nonce__ = btoa(OC.requestToken)
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('viewer', '', 'js/')
 
+// Inject proper font for cypress visual regression testing
+if (isTesting) {
+	// Import font so CI has the same
+	import(/* webpackChunkName: 'roboto-font' */'fontsource-roboto')
+}
+
 // Init Viewer Service
 if (window.OCA) {
 	Object.assign(window.OCA, { Viewer: new ViewerService() })

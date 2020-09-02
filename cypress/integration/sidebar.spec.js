@@ -74,7 +74,7 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 	})
 
 	it('Does not have any visual regression 1', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('sidebar-1')
 	})
 
 	it('Open the sidebar', function() {
@@ -97,7 +97,7 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 		// Switch to sharing section to avoid the issue.
 		cy.get('aside.app-sidebar a#sharing').click()
 
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('sidebar-2')
 	})
 
 	it('Change to next image with sidebar open', function() {
@@ -116,7 +116,7 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 		// Switch to sharing section to avoid the issue.
 		cy.get('aside.app-sidebar a#sharing').click()
 
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('sidebar-3')
 	})
 
 	it('Change to previous image with sidebar open', function() {
@@ -135,7 +135,7 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 		// Switch to sharing section to avoid the issue.
 		cy.get('aside.app-sidebar a#sharing').click()
 
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('sidebar-4')
 	})
 
 	it('Close the sidebar', function() {
@@ -165,6 +165,6 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 	})
 
 	it('Does not have any visual regression 5', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('sidebar-5')
 	})
 })

@@ -11,10 +11,27 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-const {
-	addMatchImageSnapshotPlugin
-} = require('cypress-image-snapshot/plugin')
+const getCompareSnapshotsPlugin = require('cypress-visual-regression/dist/plugin')
 
-module.exports = (on, config) => {
-	addMatchImageSnapshotPlugin(on, config)
+module.exports = (on) => {
+	getCompareSnapshotsPlugin(on)
+
+
+	// Disable spell checking to prevent rendering differences
+	on('before:browser:launch', (browser, launchOptions) => {
+		if (browser.family === 'chromium' && browser.name !== 'electron') {
+			launchOptions.preferences.default['browser.enable_spellchecking'] = false
+			return launchOptions
+		}
+
+		if (browser.family === 'firefox') {
+			launchOptions.preferences['layout.spellcheckDefault'] = 0
+			return launchOptions
+		}
+
+		if (browser.name === 'electron') {
+			launchOptions.preferences.spellcheck = false
+			return launchOptions
+		}
+	})
 }

@@ -87,7 +87,7 @@ describe('Open custom list of images in viewer with pagination', function() {
 									},
 								],
 								// This will be triggered when we get to the end of the list
-								loadMore: function() {
+								loadMore() {
 									// make sure we only loadMore once
 									if (loaded) {
 										return []
@@ -143,7 +143,7 @@ describe('Open custom list of images in viewer with pagination', function() {
 	})
 
 	it('Does not have any visual regression 1', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-custom-list-loadmore-1')
 	})
 
 	it('Show image2 on next', function() {
@@ -161,7 +161,7 @@ describe('Open custom list of images in viewer with pagination', function() {
 	})
 
 	it('Does not have any visual regression 2', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-custom-list-loadmore-2')
 	})
 
 	it('Show image3 on next', function() {
@@ -179,7 +179,7 @@ describe('Open custom list of images in viewer with pagination', function() {
 	})
 
 	it('Does not have any visual regression 3', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-custom-list-loadmore-3')
 	})
 
 	it('Show image4 on next', function() {
@@ -197,7 +197,7 @@ describe('Open custom list of images in viewer with pagination', function() {
 	})
 
 	it('Does not have any visual regression 4', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-custom-list-loadmore-4')
 	})
 
 	it('Show image1 again on next', function() {
@@ -215,6 +215,6 @@ describe('Open custom list of images in viewer with pagination', function() {
 	})
 
 	it('Does not have any visual regression 5', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-custom-list-loadmore-5')
 	})
 })

@@ -20,7 +20,6 @@
  *
  */
 
-
 import { randHash } from '../utils/'
 const randUser = randHash()
 

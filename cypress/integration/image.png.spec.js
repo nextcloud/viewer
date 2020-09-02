@@ -73,6 +73,6 @@ describe('Open image.png in viewer', function() {
 	})
 
 	it('Does not have any visual regression', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('image-png')
 	})
 })

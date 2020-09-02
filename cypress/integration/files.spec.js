@@ -20,6 +20,7 @@
  *
  */
 
+
 describe('Files default view', function() {
 	before(function() {
 		cy.login('admin', 'admin')
