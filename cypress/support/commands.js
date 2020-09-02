@@ -20,10 +20,11 @@
  *
  */
 
-import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command'
+// eslint-disable-next-line node/no-unpublished-import
+import compareSnapshotCommand from 'cypress-visual-regression/dist/command'
 import axios from '@nextcloud/axios'
 
-addMatchImageSnapshotCommand()
+compareSnapshotCommand()
 
 const url = Cypress.config('baseUrl').replace(/\/index.php\/?$/g, '')
 Cypress.env('baseUrl', url)
@@ -81,7 +82,7 @@ Cypress.Commands.add('uploadFile', (fileName, mimeType, path = '') => {
 					headers: {
 						requesttoken: window.OC.requestToken,
 						'Content-Type': mimeType,
-					}
+					},
 				}).then(response => {
 					cy.log(`Uploaded ${fileName}`, response)
 				})
@@ -104,6 +105,7 @@ Cypress.Commands.add('createFolder', dirName => {
 
 Cypress.Commands.add('openFile', fileName => {
 	cy.get(`#fileList tr[data-file="${fileName}"] a.name`).click()
+	// eslint-disable-next-line cypress/no-unnecessary-waiting
 	cy.wait(250)
 })
 
@@ -132,20 +134,20 @@ Cypress.Commands.add('createLinkShare', path => {
 			}, {
 				headers: {
 					requesttoken: window.OC.requestToken,
-				}
+				},
 			})
 			if (!('ocs' in request.data) || !('token' in request.data.ocs.data && request.data.ocs.data.token.length > 0)) {
 				throw request
 			}
 			cy.log('Share link created', request.data.ocs.data.token)
 			return cy.wrap(request.data.ocs.data.token)
-		} catch(error) {
+		} catch (error) {
 			console.error(error)
 		}
 	}).should('have.length', 15)
 })
 
-Cypress.Commands.overwrite('matchImageSnapshot', (originalFn, subject, name, options) => {
+Cypress.Commands.overwrite('compareSnapshot', (originalFn, subject, name, options) => {
 	// hide avatar because random colour break the visual regression tests
 	cy.window().then(window => {
 		const avatarDiv = window.document.querySelector('.avatardiv')

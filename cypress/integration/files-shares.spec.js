@@ -20,6 +20,8 @@
  *
  */
 
+// Import font so CI has the same
+import '!url-loader!style-loader!css-loader?fontsource-roboto'
 import { randHash } from '../utils/'
 const randUser = randHash()
 
@@ -51,10 +53,6 @@ describe('See shared folder with link share', function() {
 		cy.get('#fileList tr').should('contain', 'Photos')
 	})
 
-	it('Does not have any visual regression 1', function() {
-		cy.matchImageSnapshot()
-	})
-
 	it('See shared files in the list', function() {
 		cy.openFile('Photos')
 		cy.get('#fileList tr[data-file="image1.jpg"]', { timeout: 10000 })
@@ -69,19 +67,20 @@ describe('See shared folder with link share', function() {
 			.should('contain', 'video1.mp4')
 	})
 
-	it('Does not have any visual regression 2', function() {
-		cy.matchImageSnapshot()
+	it('Take screenshot', function() {
+		cy.screenshot()
 	})
 
 	it('Share the Photos folder with a share link and access the share link', function() {
 		cy.createLinkShare('/Photos').then(token => {
 			cy.logout()
 			cy.visit(`/s/${token}`)
+			cy.wait(1000)
 		})
 	})
 
-	it('Does not have any visual regression 3', function() {
-		cy.matchImageSnapshot()
+	it('Does not have any visual regression 1', function() {
+		cy.compareSnapshot('files-1')
 	})
 
 	it('Open the viewer on file click', function() {
@@ -109,8 +108,8 @@ describe('See shared folder with link share', function() {
 		cy.get('#viewer-content a.next').should('be.visible')
 	})
 
-	it('Does not have any visual regression 4', function() {
-		cy.matchImageSnapshot()
+	it('Does not have any visual regression 2', function() {
+		cy.compareSnapshot('files-2')
 	})
 
 	it('Show image2 on next', function() {
@@ -127,8 +126,8 @@ describe('See shared folder with link share', function() {
 			.and('not.have.class', 'icon-loading')
 	})
 
-	it('Does not have any visual regression 5', function() {
-		cy.matchImageSnapshot()
+	it('Does not have any visual regression 3', function() {
+		cy.compareSnapshot('files-3')
 	})
 
 	it('Show image3 on next', function() {
@@ -145,8 +144,8 @@ describe('See shared folder with link share', function() {
 			.and('not.have.class', 'icon-loading')
 	})
 
-	it('Does not have any visual regression 6', function() {
-		cy.matchImageSnapshot()
+	it('Does not have any visual regression 4', function() {
+		cy.compareSnapshot('files-4')
 	})
 
 	it('Show image4 on next', function() {
@@ -163,8 +162,8 @@ describe('See shared folder with link share', function() {
 			.and('not.have.class', 'icon-loading')
 	})
 
-	it('Does not have any visual regression 7', function() {
-		cy.matchImageSnapshot()
+	it('Does not have any visual regression 5', function() {
+		cy.compareSnapshot('files-5')
 	})
 
 	it('Show video1 on next', function() {
@@ -184,8 +183,8 @@ describe('See shared folder with link share', function() {
 			.and('not.have.class', 'icon-loading')
 	})
 
-	it('Does not have any visual regression 8', function() {
-		cy.matchImageSnapshot()
+	it('Does not have any visual regression 6', function() {
+		cy.compareSnapshot('files-6')
 	})
 
 	it('Show image1 again on next', function() {
@@ -202,7 +201,7 @@ describe('See shared folder with link share', function() {
 			.and('not.have.class', 'icon-loading')
 	})
 
-	it('Does not have any visual regression 9', function() {
-		cy.matchImageSnapshot()
+	it('Does not have any visual regression 7', function() {
+		cy.compareSnapshot('files-7')
 	})
 })

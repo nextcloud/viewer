@@ -20,6 +20,8 @@
  *
  */
 
+// Import font so CI has the same
+import '!url-loader!style-loader!css-loader?fontsource-roboto'
 import { randHash } from '../utils/'
 const randUser = randHash()
 
@@ -81,7 +83,7 @@ describe('Open images in viewer', function() {
 	})
 
 	it('Does not have any visual regression 1', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-1')
 	})
 
 	it('Show image2 on next', function() {
@@ -99,7 +101,7 @@ describe('Open images in viewer', function() {
 	})
 
 	it('Does not have any visual regression 2', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-2')
 	})
 
 	it('Show image3 on next', function() {
@@ -117,7 +119,7 @@ describe('Open images in viewer', function() {
 	})
 
 	it('Does not have any visual regression 3', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-3')
 	})
 
 	it('Show image4 on next', function() {
@@ -136,7 +138,7 @@ describe('Open images in viewer', function() {
 	})
 
 	it('Does not have any visual regression 4', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-4')
 	})
 
 	it('Show image1 again on next', function() {
@@ -154,6 +156,6 @@ describe('Open images in viewer', function() {
 	})
 
 	it('Does not have any visual regression 5', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('images-5')
 	})
 })

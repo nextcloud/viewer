@@ -20,7 +20,8 @@
  *
  */
 
-
+// Import font so CI has the same
+import '!url-loader!style-loader!css-loader?fontsource-roboto'
 import { randHash } from '../utils/'
 const randUser = randHash()
 
@@ -76,6 +77,6 @@ describe('Open image.svg in viewer', function() {
 	})
 
 	it('Does not have any visual regression', function() {
-		cy.matchImageSnapshot()
+		cy.compareSnapshot('image-svg')
 	})
 })

@@ -3,5 +3,11 @@
   "projectId": "xysa6x",
   "viewportWidth": 1280,
   "viewportHeight": 720,
-  "defaultCommandTimeout": 6000
+  "defaultCommandTimeout": 6000,
+  "env": {
+    "failSilently": false,
+    "type": "actual"
+  },
+  "screenshotsFolder": "cypress/snapshots/actual",
+  "trashAssetsBeforeRuns": true
 }
