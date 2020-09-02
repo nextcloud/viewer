@@ -21,6 +21,7 @@ vendor
 .php_cs.cache
 
 # Cypress files
+js/*roboto*
 cypress/videos
 cypress/screenshots
 cypress/snapshots/actual

@@ -20,8 +20,6 @@
  *
  */
 
-// Import font so CI has the same
-import '!url-loader!style-loader!css-loader?fontsource-roboto'
 
 describe('Files default view', function() {
 	before(function() {

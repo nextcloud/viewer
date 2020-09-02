@@ -40,11 +40,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies & build app
-        run: |
-          npm ci
-          TESTING=true npm run build --if-present
-
       - name: Wait for server
         run: |
             npm install -g wait-on
@@ -60,6 +55,7 @@ jobs:
         with:
           record: true
           parallel: true
+          build: npm run build
           # cypress env
           ci-build-id: ${{ github.sha }}-${{ github.run_number }}
           tag: ${{ github.event_name }}
@@ -67,6 +63,7 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # https://github.com/cypress-io/github-action/issues/124
           COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
+          TESTING: true
 
       - name: Upload snapshots
         uses: actions/upload-artifact@v2
