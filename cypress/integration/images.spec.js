@@ -68,7 +68,7 @@ describe('Open images in viewer', function() {
 
 	it('See the menu icon and title on the viewer header', function() {
 		cy.get('#viewer-content .modal-title').should('contain', 'image1.jpg')
-		cy.get('#viewer-content .modal-header button.icon-menu-sidebar').should('be.visible')
+		cy.get('#viewer-content .modal-header .icons-menu .action-item .v-popover .trigger .action-item__menutoggle').should('be.visible')
 		cy.get('#viewer-content .modal-header button.icon-close').should('be.visible')
 	})
 

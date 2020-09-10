@@ -69,7 +69,7 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 
 	it('See the menu icon and title on the viewer header', function() {
 		cy.get('#viewer-content .modal-title').should('contain', 'image1.jpg')
-		cy.get('#viewer-content .modal-header action-item__menutoggle').should('be.visible')
+		cy.get('#viewer-content .modal-header .icons-menu .action-item .v-popover .trigger .action-item__menutoggle').should('be.visible')
 		cy.get('#viewer-content .modal-header button.icon-close').should('be.visible')
 	})
 
