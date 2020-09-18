@@ -443,5 +443,5 @@ S.a.defaults.headers["X-Requested-With"]="XMLHttpRequest",R.a.getPatcher().patch
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-o.default.prototype.t=t,o.default.prototype.n=n,o.default.prototype.OC=OC,o.default.prototype.OCA=OCA,i.nc=btoa(OC.requestToken),i.p=Object(E.generateFilePath)("viewer","","js/"),window.OCA&&(Object.assign(window.OCA,{Viewer:new Ze}),OCA.Viewer.version="1.4.0");var Je=document.createElement("div");Je.id="viewer",document.body.appendChild(Je);r.default=new o.default({el:"#viewer",name:"ViewerRoot",render:function(e){return e(ce)}})}]);
-//# sourceMappingURL=viewer-main.js.map?v=a2e8a2ac3fb44737505b
+o.default.prototype.t=t,o.default.prototype.n=n,o.default.prototype.OC=OC,o.default.prototype.OCA=OCA,i.nc=btoa(OC.requestToken),i.p=Object(E.generateFilePath)("viewer","","js/"),window.OCA&&(Object.assign(window.OCA,{Viewer:new Ze}),OCA.Viewer.version="1.5.0");var Je=document.createElement("div");Je.id="viewer",document.body.appendChild(Je);r.default=new o.default({el:"#viewer",name:"ViewerRoot",render:function(e){return e(ce)}})}]);
+//# sourceMappingURL=viewer-main.js.map?v=5a8f6e9cb68321cba276
