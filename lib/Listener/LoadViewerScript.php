@@ -29,14 +29,47 @@ use OCA\Viewer\AppInfo\Application;
 use OCA\Viewer\Event\LoadViewer;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\EventDispatcher\Event;
+use OCP\AppFramework\Services\IInitialState;
+use OCP\IUserSession;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IConfig;
 use OCP\Util;
 
 class LoadViewerScript implements IEventListener {
+		
+	/** @var IInitialState */
+	private $initialStateService;
+
+	/** @var IUserSession */
+	private $userSession;
+
+	/** @var IConfig */
+	private $config;
+
+	public function __construct(IInitialState $initialStateService,
+								IUserSession $userSession,
+								IConfig $config) {
+		$this->initialStateService = $initialStateService;
+		$this->userSession = $userSession;
+		$this->config = $config;
+	}
+
 	public function handle(Event $event): void {
 		if (!($event instanceof LoadViewer || $event instanceof LoadAdditionalScriptsEvent)) {
 			return;
 		}
+
+		$fileSorting = 'name';
+		$fileSortingDirection = 'asc';
+
+		$user = $this->userSession->getUser();
+		if ($user !== null) {
+			$fileSorting = $this->config->getUserValue($user->getUID(), 'files', 'file_sorting', 'name');
+			$fileSortingDirection = $this->config->getUserValue($user->getUID(), 'files', 'file_sorting_direction', 'asc');
+		}
+
+		$this->initialStateService->provideInitialState('file-sorting', $fileSorting);
+		$this->initialStateService->provideInitialState('file-sorting-direction', $fileSortingDirection);
 
 		Util::addScript(Application::APP_ID, 'viewer-main');
 	}
