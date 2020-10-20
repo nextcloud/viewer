@@ -21,6 +21,7 @@
  */
 import camelcase from 'camelcase'
 import { isNumber } from './numberUtil'
+import { loadState } from '@nextcloud/initial-state'
 
 /**
  * Get an url encoded path
@@ -62,6 +63,12 @@ const extractFilePaths = function(path) {
  * @returns {number}
  */
 const sortCompare = function(fileInfo1, fileInfo2, key, asc = true) {
+
+	const fileSorting = loadState('viewer', 'file-sorting')
+	const fileSortingDirection = loadState('viewer', 'file-sorting-direction')
+
+	console.log(fileSorting)
+	console.log(fileSortingDirection)
 
 	if (fileInfo1.isFavorite && !fileInfo2.isFavorite) {
 		return -1
