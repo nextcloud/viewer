@@ -10567,50 +10567,6 @@ createToken('GTE0PRE', '^\\s*>=\\s*0\.0\.0-0\\s*$');
 
 /***/ }),
 
-/***/ "./node_modules/@nextcloud/initial-state/dist/index.js":
-/*!*************************************************************!*\
-  !*** ./node_modules/@nextcloud/initial-state/dist/index.js ***!
-  \*************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-__webpack_require__(/*! core-js/modules/es.array.concat */ "./node_modules/core-js/modules/es.array.concat.js");
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.loadState = loadState;
-
-/**
- * @param app app ID, e.g. "mail"
- * @param key name of the property
- * @param fallback optional parameter to use as default value
- * @throws if the key can't be found
- */
-function loadState(app, key, fallback) {
-  var elem = document.querySelector("#initial-state-".concat(app, "-").concat(key));
-
-  if (elem === null) {
-    if (fallback !== undefined) {
-      return fallback;
-    }
-
-    throw new Error("Could not find initial state ".concat(key, " of ").concat(app));
-  }
-
-  try {
-    return JSON.parse(atob(elem.value));
-  } catch (e) {
-    throw new Error("Could not parse initial state ".concat(key, " of ").concat(app));
-  }
-}
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-
 /***/ "./node_modules/@nextcloud/l10n/dist/gettext.js":
 /*!******************************************************!*\
   !*** ./node_modules/@nextcloud/l10n/dist/gettext.js ***!
@@ -58393,6 +58349,157 @@ Stream.prototype.pipe = function(dest, options) {
 
 /***/ }),
 
+/***/ "./node_modules/string-natural-compare/natural-compare.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/string-natural-compare/natural-compare.js ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+const defaultAlphabetIndexMap = [];
+
+function isNumberCode(code) {
+  return code >= 48/* '0' */ && code <= 57/* '9' */;
+}
+
+function naturalCompare(a, b, opts) {
+  if (typeof a !== 'string') {
+    throw new TypeError(`The first argument must be a string. Received type '${typeof a}'`);
+  }
+  if (typeof b !== 'string') {
+    throw new TypeError(`The second argument must be a string. Received type '${typeof b}'`);
+  }
+
+  const lengthA = a.length;
+  const lengthB = b.length;
+  let indexA = 0;
+  let indexB = 0;
+  let alphabetIndexMap = defaultAlphabetIndexMap;
+  let firstDifferenceInLeadingZeros = 0;
+
+  if (opts) {
+    if (opts.caseInsensitive) {
+      a = a.toLowerCase();
+      b = b.toLowerCase();
+    }
+
+    if (opts.alphabet) {
+      alphabetIndexMap = buildAlphabetIndexMap(opts.alphabet);
+    }
+  }
+
+  while (indexA < lengthA && indexB < lengthB) {
+    let charCodeA = a.charCodeAt(indexA);
+    let charCodeB = b.charCodeAt(indexB);
+
+    if (isNumberCode(charCodeA)) {
+      if (!isNumberCode(charCodeB)) {
+        return charCodeA - charCodeB;
+      }
+
+      let numStartA = indexA;
+      let numStartB = indexB;
+
+      while (charCodeA === 48/* '0' */ && ++numStartA < lengthA) {
+        charCodeA = a.charCodeAt(numStartA);
+      }
+      while (charCodeB === 48/* '0' */ && ++numStartB < lengthB) {
+        charCodeB = b.charCodeAt(numStartB);
+      }
+
+      if (numStartA !== numStartB && firstDifferenceInLeadingZeros === 0) {
+        firstDifferenceInLeadingZeros = numStartA - numStartB;
+      }
+
+      let numEndA = numStartA;
+      let numEndB = numStartB;
+
+      while (numEndA < lengthA && isNumberCode(a.charCodeAt(numEndA))) {
+        ++numEndA;
+      }
+      while (numEndB < lengthB && isNumberCode(b.charCodeAt(numEndB))) {
+        ++numEndB;
+      }
+
+      let difference = numEndA - numStartA - numEndB + numStartB; // numA length - numB length
+      if (difference !== 0) {
+        return difference;
+      }
+
+      while (numStartA < numEndA) {
+        difference = a.charCodeAt(numStartA++) - b.charCodeAt(numStartB++);
+        if (difference !== 0) {
+          return difference;
+        }
+      }
+
+      indexA = numEndA;
+      indexB = numEndB;
+      continue;
+    }
+
+    if (charCodeA !== charCodeB) {
+      if (
+        charCodeA < alphabetIndexMap.length &&
+        charCodeB < alphabetIndexMap.length &&
+        alphabetIndexMap[charCodeA] !== -1 &&
+        alphabetIndexMap[charCodeB] !== -1
+      ) {
+        return alphabetIndexMap[charCodeA] - alphabetIndexMap[charCodeB];
+      }
+
+      return charCodeA - charCodeB;
+    }
+
+    ++indexA;
+    ++indexB;
+  }
+
+  if (indexA < lengthA) { // `b` is a substring of `a`
+    return 1;
+  }
+
+  if (indexB < lengthB) { // `a` is a substring of `b`
+    return -1;
+  }
+
+  return firstDifferenceInLeadingZeros;
+}
+
+const alphabetIndexMapCache = {};
+
+function buildAlphabetIndexMap(alphabet) {
+  const existingMap = alphabetIndexMapCache[alphabet];
+  if (existingMap !== undefined) {
+    return existingMap;
+  }
+
+  const indexMap = [];
+  const maxCharCode = alphabet.split('').reduce((maxCode, char) => {
+    return Math.max(maxCode, char.charCodeAt(0));
+  }, 0);
+
+  for (let i = 0; i <= maxCharCode; i++) {
+    indexMap.push(-1);
+  }
+
+  for (let i = 0; i < alphabet.length; i++) {
+    indexMap[alphabet.charCodeAt(i)] = i;
+  }
+
+  alphabetIndexMapCache[alphabet] = indexMap;
+
+  return indexMap;
+}
+
+module.exports = naturalCompare;
+
+
+/***/ }),
+
 /***/ "./node_modules/string_decoder/lib/string_decoder.js":
 /*!***********************************************************!*\
   !*** ./node_modules/string_decoder/lib/string_decoder.js ***!
@@ -78846,6 +78953,88 @@ function pushToHistory(_ref) {
 
 /***/ }),
 
+/***/ "./src/services/FilesSort.js":
+/*!***********************************!*\
+  !*** ./src/services/FilesSort.js ***!
+  \***********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _nextcloud_axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @nextcloud/axios */ "./node_modules/@nextcloud/axios/dist/index.js");
+/* harmony import */ var _nextcloud_axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_nextcloud_axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _nextcloud_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @nextcloud/router */ "./node_modules/@nextcloud/router/dist/index.js");
+/* harmony import */ var _nextcloud_router__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_nextcloud_router__WEBPACK_IMPORTED_MODULE_1__);
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+/**
+ * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
+ *
+ * @author John Molakvoæ <skjnldsv@protonmail.com>
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* harmony default export */ __webpack_exports__["default"] = (function (_x) {
+  return _ref.apply(this, arguments);
+});
+
+function _ref() {
+  _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(obj) {
+    var sortInfo, url;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            sortInfo = '';
+            _context.prev = 1;
+            url = Object(_nextcloud_router__WEBPACK_IMPORTED_MODULE_1__["generateUrl"])('/apps/viewer/api/v1/getSortInfo');
+            _context.next = 5;
+            return _nextcloud_axios__WEBPACK_IMPORTED_MODULE_0___default.a.get(url);
+
+          case 5:
+            sortInfo = _context.sent;
+            _context.next = 11;
+            break;
+
+          case 8:
+            _context.prev = 8;
+            _context.t0 = _context["catch"](1);
+            console.error(_context.t0);
+
+          case 11:
+            return _context.abrupt("return", sortInfo);
+
+          case 12:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[1, 8]]);
+  }));
+  return _ref.apply(this, arguments);
+}
+
+/***/ }),
+
 /***/ "./src/services/Viewer.js":
 /*!********************************!*\
   !*** ./src/services/Viewer.js ***!
@@ -79255,9 +79444,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var camelcase__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! camelcase */ "./node_modules/camelcase/index.js");
 /* harmony import */ var camelcase__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(camelcase__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _numberUtil__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./numberUtil */ "./src/utils/numberUtil.js");
-/* harmony import */ var _nextcloud_initial_state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @nextcloud/initial-state */ "./node_modules/@nextcloud/initial-state/dist/index.js");
-/* harmony import */ var _nextcloud_initial_state__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_nextcloud_initial_state__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _services_FilesSort__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/FilesSort */ "./src/services/FilesSort.js");
+/* harmony import */ var string_natural_compare__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! string-natural-compare */ "./node_modules/string-natural-compare/natural-compare.js");
+/* harmony import */ var string_natural_compare__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(string_natural_compare__WEBPACK_IMPORTED_MODULE_3__);
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 /**
  * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
@@ -79280,6 +79474,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 
 
 
@@ -79325,34 +79520,88 @@ var extractFilePaths = function extractFilePaths(path) {
  */
 
 
-var sortCompare = function sortCompare(fileInfo1, fileInfo2, key) {
-  var asc = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
-  var fileSorting = Object(_nextcloud_initial_state__WEBPACK_IMPORTED_MODULE_2__["loadState"])('viewer', 'file-sorting');
-  var fileSortingDirection = Object(_nextcloud_initial_state__WEBPACK_IMPORTED_MODULE_2__["loadState"])('viewer', 'file-sorting-direction');
-  console.log(fileSorting);
-  console.log(fileSortingDirection);
+var sortCompare = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(fileInfo1, fileInfo2, key) {
+    var asc,
+        sortdata,
+        _args = arguments;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            asc = _args.length > 3 && _args[3] !== undefined ? _args[3] : true;
+            _context.prev = 1;
+            _context.next = 4;
+            return Object(_services_FilesSort__WEBPACK_IMPORTED_MODULE_2__["default"])();
 
-  if (fileInfo1.isFavorite && !fileInfo2.isFavorite) {
-    return -1;
-  } else if (!fileInfo1.isFavorite && fileInfo2.isFavorite) {
-    return 1;
-  } // if this is a number, let's sort by integer
+          case 4:
+            sortdata = _context.sent;
+            console.log(sortdata.data);
+            _context.next = 11;
+            break;
 
+          case 8:
+            _context.prev = 8;
+            _context.t0 = _context["catch"](1);
+            console.error(_context.t0);
 
-  if (Object(_numberUtil__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(fileInfo1[key]) && Object(_numberUtil__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(fileInfo2[key])) {
-    return Number(fileInfo1[key]) - Number(fileInfo2[key]);
-  } // else we sort by string, so let's sort directories first
+          case 11:
+            if (!(fileInfo1.isFavorite && !fileInfo2.isFavorite)) {
+              _context.next = 15;
+              break;
+            }
 
+            return _context.abrupt("return", -1);
 
-  if (fileInfo1.type === 'directory' && fileInfo2.type !== 'directory') {
-    return -1;
-  } else if (fileInfo1.type !== 'directory' && fileInfo2.type === 'directory') {
-    return 1;
-  } // finally sort by name
+          case 15:
+            if (!(!fileInfo1.isFavorite && fileInfo2.isFavorite)) {
+              _context.next = 17;
+              break;
+            }
 
+            return _context.abrupt("return", 1);
 
-  return asc ? fileInfo1[key].localeCompare(fileInfo2[key], OC.getLanguage()) : -fileInfo1[key].localeCompare(fileInfo2[key], OC.getLanguage());
-};
+          case 17:
+            if (!(Object(_numberUtil__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(fileInfo1[key]) && Object(_numberUtil__WEBPACK_IMPORTED_MODULE_1__["isNumber"])(fileInfo2[key]))) {
+              _context.next = 19;
+              break;
+            }
+
+            return _context.abrupt("return", Number(fileInfo1[key]) - Number(fileInfo2[key]));
+
+          case 19:
+            if (!(fileInfo1.type === 'directory' && fileInfo2.type !== 'directory')) {
+              _context.next = 23;
+              break;
+            }
+
+            return _context.abrupt("return", -1);
+
+          case 23:
+            if (!(fileInfo1.type !== 'directory' && fileInfo2.type === 'directory')) {
+              _context.next = 25;
+              break;
+            }
+
+            return _context.abrupt("return", 1);
+
+          case 25:
+            return _context.abrupt("return", string_natural_compare__WEBPACK_IMPORTED_MODULE_3___default()(fileInfo1[key].toString(), fileInfo2[key].toString(), {
+              caseInsensitive: true
+            }));
+
+          case 27:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[1, 8]]);
+  }));
+
+  return function sortCompare(_x, _x2, _x3) {
+    return _ref.apply(this, arguments);
+  };
+}();
 /**
  * Generate a fileinfo object based on the full dav properties
  * It will flatten everything and put all keys to camelCase
@@ -79562,4 +79811,4 @@ __webpack_require__.r(__webpack_exports__);
 /***/ })
 
 /******/ });
-//# sourceMappingURL=viewer-main.js.map?v=e57afc0cd7352e206277
+//# sourceMappingURL=viewer-main.js.map?v=9315efec7e9398a0475e

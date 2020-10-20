@@ -50,6 +50,7 @@
     "nextcloud-server": "^0.15.10",
     "path-parse": "^1.0.6",
     "regenerator-runtime": "^0.13.7",
+    "string-natural-compare": "^3.0.1",
     "vue": "^2.6.12",
     "vue-async-computed": "^3.9.0",
     "vue-plyr": "^6.0.4",

@@ -21,7 +21,8 @@
  */
 import camelcase from 'camelcase'
 import { isNumber } from './numberUtil'
-import { loadState } from '@nextcloud/initial-state'
+import sortInfo from '../services/FilesSort'
+import naturalCompare from 'string-natural-compare'
 
 /**
  * Get an url encoded path
@@ -62,13 +63,20 @@ const extractFilePaths = function(path) {
  * @param {boolean} [asc=true] sort ascending?
  * @returns {number}
  */
-const sortCompare = function(fileInfo1, fileInfo2, key, asc = true) {
+const sortCompare = async function(fileInfo1, fileInfo2, key, asc = true) {
 
-	const fileSorting = loadState('viewer', 'file-sorting')
-	const fileSortingDirection = loadState('viewer', 'file-sorting-direction')
+	/*
+	fileSorting: asc, desc
+	fileSortingDirection: name, mtime, size
 
-	console.log(fileSorting)
-	console.log(fileSortingDirection)
+	*/
+
+	try {
+		const sortdata = await sortInfo()
+		console.log(sortdata.data)
+	} catch (err) {
+		console.error(err)
+	}
 
 	if (fileInfo1.isFavorite && !fileInfo2.isFavorite) {
 		return -1
@@ -87,6 +95,8 @@ const sortCompare = function(fileInfo1, fileInfo2, key, asc = true) {
 	} else if (fileInfo1.type !== 'directory' && fileInfo2.type === 'directory') {
 		return 1
 	}
+
+	return naturalCompare(fileInfo1[key].toString(), fileInfo2[key].toString(), { caseInsensitive: true })
 
 	// finally sort by name
 	return asc
