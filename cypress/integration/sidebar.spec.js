@@ -57,20 +57,20 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 
 	it('Open the viewer on file click', function() {
 		cy.openFile('image1.jpg')
-		cy.get('#viewer-content').should('be.visible')
+		cy.get('body > .viewer').should('be.visible')
 	})
 
 	it('Does not see a loading animation', function() {
-		cy.get('#viewer-content', { timeout: 10000 })
+		cy.get('body > .viewer', { timeout: 10000 })
 			.should('be.visible')
 			.and('have.class', 'modal-mask')
 			.and('not.have.class', 'icon-loading')
 	})
 
 	it('See the menu icon and title on the viewer header', function() {
-		cy.get('#viewer-content .modal-title').should('contain', 'image1.jpg')
-		cy.get('#viewer-content .modal-header button.icon-menu-sidebar-white-forced').should('be.visible')
-		cy.get('#viewer-content .modal-header button.icon-close').should('be.visible')
+		cy.get('body > .viewer .modal-title').should('contain', 'image1.jpg')
+		cy.get('body > .viewer .modal-header button.icon-menu-sidebar-white-forced').should('be.visible')
+		cy.get('body > .viewer .modal-header button.icon-close').should('be.visible')
 	})
 
 	it('Does not have any visual regression 1', function() {
@@ -78,10 +78,13 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 	})
 
 	it('Open the sidebar', function() {
-		cy.get('#viewer-content .modal-header button.icon-menu-sidebar-white-forced').click()
+		// open the menu
+		cy.get('body > .viewer .modal-header button.icon-menu-sidebar-white-forced').click()
+		// open the sidebar
+		cy.get('.action-button__icon.icon-menu-sidebar-white-forced').click()
 		cy.get('aside.app-sidebar').should('be.visible')
 		// we hide the sidebar button if opened
-		cy.get('#viewer-content .modal-header button.icon-menu-sidebar-white-forced').should('not.be.visible')
+		cy.get('body > .viewer .modal-header button.icon-menu-sidebar-white-forced').should('not.be.visible')
 		// check the sidebar is opened for the correct file
 		cy.get('aside.app-sidebar .app-sidebar-header .app-sidebar-header__maintitle').should('contain', 'image1.jpg')
 		// check we indeed have a preview
@@ -107,7 +110,7 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 		cy.get('aside.app-sidebar .app-sidebar-header .app-sidebar-header__maintitle').should('contain', 'image1.jpg')
 
 		// open the next file (image2.png) using the arrow
-		cy.get('#viewer-content .icon-next').click()
+		cy.get('body > .viewer .icon-next').click()
 		cy.get('aside.app-sidebar .app-sidebar-header .app-sidebar-header__maintitle').should('contain', 'image2.jpg')
 	})
 
@@ -126,7 +129,7 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 		cy.get('aside.app-sidebar .app-sidebar-header .app-sidebar-header__maintitle').should('contain', 'image2.jpg')
 
 		// open the previous file (image1.png) using the arrow
-		cy.get('#viewer-content .icon-previous').click()
+		cy.get('body > .viewer .icon-previous').click()
 		cy.get('aside.app-sidebar .app-sidebar-header .app-sidebar-header__maintitle').should('contain', 'image1.jpg')
 	})
 
@@ -141,18 +144,18 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 	it('Close the sidebar', function() {
 		cy.get('aside.app-sidebar .app-sidebar-header .app-sidebar__close').click()
 		cy.get('aside.app-sidebar').should('not.be.visible')
-		cy.get('#viewer-content .modal-header button.icon-menu-sidebar-white-forced').should('be.visible')
+		cy.get('body > .viewer .modal-header button.icon-menu-sidebar-white-forced').should('be.visible')
 	})
 
 	it('Open the viewer with the sidebar open', function() {
-		cy.get('#viewer-content .header-close.icon-close').click()
-		cy.get('#viewer-content').should('not.be.visible')
+		cy.get('body > .viewer .header-close.icon-close').click()
+		cy.get('body > .viewer').should('not.be.visible')
 
 		// open the sidebar without viewer open
 		cy.get('#fileList tr[data-file="image1.jpg"] .date .modified').click()
 
 		cy.openFile('image1.jpg')
-		cy.get('#viewer-content', { timeout: 10000 })
+		cy.get('body > .viewer', { timeout: 10000 })
 			.should('be.visible')
 			.and('have.class', 'modal-mask')
 			.and('not.have.class', 'icon-loading')
@@ -161,7 +164,7 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 		// close the sidebar again
 		cy.get('aside.app-sidebar .app-sidebar-header .app-sidebar__close').click()
 		cy.get('aside.app-sidebar').should('not.be.visible')
-		cy.get('#viewer-content .modal-header button.icon-menu-sidebar-white-forced').should('be.visible')
+		cy.get('body > .viewer .modal-header button.icon-menu-sidebar-white-forced').should('be.visible')
 	})
 
 	it('Does not have any visual regression 5', function() {
