@@ -1,7 +1,7 @@
 /**
- * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
+ * @copyright Copyright (c) 2020 Florent Fayolle <florent@zeteo.me>
  *
- * @author John Molakvoæ <skjnldsv@protonmail.com>
+ * @author Florent Fayolle <florent@zeteo.me>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -23,7 +23,7 @@
 import { randHash } from '../utils'
 const randUser = randHash()
 
-describe('Delete image.png in viewer', function() {
+describe('Download image.png in viewer', function() {
 	before(function() {
 		// Init user
 		cy.nextcloudCreateUser(randUser, 'password')
@@ -36,6 +36,7 @@ describe('Delete image.png in viewer', function() {
 		// wait a bit for things to be settled
 		cy.wait(2000)
 	})
+
 	after(function() {
 		cy.logout()
 	})
@@ -57,25 +58,14 @@ describe('Delete image.png in viewer', function() {
 			.and('not.have.class', 'icon-loading')
 	})
 
-	it('Delete the image and close viewer', function() {
+	it('Download the image', function() {
 		// open the menu
 		cy.get('body > .viewer .modal-header button.action-item__menutoggle').click()
 		// delete the file
-		cy.get('.action-button__icon.icon-delete').click()
+		cy.get('.action-button__icon.icon-download').click()
 	})
 
-	it('Does not see the viewer anymore', function() {
-		cy.get('body > .viewer', { timeout: 10000 })
-			.should('not.be.visible')
-	})
-
-	it('Does not see image.png in the list anymore', function() {
-		cy.visit('/apps/files')
-		cy.get('#fileList tr[data-file="image.png"]', { timeout: 10000 })
-			.should('not.contain', 'image.png')
-	})
-
-	it('Does not have any visual regression', function() {
-		cy.matchImageSnapshot()
+	it('Compare downloaded file with asset', function() {
+		// TODO
 	})
 })

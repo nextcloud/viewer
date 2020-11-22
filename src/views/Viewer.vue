@@ -57,6 +57,12 @@
 				@click="onDelete">
 				{{ t('viewer', 'Delete') }}
 			</ActionButton>
+			<ActionButton
+				icon="icon-download"
+				:close-after-click="true"
+				@click="onDownload">
+				{{ t('viewer', 'Download') }}
+			</ActionButton>
 		</template>
 
 		<div class="viewer__content" @click.self.exact="close">
@@ -120,6 +126,7 @@ import '@nextcloud/dialogs/styles/toast.scss'
 import { showError } from '@nextcloud/dialogs'
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import { dirname } from '@nextcloud/paths'
 import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen'
 import isMobile from '@nextcloud/vue/dist/Mixins/isMobile'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
@@ -736,6 +743,11 @@ export default {
 			this.Viewer.onClose()
 		},
 
+		onDownload() {
+			const { basename, filename } = this.currentFile
+			const url = OCA.Files.Files.getDownloadUrl(basename, dirname(filename))
+			location.href = url
+		},
 		async onDelete() {
 			try {
 				const url = this.root + this.currentFile.filename

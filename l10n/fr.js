@@ -9,6 +9,7 @@ OC.L10N.register(
     "Your browser does not support videos." : "Votre navigateur ne prend pas en charge les vidéos.",
     "Open sidebar" : "Ouvrir la barre latérale",
     "Delete" : "Supprimer",
+    "Download" : "Télécharger",
     "There is no plugin available to display this file type" : "Il n'y a pas d'extension disponible pour afficher ce type de fichier.",
     "View" : "Afficher",
     "Your browser does not support the video tag." : "Votre navigateur Web ne prend pas en charge ce type de vidéo."
