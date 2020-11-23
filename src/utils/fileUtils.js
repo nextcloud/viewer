@@ -19,7 +19,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+import { dirname } from '@nextcloud/paths'
+import { generateUrl } from '@nextcloud/router'
+
 import camelcase from 'camelcase'
+import { getRootPath, getToken, isPublic } from './davUtils'
 import { isNumber } from './numberUtil'
 
 /**
@@ -119,4 +123,18 @@ const genFileInfo = function(obj) {
 	return fileInfo
 }
 
-export { encodeFilePath, extractFilePaths, sortCompare, genFileInfo }
+/**
+ * Generate absolute dav remote path of the file
+ * @param {object} fileInfo The fileInfo
+ * @returns {string}
+ */
+function genDavPath(fileInfo) {
+	// TODO: allow proper dav access without the need of basic auth
+	// https://github.com/nextcloud/server/issues/19700
+	if (isPublic()) {
+		return generateUrl(`/s/${getToken()}/download?path=${dirname(fileInfo.filename)}&files=${fileInfo.basename}`)
+	}
+	return getRootPath() + fileInfo.filename
+}
+
+export { encodeFilePath, extractFilePaths, sortCompare, genFileInfo, genDavPath }

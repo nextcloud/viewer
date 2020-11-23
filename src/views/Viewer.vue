@@ -126,7 +126,6 @@ import '@nextcloud/dialogs/styles/toast.scss'
 import { showError } from '@nextcloud/dialogs'
 
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import { dirname } from '@nextcloud/paths'
 import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen'
 import isMobile from '@nextcloud/vue/dist/Mixins/isMobile'
 import Modal from '@nextcloud/vue/dist/Components/Modal'
@@ -744,9 +743,7 @@ export default {
 		},
 
 		onDownload() {
-			const { basename, filename } = this.currentFile
-			const url = OCA.Files.Files.getDownloadUrl(basename, dirname(filename))
-			location.href = url
+			location.href = this.currentFile.davPath
 		},
 		async onDelete() {
 			try {
