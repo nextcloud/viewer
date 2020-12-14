@@ -21,7 +21,7 @@
  *
  */
 
-import { randHash } from '../utils'
+import { randHash } from '../utils/'
 const randUser = randHash()
 
 describe('Open the sidebar from the viewer and open viewer with sidebar already opened', function() {
@@ -78,10 +78,8 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 	})
 
 	it('Open the sidebar', function() {
-		// open the menu
-		cy.get('body > .viewer .modal-header button.icon-menu-sidebar-white-forced').click()
 		// open the sidebar
-		cy.get('.action-button__icon.icon-menu-sidebar-white-forced').click()
+		cy.get('body > .viewer .modal-header button.icon-menu-sidebar-white-forced').click()
 		cy.get('aside.app-sidebar').should('be.visible')
 		// we hide the sidebar button if opened
 		cy.get('body > .viewer .modal-header button.icon-menu-sidebar-white-forced').should('not.exist')
