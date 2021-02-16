@@ -52,7 +52,7 @@
     "vue": "^2.6.12",
     "vue-async-computed": "^3.9.0",
     "vue-plyr": "^7.0.0",
-    "webdav": "^3.6.1"
+    "webdav": "^4.1.0"
   },
   "browserslist": [
     "last 2 versions",
