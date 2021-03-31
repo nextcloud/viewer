@@ -21,10 +21,10 @@
  */
 
 import { randHash } from '../utils'
-import * as path from 'path';
+import * as path from 'path'
+
 const randUser = randHash()
-const fileName = "image.png"
-const fileSize = 4531680; // du -b image.png
+const fileName = 'image.png'
 
 describe(`Download ${fileName} in viewer`, function() {
 	before(function() {
@@ -37,7 +37,7 @@ describe(`Download ${fileName} in viewer`, function() {
 		cy.visit('/apps/files')
 
 		// wait a bit for things to be settled
-		cy.wait(2000)
+		cy.wait(1000)
 	})
 
 	after(function() {
@@ -70,12 +70,18 @@ describe(`Download ${fileName} in viewer`, function() {
 
 	it('Compare downloaded file with asset by size', function() {
 		const downloadsFolder = Cypress.config('downloadsFolder')
-		const downloadedFileName = path.join(downloadsFolder, fileName)
-		cy.readFile(downloadedFileName, 'binary', { timeout: 15000 })
-			.should((buffer) => {
-				if (buffer.length !== fileSize) {
-					throw new Error(`File size ${buffer.length} is not ${fileSize}`)
-				}
-			})
+		const fixturesFolder = Cypress.config('fixturesFolder')
+
+		const downloadedFilePath = path.join(downloadsFolder, fileName)
+		const fixtureFilePath = path.join(fixturesFolder, fileName)
+
+		cy.readFile(fixtureFilePath, 'binary', { timeout: 5000 }).then(fixtureBuffer => {
+			cy.readFile(downloadedFilePath, 'binary', { timeout: 5000 })
+				.should(downloadedBuffer => {
+					if (downloadedBuffer.length !== fixtureBuffer.length) {
+						throw new Error(`File size ${downloadedBuffer.length} is not ${fixtureBuffer.length}`)
+					}
+				})
+		})
 	})
 })
