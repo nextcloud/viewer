@@ -788,7 +788,7 @@ export default {
 }
 
 // force white icon
-.icon-menu-sidebar-white-forced {
+#viewer .icon-menu-sidebar-white-forced {
 	background-image: url('../assets/menu-sidebar-white.svg');
 }
 
