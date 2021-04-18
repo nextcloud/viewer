@@ -34,7 +34,7 @@ function naughtyFileName(realName) {
 	return (
 		"~⛰️ shot of a ${big} mountain`, " +
 		"realy #1's " +
-		'" #_+="%2520 was this called ' +
+		'" #_+="%2520%27%22%60%25%21%23 was this called ' +
 		realName +
 		"? :p ." +
 		ext.toUpperCase()
@@ -66,6 +66,8 @@ for (let [file, type] of [
 	);
 	const randUser = randHash();
 
+	const folderName = 'Wasabi "%27%22%60%25%21%23" >`⛰️<' + file +  "><` eand 'foo'!#?#%~"
+
 	describe(`Open ${file} in viewer with a naughy name`, function () {
 		before(function () {
 			// Init user
@@ -73,7 +75,8 @@ for (let [file, type] of [
 			cy.login(randUser, "password");
 
 			// Upload test files
-			cy.uploadFile(file, type, "", placedName);
+			cy.createFolder(folderName)
+			cy.uploadFile(file, type, "/"+folderName, placedName);
 			cy.visit("/apps/files");
 
 			// wait a bit for things to be settled
@@ -84,6 +87,7 @@ for (let [file, type] of [
 		});
 
 		it(`See ${file} as ${placedName} in the list`, function () {
+			cy.openFile(folderName)
 			cy.get(`#fileList tr[data-file="${placedNameCss}"]`, {
 				timeout: 10000,
 			}).should("contain", placedName);
