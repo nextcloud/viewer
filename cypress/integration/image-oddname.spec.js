@@ -83,7 +83,7 @@ for (let [file, type] of [
 			cy.wait(1000);
 		});
 		after(function () {
-			cy.logout();
+			// no need to log out we do this in the test to check the public link
 		});
 
 		it(`See ${file} as ${placedName} in the list`, function () {
@@ -116,6 +116,37 @@ for (let [file, type] of [
 		});
 
 		it("Does not see navigation arrows", function () {
+			cy.get("body > .viewer a.prev").should("not.be.visible");
+			cy.get("body > .viewer a.next").should("not.be.visible");
+		});
+
+		it('Share the Photos folder with a share link and access the share link', function() {
+			cy.createLinkShare(folderName).then(token => {
+				cy.logout()
+				cy.visit(`/s/${token}`)
+			})
+		});
+
+
+		it('Open the viewer on file click (public)', function() {
+			cy.openFile(placedName)
+			cy.get('body > .viewer').should('be.visible')
+		})
+
+
+		it("Does not see a loading animation (public)", function () {
+			cy.get("body > .viewer", { timeout: 10000 })
+				.should("be.visible")
+				.and("have.class", "modal-mask")
+				.and("not.have.class", "icon-loading");
+		});
+
+		it("See the menu icon and title on the viewer header (public)", function () {
+			cy.get("body > .viewer .modal-title").should("contain", placedName);
+			cy.get("body > .viewer .modal-header button.icon-close").should("be.visible");
+		});
+
+		it("Does not see navigation arrows (public)", function () {
 			cy.get("body > .viewer a.prev").should("not.be.visible");
 			cy.get("body > .viewer a.next").should("not.be.visible");
 		});
