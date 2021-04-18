@@ -47,9 +47,9 @@ export default {
 			// TODO: allow proper dav access without the need of basic auth
 			// https://github.com/nextcloud/server/issues/19700
 			if (isPublic()) {
-				return generateUrl(`/s/${getToken()}/download?path=${this.filename.replace(this.basename, '')}&files=${this.basename}`)
+				return generateUrl(`/s/${getToken()}/download?path=${encodeURIComponent(this.filename.replace(this.basename, ''))}&files=${encodeURIComponent(this.basename)}`)
 			}
-			return getRootPath() + this.filename
+			return getRootPath() + encodeFilePath(this.filename)
 		},
 	},
 	methods: {
