@@ -80,7 +80,7 @@ Cypress.Commands.add('uploadFile', (fixtureFileName, mimeType, path = '', upload
 		try {
 			const file = new File([blob], uploadedFileName, { type: mimeType })
 			return cy.window().then(async window => {
-				await axios.put(`${Cypress.env('baseUrl')}/remote.php/webdav${path}/${encodeURIComponent(uploadedFileName)}`, file, {
+				await axios.put(`${Cypress.env('baseUrl')}/remote.php/webdav${path.split("/").map(encodeURIComponent).join("/")}/${encodeURIComponent(uploadedFileName)}`, file, {
 					headers: {
 						requesttoken: window.OC.requestToken,
 						'Content-Type': mimeType,
