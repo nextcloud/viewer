@@ -145,7 +145,9 @@ for (let [file, type] of [
 
 		it("See the menu icon and title on the viewer header (public)", function () {
 			cy.get("body > .viewer .modal-title").should("contain", placedName);
-			cy.get("body > .viewer .modal-header button.icon-close").should("be.visible");
+			cy.get("body > .viewer .modal-header button.icon-close").should(
+				"be.visible"
+			);
 		});
 
 		it("Does not see navigation arrows (public)", function () {
