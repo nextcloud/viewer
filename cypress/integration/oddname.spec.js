@@ -63,13 +63,13 @@ for (let [file, type] of [
 	const placedName = naughtyFileName(file);
 
 	// We'll escape all the characters in the name to match it with css
-	const placedNameCss = placedName.replaceAll(
-		/./gi,
-		(x) => "\\" + ("00000" + x.charCodeAt(0).toString(16)).slice(-6)
-	);
-	const randUser = randHash();
+	const placedNameCss = CSS.escape(placedName);
 
-	const folderName = 'Wasabi "%27%22%60%25%21%23" >`⛰️<' + file +  "><` eand 'foo'!#?#%~"
+	// fresh user for each file
+	const randUser = randHash() + "@-" + randHash(); // @ is allowed, so use it
+
+	const folderName =
+		'Nextcloud "%27%22%60%25%21%23" >`⛰️<' + file + "><` e*'rocks!#?#%~";
 
 	describe(`Open ${file} in viewer with a naughy name`, function () {
 		before(function () {
@@ -78,11 +78,13 @@ for (let [file, type] of [
 			cy.login(randUser, "password");
 
 			// Upload test files
-			cy.createFolder(folderName)
-			cy.uploadFile(file, type, "/"+folderName, placedName);
+			cy.createFolder(folderName);
+			cy.uploadFile(file, type, "/" + folderName, placedName);
 			cy.visit("/apps/files");
 
 			// wait a bit for things to be settled
+			cy.wait(1000);
+			cy.openFile(folderName);
 			cy.wait(1000);
 		});
 		after(function () {
@@ -90,7 +92,6 @@ for (let [file, type] of [
 		});
 
 		it(`See ${file} as ${placedName} in the list`, function () {
-			cy.openFile(folderName)
 			cy.get(`#fileList tr[data-file="${placedNameCss}"]`, {
 				timeout: 10000,
 			}).should("contain", placedName);
@@ -123,19 +124,17 @@ for (let [file, type] of [
 			cy.get("body > .viewer a.next").should("not.be.visible");
 		});
 
-		it('Share the Photos folder with a share link and access the share link', function() {
-			cy.createLinkShare(folderName).then(token => {
-				cy.logout()
-				cy.visit(`/s/${token}`)
-			})
+		it("Share the folder with a share link and access the share link", function () {
+			cy.createLinkShare(folderName).then((token) => {
+				cy.logout();
+				cy.visit(`/s/${token}`);
+			});
 		});
 
-
-		it('Open the viewer on file click (public)', function() {
-			cy.openFile(placedName)
-			cy.get('body > .viewer').should('be.visible')
-		})
-
+		it("Open the viewer on file click (public)", function () {
+			cy.openFile(placedName);
+			cy.get("body > .viewer").should("be.visible");
+		});
 
 		it("Does not see a loading animation (public)", function () {
 			cy.get("body > .viewer", { timeout: 10000 })

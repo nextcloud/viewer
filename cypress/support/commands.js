@@ -69,6 +69,14 @@ Cypress.Commands.add('nextcloudCreateUser', (user, password) => {
 	})
 })
 
+/**
+ * cy.uploadedFile - uploads a file from the fixtures folder
+ *
+ * @param {string} fixtureFileName
+ * @param {string} mimeType eg. image/png
+ * @param {string} path  to the folder in which this file should be uploaded
+ * @param {string} uploadedFileName  alternative name to give the file while uploading
+ */
 Cypress.Commands.add('uploadFile', (fixtureFileName, mimeType, path = '', uploadedFileName = null) => {
 	if(uploadedFileName === null){
 		uploadedFileName = fixtureFileName;
@@ -105,29 +113,19 @@ Cypress.Commands.add('createFolder', dirName => {
 	cy.log('Created folder', dirName)
 })
 
-function cssEscape(v) {
-      if (v.match(/^[A-Za-z0-9 -]*$/)) {
-        return v;
-      } else {
-        let a = v.replaceAll(/./gi, (x) => "\\" + ("00000" + x.charCodeAt(0).toString(16)).slice(-6))
-        console.log(a);
-        return a;
-      }
-}
-
 Cypress.Commands.add('openFile', fileName => {
-	cy.get(`#fileList tr[data-file="${cssEscape(fileName)}"] a.name`).click()
+	cy.get(`#fileList tr[data-file="${CSS.escape(fileName)}"] a.name`).click()
 	cy.wait(250)
 })
 
 Cypress.Commands.add('getFileId', fileName => {
-	return cy.get(`#fileList tr[data-file="${cssEscape(fileName)}"]`)
+	return cy.get(`#fileList tr[data-file="${CSS.escape(fileName)}"]`)
 		.should('have.attr', 'data-id')
 })
 
 Cypress.Commands.add('deleteFile', fileName => {
-	cy.get(`#fileList tr[data-file="${cssEscape(fileName)}"] a.name .action-menu`).click()
-	cy.get(`#fileList tr[data-file="${cssEscape(fileName)}"] a.name + .popovermenu .action-delete`).click()
+	cy.get(`#fileList tr[data-file="${CSS.escape(fileName)}"] a.name .action-menu`).click()
+	cy.get(`#fileList tr[data-file="${CSS.escape(fileName)}"] a.name + .popovermenu .action-delete`).click()
 })
 
 /**
