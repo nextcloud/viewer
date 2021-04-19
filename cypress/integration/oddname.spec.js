@@ -36,7 +36,10 @@ function naughtyFileName(realName) {
 		"realy #1's " +
 		'" #_+="%2520%27%22%60%25%21%23 was this called ' +
 		realName +
-		"? :p ." +
+		"in the" +
+		"☁️" +
+		"👩‍💻" +
+		"? :* ." +
 		ext.toUpperCase()
 	);
 }
