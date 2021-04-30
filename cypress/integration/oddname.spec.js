@@ -44,6 +44,13 @@ function naughtyFileName(realName) {
 	);
 }
 
+
+let failsLeft = 5;
+Cypress.on('fail', (error, runnable) => {
+	failsLeft--;
+	throw error // throw error to have test still fail
+})
+
 for (let [file, type] of [
 	["image1.jpg", "image/jpeg"],
 	["image.gif", "image/gif"],
@@ -56,6 +63,7 @@ for (let [file, type] of [
 	["video.ogv", "video/ogv"],
 	["video.webm", "video/webm"],
 ]) {
+
 	const placedName = naughtyFileName(file);
 
 	// We'll escape all the characters in the name to match it with css
@@ -82,6 +90,9 @@ for (let [file, type] of [
 			cy.wait(1000);
 			cy.openFile(folderName);
 			cy.wait(1000);
+			if(failsLeft < 0){
+				throw new Error(`Skipped test due to too many fails`)
+			}
 		});
 		after(function () {
 			// no need to log out we do this in the test to check the public link
