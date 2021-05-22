@@ -398,6 +398,9 @@ export default {
 					return
 				}
 
+				// available caption languages
+				const langs = []
+
 				// check if part of a group, if so retrieve full files list
 				const group = this.mimeGroups[mime]
 				if (this.files && this.files.length > 0) {
@@ -414,6 +417,19 @@ export default {
 
 					// retrieve folder list
 					const fileList = await folderRequest(dirPath)
+
+					// retrieve caption languages
+					const prefix = fileName.replace(/[.][^.]+$/, '')
+					for (let i = 0; i < fileList.length; ++i) {
+						const basename = fileList[i].basename
+						if (basename.indexOf(prefix) !== 0) continue
+						const suffix = basename.slice(prefix.length)
+						if (suffix.search(/^[.]..[.]vtt$/) === 0) {
+							langs.push(suffix.slice(1, 3))
+						} else if (suffix.search(/^[.]...[.]vtt$/) === 0) {
+							langs.push(suffix.slice(1, 4))
+						}
+					}
 
 					// filter out the unwanted mimes
 					const filteredFiles = fileList.filter(file => file.mime && mimes.indexOf(file.mime) !== -1)
@@ -439,7 +455,7 @@ export default {
 				}
 
 				// show file
-				this.currentFile = new File(fileInfo, mime, this.components[mime])
+				this.currentFile = new File(fileInfo, mime, this.components[mime], langs)
 				this.updatePreviousNext()
 
 				// if sidebar was opened before, let's update the file
@@ -457,7 +473,7 @@ export default {
 		openFileFromList(fileInfo) {
 			// override mimetype if existing alias
 			const mime = fileInfo.mime
-			this.currentFile = new File(fileInfo, mime, this.components[mime])
+			this.currentFile = new File(fileInfo, mime, this.components[mime], [])
 			this.changeSidebar()
 			this.updatePreviousNext()
 		},
@@ -481,7 +497,7 @@ export default {
 			if (prev) {
 				const mime = prev.mime
 				if (this.components[mime]) {
-					this.previousFile = new File(prev, mime, this.components[mime])
+					this.previousFile = new File(prev, mime, this.components[mime], [])
 				}
 			} else {
 				// RESET
@@ -491,7 +507,7 @@ export default {
 			if (next) {
 				const mime = next.mime
 				if (this.components[mime]) {
-					this.nextFile = new File(next, mime, this.components[mime])
+					this.nextFile = new File(next, mime, this.components[mime], [])
 				}
 			} else {
 				// RESET

@@ -21,13 +21,14 @@
  */
 import { getDavPath } from '../utils/fileUtils'
 
-export default function(fileInfo, mime, component) {
+export default function(fileInfo, mime, component, caplangs) {
 	const data = {
 		mime,
 		modal: component,
 		failed: false,
 		loaded: false,
 		davPath: getDavPath(fileInfo),
+		caplangs,
 	}
 
 	return Object.assign({}, fileInfo, data)
