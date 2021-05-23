@@ -24,7 +24,6 @@
 	<!-- Plyr currently replaces the parent. Wrapping to prevent this
 	https://github.com/redxtech/vue-plyr/issues/259 -->
 	<div v-if="src">
-		<div v-html="fetchTracks()" />
 		<VuePlyr ref="plyr"
 			:options="options"
 			:style="{
@@ -108,7 +107,6 @@ export default {
 >>>>>>> 59d2829 (Add support for video captions)
 				controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
 				loadSprite: false,
-
 			}
 		},
 	},
