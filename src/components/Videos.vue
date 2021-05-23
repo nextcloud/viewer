@@ -334,7 +334,7 @@ export default {
 					const basename = folder[i].basename
 					const index = basename.indexOf(videoRoot)
 					// Consider only file... or .file...
-					if (!(index === 0 || (index === 1 || basename[0] === '.'))) {
+					if (!(index === 0 || (index === 1 && basename[0] === '.'))) {
 						continue
 					}
 					const suffix = basename.slice(videoRoot.length + index)
