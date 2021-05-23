@@ -47,7 +47,7 @@
 					:src="track.src"
 					:label="track.label"
 					kind="captions"
-					:srclang="track.lang">
+					:srclang="track.srclang">
 
 				<!-- Omitting `type` on purpose because most of the
 					browsers auto detect the appropriate codec.
