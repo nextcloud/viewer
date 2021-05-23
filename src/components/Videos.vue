@@ -24,7 +24,7 @@
 	<!-- Plyr currently replaces the parent. Wrapping to prevent this
 	https://github.com/redxtech/vue-plyr/issues/259 -->
 	<div v-if="davPath">
-		<div v-html="fetchTracks()" />
+		<!-- <div v-html="fetchTracks()" /> -->
 		<VuePlyr
 			ref="plyr"
 			:options="options"
@@ -93,6 +93,7 @@ export default {
 			return this.$refs.plyr.player
 		},
 		options() {
+			this.fetchTracks()
 			return {
 				autoplay: this.active === true,
 				captions: { active: false, language: 'auto', update: true },
