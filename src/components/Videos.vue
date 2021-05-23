@@ -134,15 +134,9 @@ export default {
 			this.updateVideoSize()
 		},
 
-		async fetchFolder(dirPath) {
-			// Fetching the contents of the video folder must be asynchronous
-			const fileList = await getFileList(dirPath)
-			return fileList
-		},
-
 		fetchTracks() {
 			const dirPath = extractFilePaths(this.filename)[0]
-			this.fetchFolder(dirPath).then(folder => {
+			getFileList(dirPath).then(folder => {
 				// ISO code for languages
 				// See https://www.loc.gov/standards/iso639-2/php/code_list.php
 				const languages = {
