@@ -96,6 +96,7 @@ export default {
 			return this.$refs.plyr.player
 		},
 		options() {
+			this.fetchTracks()
 			return {
 				autoplay: this.active === true,
 <<<<<<< HEAD
