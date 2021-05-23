@@ -41,8 +41,14 @@
 				preload="metadata"
 				@ended="donePlaying"
 				@canplay="doneLoading"
-				@loadedmetadata="onLoadedMetadata"
-				v-html="tracks">
+				@loadedmetadata="onLoadedMetadata">
+
+				<track v-for="track in tracks"
+					:key="track"
+					:src="track.src"
+					:label="track.label"
+					kind="captions"
+					:srclang="track.lang">
 
 				<!-- Omitting `type` on purpose because most of the
 					browsers auto detect the appropriate codec.
@@ -329,7 +335,7 @@ export default {
 				const videoRoot = this.basename.replace(/[.][^.]+$/, '')
 				// Create caption tracks for the HTML5 player
 				// E.g.: <file>.mkv: look for <file>.xx.vtt or .<file>.xx.vtt
-				let capTracks = '' // '<source src="' + this.davPath + '" />\n'
+				const capTracks = []
 				for (let i = 0; i < folder.length; ++i) {
 					const basename = folder[i].basename
 					const index = basename.indexOf(videoRoot)
@@ -344,11 +350,12 @@ export default {
 					}
 					const lang = suffix.slice(1, 3)
 					const language = languages[lang] || lang
-					capTracks += '<track src="' + davDir + basename + '"'
-						+ ' label="' + language + '"'
-						+ ' kind="captions"'
-						+ ' srclang="' + lang + '"'
-						+ ' />\n'
+					// an array of objects with src, label and lang keys
+					capTracks.push({
+						src: davDir + basename,
+						label: language,
+						srclang: lang,
+					})
 				}
 				this.tracks = capTracks
 			})
