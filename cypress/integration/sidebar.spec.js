@@ -79,9 +79,9 @@ describe('Open the sidebar from the viewer and open viewer with sidebar already 
 
 	it('Open the sidebar', function() {
 		// open the menu
-		cy.get('body > .viewer .modal-header button.action-item__menutoggle').click()
-		// open the sidebar
-		cy.get('.action-button__icon.icon-menu-sidebar').click()
+		cy.get('body > .viewer .modal-header button.action-item__menutoggle').wait(300).click()
+		// open the sidebar (wait for the menu to be expanded)
+		cy.get('.action-button__icon.icon-menu-sidebar').wait(300).click()
 		cy.get('aside.app-sidebar').should('be.visible')
 		// we hide the sidebar button if opened
 		cy.get('.action-button__icon.icon-menu-sidebar').should('not.exist')
