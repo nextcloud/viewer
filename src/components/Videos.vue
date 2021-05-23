@@ -329,8 +329,8 @@ export default {
 				// Create caption tracks for the HTML5 player
 				// E.g.: <file>.mkv: look for <file>.xx.vtt or .<file>.xx.vtt
 				const capTracks = []
-				for (let i = 0; i < folder.length; ++i) {
-					const basename = folder[i].basename
+				for (const file of folder) {
+					const basename = file.basename
 					const index = basename.indexOf(videoRoot)
 					// Consider only file... or .file...
 					if (!(index === 0 || (index === 1 && basename[0] === '.'))) {
