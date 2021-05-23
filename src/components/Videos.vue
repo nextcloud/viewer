@@ -24,7 +24,6 @@
 	<!-- Plyr currently replaces the parent. Wrapping to prevent this
 	https://github.com/redxtech/vue-plyr/issues/259 -->
 	<div v-if="davPath">
-		<!-- <div v-html="fetchTracks()" /> -->
 		<VuePlyr
 			ref="plyr"
 			:options="options"
@@ -99,7 +98,6 @@ export default {
 				captions: { active: false, language: 'auto', update: true },
 				controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
 				loadSprite: false,
-
 			}
 		},
 	},
