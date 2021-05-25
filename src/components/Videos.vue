@@ -42,8 +42,6 @@
 				@canplay="doneLoading"
 				@loadedmetadata="onLoadedMetadata">
 
-				{{ fetchTracks() }}
-
 				<track v-for="track in tracks"
 					:key="track"
 					:src="track.src"
@@ -78,11 +76,11 @@ Vue.use(VuePlyr)
 export default {
 	name: 'Videos',
 
-	data: () => ({
+	data() {
 		// This is required so that tracks is declared and reactive
 		// Otherwise updates may fail to make it to plyr
-		tracks: [],
-	}),
+		return { tracks: [], }
+	},
 
 	computed: {
 		livePhoto() {
@@ -137,6 +135,8 @@ export default {
 		},
 
 		onLoadedMetadata() {
+
+			this.fetchTracks()
 			this.updateVideoSize()
 		},
 
