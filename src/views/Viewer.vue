@@ -156,43 +156,41 @@ export default {
 
 	mixins: [isMobile, isFullscreen],
 
-	data() {
-		return {
-			// Reactivity bindings
-			Viewer: OCA.Viewer,
-			Sidebar: null,
-			handlers: OCA.Viewer.availableHandlers,
+	data: () => ({
+		// Reactivity bindings
+		Viewer: OCA.Viewer.state,
+		Sidebar: null,
+		handlers: OCA.Viewer.availableHandlers,
 
-			// Viewer variables
-			components: {},
-			mimeGroups: {},
-			registeredHandlers: [],
+		// Viewer variables
+		components: {},
+		mimeGroups: {},
+		registeredHandlers: [],
 
-			// Files variables
-			currentIndex: 0,
-			previousFile: {},
-			currentFile: {},
-			nextFile: {},
-			fileList: [],
+		// Files variables
+		currentIndex: 0,
+		previousFile: {},
+		currentFile: {},
+		nextFile: {},
+		fileList: [],
 
-			// States
-			isLoaded: false,
-			initiated: false,
+		// States
+		isLoaded: false,
+		initiated: false,
 
-			// cancellable requests
-			cancelRequestFile: () => {},
-			cancelRequestFolder: () => {},
+		// cancellable requests
+		cancelRequestFile: () => {},
+		cancelRequestFolder: () => {},
 
-			// Flags
-			sidebarWidth: 0,
-			isSidebarShown: false,
-			canSwipe: true,
-			isStandalone: !(OCA && OCA.Files && 'fileActions' in OCA.Files),
-			isTesting,
+		// Flags
+		sidebarWidth: 0,
+		isSidebarShown: false,
+		canSwipe: true,
+		isStandalone: !(OCA && OCA.Files && 'fileActions' in OCA.Files),
+		isTesting,
 
-			root: getRootPath(),
-		}
-	},
+		root: getRootPath(),
+	}),
 
 	computed: {
 		hasPrevious() {
@@ -723,7 +721,7 @@ export default {
 			// Open the sidebar sharing tab
 			// TODO: also hide figure, needs a proper method for it in server Sidebar
 			await OCA.Files.Sidebar.open(this.currentFile.filename)
-			setTimeout(this.showAppsSidebar, 100) // we have to wait the animation of the sidebar
+			setTimeout(this.showAppsSidebar, 50) // we have to wait the animation of the sidebar
 		},
 
 		showAppsSidebar() {
@@ -756,7 +754,7 @@ export default {
 		},
 
 		onNext(info, oldFileInfo) {
-			this.Viewer.onNext(info, oldFileInfo)
+			this.Viewer.onNext(oldFileInfo)
 		},
 
 		onClose() {
