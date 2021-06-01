@@ -43,9 +43,9 @@
 				<track v-for="track in tracks"
 					:key="track"
 					:src="track.davPath"
-					:label="track.locale"
+					:label="track.language"
 					kind="captions"
-					:srclang="track.language">
+					:srclang="track.locale">
 
 				<!-- Omitting `type` on purpose because most of the
 					browsers auto detect the appropriate codec.
