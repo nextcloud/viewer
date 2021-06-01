@@ -60,51 +60,50 @@ class VideoController extends Controller {
 		$this->userSession = $userSession;
 	}
 
-	// I copied the annotation below without understanding it... is it useful?
 	/**
 	 * @NoAdminRequired
 	 */
 	public function getTracks($videoPath): DataResponse  {
-		// $videoPath is the path to the main video file, eg: 'mypath/movie.mkv'
-		// Return an array of found tracks associated with the main video.
-		// Each track is an object:
-		//   - basename  /* basename of the track */
-		//   - language  /* language for the track */
-		//   - locale    /* (usuallu) 2-letter code for the language */
-		//
+		/**
+		 * $videoPath is the path to the main video file, eg: 'mypath/movie.mkv'
+		 * Return an array of found tracks associated with the main video.
+		 * Each track is an object:
+		 *   - basename  // basename of the track
+		 *   - language  // language for the track
+		 *   - locale    // (usually 2-letter) code for the language
+		 */
+		$locales = array_filter($this->l10nFactory->findAvailableLocales(),
+			function($v) {
+				// Discard codes that are more than 3 characters long
+				// Otherwise we get a list of 1500 candidate tracks !!
+				return (strlen($v['code']) <= 3);
+			});
 		$video = $this->rootFolder
 			->getUserFolder($this->userSession->getUser()->getUID())
 			->get($videoPath);
-		$rootName = pathinfo($video->getFileInfo()->getPath())['filename'];
-		$rootLen = strlen($rootName);
-		// eg: $rootName is 'movie', $rooLen is 5
-		$files = $video->getParent()->getDirectoryListing();
-		// $files if the array of files within the same directory
-		$res = [];
-		foreach ($files as $file) {
-			$path = $file->getFileInfo()->getPath();
-			// eg: $path is 'mypath/.movie.en.vtt'
-			$baseName = pathinfo($path)['basename'];
-			$rootPos = strpos($baseName, $rootName);
-			// eg: $basename is '.movie.en.vtt', $rootPos is 1
-			if (rootPos == 0 || (rootPos == 1 && $baseName[0] == '.')) {
-				$extension = substr($baseName, $rootPos + $rootLen);
-				// eg: $extension is '.en.vtt'
-				$pattern = "/^[.]([^.]+)[.]vtt$/";
-				$locales = $this->l10nFactory->findAvailableLocales();
-				if (preg_match($pattern, $extension)) {
-					$locale = preg_replace($pattern, "$1", $extension);
-					$key = array_search($locale, array_column($locales, 'code'));
-					$language = $key ? $locales[$key]['name'] : $locale;
-					array_push($res, [
-						basename => $baseName,
-						language => $language, // eg: 'English'
-						locale => $locale // eg: 'en'
-					]);
-				}
-			}
-		}
-		$response = new DataResponse($res);
-		return $response;
+		$videoDir = $video->getParent();
+		$videoName = pathinfo($video->getFileInfo()->getPath())['filename'];
+		$candidateTracks = array_merge(
+			// List candidateTracks of the form 'video.<locale>.vtt'
+			array_map(function ($locale) use ($videoName) {
+				return [
+					basename => $videoName . '.' . $locale['code'] . '.vtt',
+					language => $locale['name'],
+					locale => $locale['code']
+				];
+			}, $locales),
+			// Add candidateTracks of the form '.video.<locale>.vtt' (dotted)
+			array_map(function ($locale) use ($videoName) {
+				return [
+					basename => '.' . $videoName . '.' . $locale['code'] . '.vtt',
+					language => $locale['name'],
+					locale => $locale['code']
+				];
+			}, $locales));
+		// Keep only tracks actually available in the video folder
+		$availableTracks = array_filter($candidateTracks, function($v) use ($videoDir) {
+			return $videoDir->nodeExists($v['basename']);
+		});
+		return new DataResponse($availableTracks);
 	}
 }

@@ -158,7 +158,7 @@ export default {
 					{ params: { videoPath: this.filename } }
 				)
 				const davDir = dirname(this.davPath)
-				this.tracks = response.data.map(track => ({
+				this.tracks = Object.values(response.data).map(track => ({
 					davPath: davDir + '/' + track.basename,
 					language: track.language,
 					locale: track.locale,
