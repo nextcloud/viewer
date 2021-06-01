@@ -67,7 +67,7 @@ import logger from '../services/logger.js'
 import { extractFilePaths } from '../utils/fileUtils'
 import getFileList from '../services/FileList'
 import { dirname } from '@nextcloud/paths'
-import { generateUrl } from '@nextcloud/router'
+import { generateOcsUrl } from '@nextcloud/router'
 import axios from '@nextcloud/axios'
 
 const liveExt = ['jpg', 'jpeg', 'png']
@@ -154,11 +154,11 @@ export default {
 		async fetchTracks() {
 			try {
 				const response = await axios.get(
-					generateUrl('/apps/viewer/video/tracks'),
+					generateOcsUrl('/apps/viewer/video/v1.0/tracks'),
 					{ params: { videoPath: this.filename } }
 				)
 				const davDir = dirname(this.davPath)
-				this.tracks = Object.values(response.data).map(track => ({
+				this.tracks = Object.values(response.data.ocs.data).map(track => ({
 					davPath: davDir + '/' + track.basename,
 					language: track.language,
 					locale: track.locale,

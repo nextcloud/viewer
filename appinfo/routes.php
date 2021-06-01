@@ -22,11 +22,11 @@
  */
 
 return [
-	'routes' => [
+	'ocs' => [
 		[
 			'name' => 'video#getTracks',
-			'url' => '/video/tracks',
-			'verb' => 'GET'
+			'url' => '/video/v1.0/tracks',
+			'verb' => 'GET',
 		]
 	]
 ];

@@ -28,7 +28,7 @@ use Exception;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Controller;
+use OCP\AppFramework\OCSController;
 use OCP\L10N\IFactory;
 
 use OCP\Files\File;
@@ -37,7 +37,7 @@ use OCP\IUserSession;
 
 use OCA\Viewer\AppInfo\Application;
 
-class VideoController extends Controller {
+class VideoController extends OCSController {
 
 	/** @var IRootFolder */
 	private $rootFolder;
