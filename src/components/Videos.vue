@@ -150,22 +150,22 @@ export default {
 		},
 
 		// Fetch caption tracks and build HTML5 block
-		fetchTracks() {
-			const url = generateUrl('/apps/viewer/video/tracks')
-			const params = { params: { videoPath: this.filename } }
-			axios.get(url, params).then(response => {
+		async fetchTracks() {
+			try {
+				const response = await axios.get(
+					generateUrl('/apps/viewer/video/tracks'),
+					{ params: { videoPath: this.filename } }
+				)
 				const davDir = this.davPath.replace(/[^/]*$/, '')
-				const tracks = response.data
-				const capTracks = []
-				for (const track of tracks) {
-					capTracks.push({
-						davPath: davDir + track.basename,
-						language: track.language,
-						locale: track.locale,
-					})
-				}
-				this.tracks = capTracks
-			})
+				this.tracks = response.data.map(track => ({
+					davPath: davDir + track.basename,
+					language: track.language,
+					locale: track.locale,
+				}))
+			} catch (error) {
+				console.error('Unable to fetch subtitles', error)
+				this.tracks = []
+			}
 		},
 
 		donePlaying() {
