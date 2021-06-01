@@ -35,27 +35,29 @@ use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\IUserSession;
 
+use OCA\Viewer\AppInfo\Application;
+
 class VideoController extends Controller {
 
-	// I copied the annotation below without understanding it... is it useful?
 	/** @var IRootFolder */
-	private $storage;
+	private $rootFolder;
 
-	// I copied the annotation below without understanding it... is it useful?
-	/** @var array */
-	private $locales;
+	/** @var IFactory */
+	private $l10nFactory;
+
+	/** @var IUserSession */
+	private $userSession;
 
 	public function __construct(
-		string $AppName,
 		IRequest $request,
-		IRootFolder $storage,
-		IFactory $factory,
+		IRootFolder $rootFolder,
+		IFactory $l10nFactory,
 		IUserSession $userSession
 	){
-		parent::__construct($AppName, $request);
-		$this->storage = $storage;
-		$this->locales = $factory->findAvailableLocales();;
-		$this->currentUser = $userSession->getUser();
+		parent::__construct(Application::APP_ID, $request);
+		$this->rootFolder = $rootFolder;
+		$this->l10nFactory = $l10nFactory;
+		$this->userSession = $userSession;
 	}
 
 	// I copied the annotation below without understanding it... is it useful?
@@ -70,7 +72,8 @@ class VideoController extends Controller {
 		//   - language  /* language for the track */
 		//   - locale    /* (usuallu) 2-letter code for the language */
 		//
-		$video = $this->storage->getUserFolder($this->currentUser->getUID())
+		$video = $this->rootFolder
+			->getUserFolder($this->userSession->getUser()->getUID())
 			->get($videoPath);
 		$rootName = pathinfo($video->getFileInfo()->getPath())['filename'];
 		$rootLen = strlen($rootName);
@@ -88,10 +91,11 @@ class VideoController extends Controller {
 				$extension = substr($baseName, $rootPos + $rootLen);
 				// eg: $extension is '.en.vtt'
 				$pattern = "/^[.]([^.]+)[.]vtt$/";
+				$locales = $this->l10nFactory->findAvailableLocales();
 				if (preg_match($pattern, $extension)) {
 					$locale = preg_replace($pattern, "$1", $extension);
-					$key = array_search($locale, array_column($this->locales, 'code'));
-					$language = $key ? $this->locales[$key]['name'] : $locale;
+					$key = array_search($locale, array_column($locales, 'code'));
+					$language = $key ? $locales[$key]['name'] : $locale;
 					array_push($res, [
 						basename => $baseName,
 						language => $language, // eg: 'English'
