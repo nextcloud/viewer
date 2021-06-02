@@ -25,7 +25,7 @@ return [
 	'ocs' => [
 		[
 			'name' => 'video#getTracks',
-			'url' => '/video/v1.0/tracks',
+			'url' => '/video/tracks',
 			'verb' => 'GET',
 		]
 	]
