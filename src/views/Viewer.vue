@@ -26,7 +26,7 @@
 		v-if="initiated || currentFile.modal"
 		id="viewer"
 		:class="{'icon-loading': !currentFile.loaded && !currentFile.failed}"
-		:clear-view-delay="isTesting ? -1 : 5000 /* prevent cypress timeouts */"
+		:clear-view-delay="isTesting ? -1 : -1"
 		:dark="true"
 		:enable-slideshow="hasPrevious || hasNext"
 		:enable-swipe="canSwipe"
