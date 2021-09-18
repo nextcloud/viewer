@@ -45,7 +45,7 @@
     "@nextcloud/vue": "^2.6.9",
     "camelcase": "^6.0.0",
     "core-js": "^3.6.5",
-    "debounce": "^1.2.0",
+    "debounce": "^1.2.1",
     "nextcloud-server": "^0.15.10",
     "path-parse": "^1.0.6",
     "regenerator-runtime": "^0.13.9",
