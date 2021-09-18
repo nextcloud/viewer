@@ -47,7 +47,7 @@
     "core-js": "^3.6.5",
     "debounce": "^1.2.1",
     "nextcloud-server": "^0.15.10",
-    "path-parse": "^1.0.6",
+    "path-parse": "^1.0.7",
     "regenerator-runtime": "^0.13.9",
     "vue": "^2.6.12",
     "vue-async-computed": "^3.9.0",
