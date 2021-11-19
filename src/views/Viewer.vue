@@ -852,6 +852,10 @@ export default {
 	background-image: url('../assets/menu-sidebar-white.svg');
 }
 
+#viewer .action-item--single.icon-download {
+	background-image: var(--icon-download-fff);
+}
+
 // Override vue components scss
 .app-sidebar.app-sidebar--full {
 	position: fixed !important;
