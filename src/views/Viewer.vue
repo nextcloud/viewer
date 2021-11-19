@@ -865,7 +865,7 @@ export default {
 }
 
 #viewer .action-item--single.icon-download {
-	background-image: var(--icon-download-000);
+	background-image: var(--icon-download-fff);
 }
 
 // put autocomplete over full sidebar
