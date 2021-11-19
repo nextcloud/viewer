@@ -50,7 +50,6 @@ for (let [file, type] of [
 	["audio.ogg", "audio/ogg"],
 	["image1.jpg", "image/jpeg"],
 	["image.gif", "image/gif"],
-	["image.heic", "image/heic"],
 	["image.png", "image/png"],
 	["image-small.png", "image/png"],
 	["image.svg", "image/svg"],
