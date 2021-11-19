@@ -864,6 +864,10 @@ export default {
 	background-image: url('../assets/menu-sidebar-white.svg');
 }
 
+#viewer .action-item--single.icon-download {
+	background-image: var(--icon-download-000);
+}
+
 // put autocomplete over full sidebar
 // TODO: remove when new sharing sidebar (18)
 // is the min-version of viewer
