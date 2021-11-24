@@ -1,5 +1,6 @@
 <!--
  - @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
+ - @copyright Copyright (c) 2021, Keith Toh <ktprograms@gmail.com>
  -
  - @author John Molakvoæ <skjnldsv@protonmail.com>
  -
@@ -24,13 +25,17 @@
 	<img
 		:class="{
 			dragging,
+			loaded,
+			zoomed: zoomRatio !== 1,
 			'animate-transition': animateTransition,
+			'fit-height': fitHeight,
+			'fit-width': fitWidth,
 		}"
 		:src="data"
 		:style="{
 			transform: 'translate(' + posX + 'px, ' + posY + 'px) scale(' + zoomRatio + ', ' + zoomRatio + ')',
 		}"
-		@load="updateImgSize"
+		@load="onLoad"
 		@wheel.prevent.stop="updateZoom"
 		@dblclick.prevent="onDblclick"
 		@mousedown.prevent="dragStart">
@@ -60,6 +65,8 @@ export default {
 			zoomRatio: 1,
 			posX: 0,
 			posY: 0,
+			fitHeight: false,
+			fitWidth: false,
 		}
 	},
 	asyncComputed: {
@@ -89,9 +96,19 @@ export default {
 	},
 	methods: {
 		// Updates the dimensions of the modal
-		updateImgSize() {
+		// also adds a resize event listener
+		onLoad() {
 			this.naturalHeight = this.$el.naturalHeight
 			this.naturalWidth = this.$el.naturalWidth
+
+			window.addEventListener('resize', () => {
+				const imageAspectRatio = this.naturalWidth / this.naturalHeight
+				const containerAspectRatio = this.$parent.$el.clientWidth / this.$parent.$el.clientHeight
+				// Arbitary decision to make the 'or equals' with the 'less than'
+				this.fitHeight = imageAspectRatio <= containerAspectRatio
+				this.fitWidth = imageAspectRatio > containerAspectRatio
+			})
+			window.dispatchEvent(new Event('resize')) // Trigger the first fit calculation
 
 			this.updateHeightWidth()
 			this.doneLoading()
@@ -204,15 +221,43 @@ export default {
 </script>
 
 <style scoped lang="scss">
+$checkered-size: 8px;
+$checkered-color: #efefef;
+
 img {
 	align-self: center;
 	justify-self: center;
 	position: absolute;
-	width: 100%;
-	height: 100vh;
 	object-fit: contain;
 	transform-origin: 0 0;
 	transition: none !important;
+
+	&.fit-height {
+		height: 100%;
+		max-width: 100%;
+	}
+	&.fit-width {
+		width: 100%;
+		max-height: 100%;
+	}
+
+	&:hover {
+		background-image: linear-gradient(45deg, #{$checkered-color} 25%, transparent 25%),
+			linear-gradient(45deg, transparent 75%, #{$checkered-color} 75%),
+			linear-gradient(45deg, transparent 75%, #{$checkered-color} 75%),
+			linear-gradient(45deg, #{$checkered-color} 25%, #fff 25%);
+		background-size: 2 * $checkered-size 2 * $checkered-size;
+		background-position: 0 0, 0 0, -#{$checkered-size} -#{$checkered-size}, $checkered-size $checkered-size;
+	}
+
+	&.zoomed {
+		z-index: 10010;
+		cursor: move;
+	}
+
+	&.loaded {
+		background-color: #fff;
+	}
 
 	&.dragging {
 		transition: none !important;
