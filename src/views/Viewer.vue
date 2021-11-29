@@ -252,15 +252,12 @@ export default {
 	},
 
 	watch: {
-		// make sure any late external app can register handlers
-		// should not happens if external apps do not wait for
-		// the DOMContentLoaded event!
+		// make sure any late app can register handlers
 		handlers() {
 			// make sure the viewer is done registering handlers
-			// so we only register handlers added AFTER the init
-			// of the viewer
+			// so we only register handlers added AFTER
+			// the viewer initialization
 			if (this.isLoaded) {
-				console.error('Please do NOT wait for the DOMContentLoaded before registering your viewer handler')
 				const handler = this.handlers[this.handlers.length - 1]
 				// register all primary components mimes
 				this.registerHandler(handler)
