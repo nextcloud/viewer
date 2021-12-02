@@ -179,10 +179,9 @@ object-assign
  */
 
 /**
- * @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+ * @copyright Copyright (c) 2020 Azul <azul@riseup.net>
  *
- * @author Marco Ambrosini <marcoambrosini@pm.me>
- * @author John Molakvoæ <skjnldsv@protonmail.com>
+ * @author Azul <azul@riseup.net>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -202,9 +201,9 @@ object-assign
  */
 
 /**
- * @copyright Copyright (c) 2020 Azul <azul@riseup.net>
+ * @copyright Copyright (c) 2021 John Molakvoæ <skjnldsv@protonmail.com>
  *
- * @author Azul <azul@riseup.net>
+ * @author John Molakvoæ <skjnldsv@protonmail.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
