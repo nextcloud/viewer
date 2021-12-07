@@ -28,6 +28,19 @@ import { getRootPath, getToken, isPublic } from '../utils/davUtils'
 // Add this so the server knows it is an request from the browserg
 axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
 
+// Add a 401 response interceptor
+axios.interceptors.response.use((response) => {
+	if (response.status === 401) {
+		location.reload()
+	}
+	return response
+}, (error) => {
+	if (error.response.status === 401) {
+		location.reload()
+	}
+	return Promise.reject(error)
+})
+
 // force our axios
 const patcher = getPatcher()
 patcher.patch('request', axios)
