@@ -117,7 +117,7 @@ export default {
 		/**
 		 * Manually retrieve the path and return its base64
 		 *
-		 * @returns {String}
+		 * @returns {Promise<String>}
 		 */
 		async getBase64FromImage() {
 			const file = await axios.get(this.davPath)
@@ -128,8 +128,8 @@ export default {
 		 * Handle zooming
 		 * Code based on https://stackoverflow.com/a/46833254/15603854
 		 *
-		 * @param {Event} event the scroll event
-		 * @returns {null}
+		 * @param {WheelEvent} event the scroll event
+		 * @returns {void}
 		 */
 		updateZoom(event) {
 			const isZoomIn = event.deltaY < 0
@@ -171,7 +171,7 @@ export default {
 		/**
 		 * Dragging handlers
 		 *
-		 * @param {Event} event the event
+		 * @param {MouseEvent} event the event
 		 */
 		dragStart(event) {
 			this.dragX = event.clientX
@@ -180,6 +180,9 @@ export default {
 			this.$el.onmouseup = this.dragEnd
 			this.$el.onmousemove = this.dragHandler
 		},
+		/**
+		 * @param {MouseEvent} event the event
+		 */
 		dragEnd(event) {
 			event.preventDefault()
 
@@ -187,6 +190,9 @@ export default {
 			this.$el.onmouseup = null
 			this.$el.onmousemove = null
 		},
+		/**
+		 * @param {MouseEvent} event the event
+		 */
 		dragHandler(event) {
 			const { clientX, clientY } = event
 
