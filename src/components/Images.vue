@@ -1,5 +1,6 @@
 <!--
  - @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
+ - @copyright Copyright (c) 2021, Keith Toh <ktprograms@gmail.com>
  -
  - @author John Molakvoæ <skjnldsv@protonmail.com>
  -
@@ -25,17 +26,17 @@
 		:class="{
 			dragging,
 			loaded,
-			zoomed: zoomRatio !== 1
+			zoomed: zoomRatio !== 1,
+			'animate-transition': animateTransition,
+			'fit-height': fitHeight,
+			'fit-width': fitWidth,
 		}"
 		:src="data"
 		:style="{
-			marginTop: shiftY + 'px',
-			marginLeft: shiftX + 'px',
-			maxHeight: zoomRatio * 100 + '%',
-			maxWidth: zoomRatio * 100 + '%',
+			transform: 'translate(' + posX + 'px, ' + posY + 'px) scale(' + zoomRatio + ', ' + zoomRatio + ')',
 		}"
-		@load="updateImgSize"
-		@wheel="updateZoom"
+		@load="onLoad"
+		@wheel.prevent.stop="updateZoom"
 		@dblclick.prevent="onDblclick"
 		@mousedown.prevent="dragStart">
 </template>
@@ -60,20 +61,14 @@ export default {
 	data() {
 		return {
 			dragging: false,
-			shiftX: 0,
-			shiftY: 0,
+			animateTransition: false,
 			zoomRatio: 1,
+			posX: 0,
+			posY: 0,
+			fitHeight: false,
+			fitWidth: false,
 		}
 	},
-	computed: {
-		zoomHeight() {
-			return Math.round(this.height * this.zoomRatio)
-		},
-		zoomWidth() {
-			return Math.round(this.width * this.zoomRatio)
-		},
-	},
-
 	asyncComputed: {
 		data() {
 			switch (this.mime) {
@@ -101,9 +96,19 @@ export default {
 	},
 	methods: {
 		// Updates the dimensions of the modal
-		updateImgSize() {
+		// also adds a resize event listener
+		onLoad() {
 			this.naturalHeight = this.$el.naturalHeight
 			this.naturalWidth = this.$el.naturalWidth
+
+			window.addEventListener('resize', () => {
+				const imageAspectRatio = this.naturalWidth / this.naturalHeight
+				const containerAspectRatio = this.$parent.$el.clientWidth / this.$parent.$el.clientHeight
+				// Arbitary decision to make the 'or equals' with the 'less than'
+				this.fitHeight = imageAspectRatio <= containerAspectRatio
+				this.fitWidth = imageAspectRatio > containerAspectRatio
+			})
+			window.dispatchEvent(new Event('resize')) // Trigger the first fit calculation
 
 			this.updateHeightWidth()
 			this.doneLoading()
@@ -112,7 +117,7 @@ export default {
 		/**
 		 * Manually retrieve the path and return its base64
 		 *
-		 * @returns {String}
+		 * @returns {Promise<String>}
 		 */
 		async getBase64FromImage() {
 			const file = await axios.get(this.davPath)
@@ -121,63 +126,63 @@ export default {
 
 		/**
 		 * Handle zooming
+		 * Code based on https://stackoverflow.com/a/46833254/15603854
 		 *
-		 * @param {Event} event the scroll event
-		 * @returns {null}
+		 * @param {WheelEvent} event the scroll event
+		 * @returns {void}
 		 */
 		updateZoom(event) {
-			event.stopPropagation()
-			event.preventDefault()
-
-			// scrolling position relative to the image
-			const scrollX = event.clientX - this.$el.x - (this.width * this.zoomRatio / 2)
-			const scrollY = event.clientY - this.$el.y - (this.height * this.zoomRatio / 2)
-			const scrollPercX = Math.round(scrollX / (this.width * this.zoomRatio) * 100) / 100
-			const scrollPercY = Math.round(scrollY / (this.height * this.zoomRatio) * 100) / 100
 			const isZoomIn = event.deltaY < 0
-
-			const newZoomRatio = isZoomIn
-				? Math.min(this.zoomRatio + 0.1, 5) // prevent too big zoom
-				: Math.max(this.zoomRatio - 0.1, 1) // prevent too small zoom
-
+			const delta = isZoomIn ? 0.1 : -0.1
 			// do not continue, img is back to its original state
-			if (newZoomRatio === 1) {
+			if (this.zoomRatio + delta === 1) {
 				return this.resetZoom()
 			}
 
-			// calc how much the img grow from its current size
-			// and adjust the margin accordingly
-			const growX = this.width * newZoomRatio - this.width * this.zoomRatio
-			const growY = this.height * newZoomRatio - this.height * this.zoomRatio
-
-			// compensate for existing margins
 			this.disableSwipe()
-			this.shiftX = this.shiftX + Math.round(-scrollPercX * growX)
-			this.shiftY = this.shiftY + Math.round(-scrollPercY * growY)
-			this.zoomRatio = newZoomRatio
+
+			// scrolling position in the page
+			const scrollX = event.clientX - this.$el.x
+			const scrollY = event.clientY - this.$el.y
+			// scrolling position relative to the image
+			const targetX = (scrollX - this.posX) / this.zoomRatio
+			const targetY = (scrollY - this.posY) / this.zoomRatio
+
+			// apply zoom
+			this.zoomRatio += delta
+			this.zoomRatio = Math.max(1, Math.min(5, this.zoomRatio))
+			// bounds checking:       ^-smallest  ^-largest zoom ratio
+
+			// calculate x and y based on zoom
+			this.posX = -targetX * this.zoomRatio + scrollX
+			this.posY = -targetY * this.zoomRatio + scrollY
 		},
 
 		resetZoom() {
+			this.animateTransition = true
 			this.enableSwipe()
 			this.zoomRatio = 1
-			this.shiftX = 0
-			this.shiftY = 0
+			this.posX = 0
+			this.posY = 0
+			// Animation is 100ms so give it double the time to finish
+			setTimeout(() => { this.animateTransition = false }, 200)
 		},
 
 		/**
 		 * Dragging handlers
 		 *
-		 * @param {Event} event the event
+		 * @param {MouseEvent} event the event
 		 */
 		dragStart(event) {
-			const { pageX, pageY } = event
-
-			this.dragX = pageX
-			this.dragY = pageY
+			this.dragX = event.clientX
+			this.dragY = event.clientY
 			this.dragging = true
 			this.$el.onmouseup = this.dragEnd
 			this.$el.onmousemove = this.dragHandler
 		},
+		/**
+		 * @param {MouseEvent} event the event
+		 */
 		dragEnd(event) {
 			event.preventDefault()
 
@@ -185,27 +190,36 @@ export default {
 			this.$el.onmouseup = null
 			this.$el.onmousemove = null
 		},
+		/**
+		 * @param {MouseEvent} event the event
+		 */
 		dragHandler(event) {
-			event.preventDefault()
-			const { pageX, pageY } = event
+			const { clientX, clientY } = event
 
-			if (this.dragging && this.zoomRatio > 1 && pageX > 0 && pageY > 0) {
-				const moveX = this.shiftX + (pageX - this.dragX)
-				const moveY = this.shiftY + (pageY - this.dragY)
-				const growX = this.zoomWidth - this.width
-				const growY = this.zoomHeight - this.height
+			if (this.dragging && this.zoomRatio > 1 && clientX > 0 && clientY > 0) {
+				this.posX += (clientX - this.dragX)
+				this.posY += (clientY - this.dragY)
 
-				this.shiftX = Math.min(Math.max(moveX, -growX / 2), growX / 2)
-				this.shiftY = Math.min(Math.max(moveY, -growY / 2), growX / 2)
-				this.dragX = pageX
-				this.dragY = pageY
+				this.dragX = clientX
+				this.dragY = clientY
 			}
 		},
+
+		/**
+		 * Double click handler
+		 */
 		onDblclick() {
 			if (this.zoomRatio > 1) {
 				this.resetZoom()
 			} else {
+				this.animateTransition = true
+				// 0.15 is half of the delta in zoom,
+				// so that multiplied by width/height centers the image
+				this.posX = -(this.$el.width * 0.15)
+				this.posY = -(this.$el.height * 0.15)
 				this.zoomRatio = 1.3
+				// Animation is 100ms so give it double the time to finish
+				setTimeout(() => { this.animateTransition = false }, 200)
 			}
 		},
 	},
@@ -217,18 +231,22 @@ $checkered-size: 8px;
 $checkered-color: #efefef;
 
 img {
-	max-width: 100%;
-	max-height: 100%;
 	align-self: center;
 	justify-self: center;
-	// black while loading
-	background-color: #000;
-	// animate zooming/resize
-	transition: height 100ms ease,
-		width 100ms ease,
-		margin-top 100ms ease,
-		margin-left 100ms ease;
-	// show checkered bg on hover if not currently zooming (but ok if zoomed)
+	position: absolute;
+	object-fit: contain;
+	transform-origin: 0 0;
+	transition: none !important;
+
+	&.fit-height {
+		height: 100%;
+		max-width: 100%;
+	}
+	&.fit-width {
+		width: 100%;
+		max-height: 100%;
+	}
+
 	&:hover {
 		background-image: linear-gradient(45deg, #{$checkered-color} 25%, transparent 25%),
 			linear-gradient(45deg, transparent 75%, #{$checkered-color} 75%),
@@ -237,21 +255,23 @@ img {
 		background-size: 2 * $checkered-size 2 * $checkered-size;
 		background-position: 0 0, 0 0, -#{$checkered-size} -#{$checkered-size}, $checkered-size $checkered-size;
 	}
-	&.loaded {
-		// white once done loading
-		background-color: #fff;
-	}
+
 	&.zoomed {
-		position: absolute;
-		max-height: none;
-		max-width: none;
 		z-index: 10010;
 		cursor: move;
+	}
+
+	&.loaded {
+		background-color: #fff;
 	}
 
 	&.dragging {
 		transition: none !important;
 		cursor: move;
+	}
+
+	&.animate-transition {
+		transition: transform 100ms ease !important;
 	}
 }
 </style>
