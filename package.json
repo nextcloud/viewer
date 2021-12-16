@@ -45,6 +45,7 @@
     "@nextcloud/router": "^1.2.0",
     "@nextcloud/vue": "^3.9.0",
     "@skjnldsv/vue-plyr": "^7.0.1-alpha.0",
+    "@nextcloud/l10n": "^1.4.1",
     "camelcase": "^6.2.0",
     "core-js": "^3.8.1",
     "debounce": "^1.2.0",
@@ -54,6 +55,10 @@
     "vue": "^2.6.12",
     "vue-async-computed": "^3.9.0",
     "webdav": "^3.6.1"
+  },
+  "engines": {
+    "node": "^14.0.0",
+    "npm": "^7.0.0"
   },
   "browserslist": [
     "last 2 versions",
