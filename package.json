@@ -56,6 +56,10 @@
     "vue-async-computed": "^3.9.0",
     "webdav": "^3.6.1"
   },
+  "engines": {
+    "node": "^14.0.0",
+    "npm": "^7.0.0"
+  },
   "browserslist": [
     "last 2 versions",
     "ie >= 11",
