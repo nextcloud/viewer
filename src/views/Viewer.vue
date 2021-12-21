@@ -326,7 +326,7 @@ export default {
 			this.isLoaded = true
 
 			// bind Sidebar if available
-			if (OCA.Files && OCA.Files.Sidebar) {
+			if (OCA?.Files?.Sidebar) {
 				this.Sidebar = OCA.Files.Sidebar.state
 			}
 		})
@@ -365,7 +365,7 @@ export default {
 			this.cancelRequestFile()
 			this.cancelRequestFolder()
 
-			if (OCA.Files.Sidebar) {
+			if (OCA?.Files?.Sidebar) {
 				OCA.Files.Sidebar.setFullScreenMode(true)
 			}
 
@@ -650,7 +650,7 @@ export default {
 			// which then triggers cleanup.
 			OCA.Viewer.close()
 
-			if (OCA.Files.Sidebar) {
+			if (OCA?.Files?.Sidebar) {
 				OCA.Files.Sidebar.setFullScreenMode(false)
 			}
 		},
@@ -739,7 +739,7 @@ export default {
 			// Open the sidebar sharing tab
 			// TODO: also hide figure, needs a proper method for it in server Sidebar
 
-			if (OCA.Files.Sidebar) {
+			if (OCA?.Files?.Sidebar) {
 				await OCA.Files.Sidebar.open(this.currentFile.filename)
 			}
 		},
