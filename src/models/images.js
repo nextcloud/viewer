@@ -28,6 +28,8 @@ export default {
 	mimes: [
 		'image/png',
 		'image/heic',
+		'image/heif',
+		'image/tiff',
 		'image/jpeg',
 		'image/gif',
 		'image/x-xbitmap',
