@@ -51,6 +51,7 @@
 import Vue from 'vue'
 import VuePlyr from '@skjnldsv/vue-plyr'
 import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
+import logger from '../services/logger'
 
 Vue.use(VuePlyr)
 
@@ -98,7 +99,11 @@ export default {
 
 	beforeDestroy() {
 		// Force stop any ongoing request
+<<<<<<< HEAD
+		logger.debug('Closing audio stream', { filename: this.filename })
+=======
 		console.debug('Closing audio stream', { filename: this.filename })
+>>>>>>> 12b5579 (Properly cancel and reset ongoing streams when unmounting)
 		this.$refs.audio.pause()
 		this.player.stop()
 		this.player.destroy()
