@@ -634,6 +634,9 @@ export default {
 			if (OCA?.Files?.Sidebar) {
 				OCA.Files.Sidebar.setFullScreenMode(false)
 			}
+			
+			//a temporary workaround to deal with a bug that occurs when double clicking on an item in NextCloud.
+			this.cleanup();
 		},
 
 		cleanup() {
