@@ -635,10 +635,9 @@ export default {
 				OCA.Files.Sidebar.setFullScreenMode(false)
 			}
 
-			//deals with a bug that occurs when double clicking on an item in NextCloud
-			//may be good to replace this with something more suitable in the future (not sure if cleanup() really belongs here)
-			this.cleanup();
-			
+			// deals with a bug that occurs when double clicking on an item in NextCloud
+			// may be good to replace this with something more suitable in the future (not sure if cleanup() really belongs here)
+			this.cleanup()
 		},
 
 		cleanup() {
