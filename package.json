@@ -34,6 +34,7 @@
 		"stylelint:fix": "stylelint src --fix",
 		"cypress": "TESTING=true cypress run",
 		"cypress:gui": "TESTING=true cypress open",
+		"cypress:update-snapshots": "cypress run --env type=base --spec cypress/integration/visual-regression.spec.js --config screenshotsFolder=cypress/snapshots/base",
 		"wait-on": "wait-on -i 500 -t 300000"
 	},
 	"dependencies": {
@@ -50,6 +51,7 @@
 		"@skjnldsv/vue-plyr": "^7.0.1-alpha.0",
 		"camelcase": "^6.3.0",
 		"debounce": "^1.2.1",
+		"fontsource-roboto": "^4.0.0",
 		"nextcloud-server": "^0.15.10",
 		"path-parse": "^1.0.7",
 		"vue": "^2.6.14",
