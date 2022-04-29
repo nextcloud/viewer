@@ -141,6 +141,10 @@ export default {
 
 		onLoadedMetadata() {
 			this.updateVideoSize()
+			// Force any further loading once we have the metadata
+			if (!this.active) {
+				this.player.stop()
+			}
 		},
 	},
 }
