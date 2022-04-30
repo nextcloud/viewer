@@ -33,7 +33,7 @@
 			}">
 			<video
 				ref="video"
-				:autoplay="active"
+				:autoplay="active ? true : null"
 				:playsinline="true"
 				:poster="livePhotoPath"
 				:src="davPath"
@@ -141,6 +141,10 @@ export default {
 
 		onLoadedMetadata() {
 			this.updateVideoSize()
+			// Force any further loading once we have the metadata
+			if (!this.active) {
+				this.player.stop()
+			}
 		},
 	},
 }
