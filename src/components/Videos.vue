@@ -33,7 +33,7 @@
 			}">
 			<video
 				ref="video"
-				:autoplay="active"
+				:autoplay="active ? true : null"
 				:playsinline="true"
 				:poster="livePhotoPath"
 				:src="davPath"
