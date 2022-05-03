@@ -4,7 +4,7 @@
  -
  - @author John Molakvoæ <skjnldsv@protonmail.com>
  -
- - @license GNU AGPL version 3 or any later version
+ - @license AGPL-3.0-or-later
  -
  - This program is free software: you can redistribute it and/or modify
  - it under the terms of the GNU Affero General Public License as
@@ -24,7 +24,7 @@
 <template>
 	<Modal v-if="initiated || currentFile.modal"
 		id="viewer"
-		size="large"
+		size="full"
 		:class="{'icon-loading': !currentFile.loaded && !currentFile.failed,
 			'theme--undefined': theme === null, 'theme--dark': theme === 'dark', 'theme--light': theme === 'light', 'theme--default': theme === 'default'}"
 		:clear-view-delay="-1 /* disable fade-out because of accessibility reasons */"
@@ -121,24 +121,24 @@ import '@nextcloud/dialogs/styles/toast.scss'
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
 
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
-import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen'
-import Modal from '@nextcloud/vue/dist/Components/Modal'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton.js'
+import ActionLink from '@nextcloud/vue/dist/Components/ActionLink.js'
+import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen.js'
+import Modal from '@nextcloud/vue/dist/Components/Modal.js'
 
-import { extractFilePaths, sortCompare } from '../utils/fileUtils'
-import { getRootPath } from '../utils/davUtils'
-import canDownload from '../utils/canDownload'
-import cancelableRequest from '../utils/CancelableRequest'
-import Error from '../components/Error'
-import File from '../models/file'
-import filesActionHandler from '../services/FilesActionHandler'
-import getFileInfo from '../services/FileInfo'
-import getFileList from '../services/FileList'
-import Mime from '../mixins/Mime'
-import logger from '../services/logger'
+import { extractFilePaths, sortCompare } from '../utils/fileUtils.js'
+import { getRootPath } from '../utils/davUtils.js'
+import canDownload from '../utils/canDownload.js'
+import cancelableRequest from '../utils/CancelableRequest.js'
+import Error from '../components/Error.vue'
+import File from '../models/file.js'
+import filesActionHandler from '../services/FilesActionHandler.js'
+import getFileInfo from '../services/FileInfo.js'
+import getFileList from '../services/FileList.js'
+import Mime from '../mixins/Mime.js'
+import logger from '../services/logger.js'
 
-import Download from 'vue-material-design-icons/Download'
+import Download from 'vue-material-design-icons/Download.vue'
 
 export default {
 	name: 'Viewer',
@@ -785,20 +785,29 @@ export default {
 
 	::v-deep .modal-container,
 	&__content {
+		overflow: visible !important;
+		cursor: pointer;
+	}
+
+	::v-deep .modal-wrapper {
+		.modal-container {
+			// Ensure some space at the bottom
+			top: var(--header-height);
+			bottom: var(--header-height);
+			height: auto;
+			// let the mime components manage their own background-color
+			background-color: transparent;
+			box-shadow: none;
+		}
+	}
+
+	&__content {
 		// center views
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		width: 100%;
 		height: 100%;
-		cursor: pointer;
-	}
-
-	::v-deep .modal-wrapper {
-		.modal-container {
-			// let the mime components manage their own background-color
-			background-color: transparent;
-		}
 	}
 
 	&__file {
@@ -819,21 +828,18 @@ export default {
 
 	&.theme--light {
 		&.modal-mask {
-			background-color: rgba(255, 255, 255, 0.92) !important;
+			background-color: rgba(255, 255, 255, .92) !important;
 		}
 		::v-deep .modal-title,
 		::v-deep .modal-header .icons-menu button svg {
-			color: #000000 !important;
-		}
-		::v-deep .modal-container {
-			box-shadow: none;
+			color: #000 !important;
 		}
 	}
 
 	&.theme--default {
 		&.modal-mask {
 			body.theme--light & {
-				background-color: rgba(255, 255, 255, 0.92) !important;
+				background-color: rgba(255, 255, 255, .92) !important;
 			}
 		}
 		::v-deep .modal-title,
@@ -843,9 +849,6 @@ export default {
 			button svg, a {
 				color: var(--color-main-text) !important;
 			}
-		}
-		::v-deep .modal-container {
-			box-shadow: none;
 		}
 	}
 }

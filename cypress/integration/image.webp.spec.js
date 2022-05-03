@@ -3,7 +3,7 @@
  *
  * @author John Molakvoæ <skjnldsv@protonmail.com>
  *
- * @license GNU AGPL version 3 or any later version
+ * @license AGPL-3.0-or-later
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -55,10 +55,6 @@ describe('Open image.webp in viewer', function() {
 			.should('be.visible')
 			.and('have.class', 'modal-mask')
 			.and('not.have.class', 'icon-loading')
-	})
-
-	it('Is not in mobile fullscreen mode', function() {
-		cy.get('body > .viewer .modal-wrapper').should('not.have.class', 'modal-wrapper--full')
 	})
 
 	it('See the menu icon and title on the viewer header', function() {

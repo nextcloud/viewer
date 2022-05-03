@@ -3,7 +3,7 @@
  -
  - @author John Molakvoæ <skjnldsv@protonmail.com>
  -
- - @license GNU AGPL version 3 or any later version
+ - @license AGPL-3.0-or-later
  -
  - This program is free software: you can redistribute it and/or modify
  - it under the terms of the GNU Affero General Public License as
@@ -27,6 +27,7 @@
 		<VuePlyr ref="plyr"
 			:options="options"
 			:style="{
+				height: height + 'px',
 				width: width + 'px'
 			}">
 			<video ref="video"
@@ -55,7 +56,7 @@
 import Vue from 'vue'
 import VuePlyr from '@skjnldsv/vue-plyr'
 import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
-import logger from '../services/logger'
+import logger from '../services/logger.js'
 
 const liveExt = ['jpg', 'jpeg', 'png']
 const liveExtRegex = new RegExp(`\\.(${liveExt.join('|')})$`, 'i')
@@ -126,8 +127,8 @@ export default {
 	methods: {
 		// Updates the dimensions of the modal
 		updateVideoSize() {
-			this.naturalHeight = this.$refs.video && this.$refs.video.videoHeight
-			this.naturalWidth = this.$refs.video && this.$refs.video.videoWidth
+			this.naturalHeight = this.$refs.video?.videoHeight
+			this.naturalWidth = this.$refs.video?.videoWidth
 			this.updateHeightWidth()
 		},
 
