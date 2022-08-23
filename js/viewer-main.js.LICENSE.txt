@@ -31,11 +31,21 @@ object-assign
  * Released under the MIT License.
  */
 
-/*! For license information please see ActionButton.js.LICENSE.txt */
+/*!
+* focus-trap 7.0.0
+* @license MIT, https://github.com/focus-trap/focus-trap/blob/master/LICENSE
+*/
 
-/*! For license information please see ActionLink.js.LICENSE.txt */
+/*!
+* tabbable 6.0.0
+* @license MIT, https://github.com/focus-trap/tabbable/blob/master/LICENSE
+*/
 
-/*! For license information please see Modal.js.LICENSE.txt */
+/*! For license information please see NcActionButton.js.LICENSE.txt */
+
+/*! For license information please see NcActionLink.js.LICENSE.txt */
+
+/*! For license information please see NcModal.js.LICENSE.txt */
 
 /*! For license information please see isFullscreen.js.LICENSE.txt */
 
