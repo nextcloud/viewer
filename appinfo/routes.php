@@ -3,6 +3,7 @@
  * @copyright Copyright (c) 2021 Frederic Ruget (douzebis) <fred@atlant.is>
  *
  * @author Frederic Ruget (douzebis) <fred@atlant.is>
+ * @author Carl Schwan <carl@carlschwan.eu>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -22,11 +23,8 @@
  */
 
 return [
-	'ocs' => [
-		[
-			'name' => 'video#getTracks',
-			'url' => '/video/tracks',
-			'verb' => 'GET',
-		]
+	'routes' => [
+		/** @see \OCA\Viewer\Controller\VideoController */
+		[ 'name' => 'video#getTracks', 'url' => '/video/tracks', 'verb' => 'GET', ]
 	]
 ];

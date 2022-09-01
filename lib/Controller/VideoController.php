@@ -28,25 +28,21 @@ use Exception;
 use OCP\IRequest;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\OCSController;
+use OCP\AppFramework\APIController;
 use OCP\L10N\IFactory;
 
 use OCP\Files\File;
+use OCP\Files\Node;
 use OCP\Files\IRootFolder;
 use OCP\IUserSession;
 
 use OCA\Viewer\AppInfo\Application;
 
-class VideoController extends OCSController {
+class VideoController extends APIController {
 
-	/** @var IRootFolder */
-	private $rootFolder;
-
-	/** @var IFactory */
-	private $l10nFactory;
-
-	/** @var IUserSession */
-	private $userSession;
+	private IRootFolder $rootFolder;
+	private IFactory $l10nFactory;
+	private IUserSession $userSession;
 
 	public function __construct(
 		IRequest $request,
@@ -63,7 +59,7 @@ class VideoController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 */
-	public function getTracks($videoPath): DataResponse  {
+	public function getTracks(string $videoPath): DataResponse  {
 		/**
 		 * $videoPath is the path to the main video file, eg: 'mypath/movie.mkv'
 		 * Return an array of found tracks associated with the main video.
@@ -73,10 +69,10 @@ class VideoController extends OCSController {
 		 *   - locale    // (usually 2-letter) code for the language
 		 */
 		$locales = array_filter($this->l10nFactory->findAvailableLocales(),
-			function($v) {
+			function(array $v): bool {
 				// Discard codes that are more than 3 characters long
 				// Otherwise we get a list of 1500 candidate tracks !!
-				return (strlen($v['code']) <= 3);
+				return strlen($v['code']) <= 3;
 			});
 		$video = $this->rootFolder
 			->getUserFolder($this->userSession->getUser()->getUID())
@@ -85,24 +81,27 @@ class VideoController extends OCSController {
 		$videoName = pathinfo($video->getFileInfo()->getPath())['filename'];
 		$candidateTracks = array_merge(
 			// List candidateTracks of the form 'video.<locale>.vtt'
-			array_map(function ($locale) use ($videoName) {
+			array_map(function (array $locale) use ($videoName): array {
 				return [
-					basename => $videoName . '.' . $locale['code'] . '.vtt',
-					language => $locale['name'],
-					locale => $locale['code']
+					'basename' => $videoName . '.' . $locale['code'] . '.vtt',
+					'language' => $locale['name'],
+					'locale' => $locale['code']
 				];
 			}, $locales),
 			// Add candidateTracks of the form '.video.<locale>.vtt' (dotted)
-			array_map(function ($locale) use ($videoName) {
+			array_map(function (array $locale) use ($videoName): array {
 				return [
-					basename => '.' . $videoName . '.' . $locale['code'] . '.vtt',
-					language => $locale['name'],
-					locale => $locale['code']
+					'basename' => '.' . $videoName . '.' . $locale['code'] . '.vtt',
+					'language' => $locale['name'],
+					'locale' => $locale['code']
 				];
 			}, $locales));
+
+		$dirContentNames = array_map(fn (Node $node) => $node->getName(), $videoDir->getDirectoryListing());
+
 		// Keep only tracks actually available in the video folder
-		$availableTracks = array_filter($candidateTracks, function($v) use ($videoDir) {
-			return $videoDir->nodeExists($v['basename']);
+		$availableTracks = array_filter($candidateTracks, function(array $v) use ($dirContentNames): bool {
+			return in_array($v['basename'], $dirContentNames);
 		});
 		return new DataResponse($availableTracks);
 	}
