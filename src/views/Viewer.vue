@@ -937,11 +937,13 @@ export default {
 			try {
 				const url = this.root + this.currentFile.filename
 				await axios.delete(url)
+
+				const remIndex = this.fileList.findIndex(file => file.basename === this.currentFile.basename)
 				if (this.hasPrevious) {
 					this.previous()
-					const currentIndex = this.fileList.findIndex(file => file.basename === this.currentFile.basename)
-					this.fileList.splice(currentIndex, 1)
+					this.fileList.splice(remIndex, 1)
 				} else {
+					this.fileList.splice(remIndex, 1)
 					this.close()
 				}
 			} catch (error) {
