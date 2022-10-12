@@ -30,7 +30,7 @@ const enabledPreviewProviders = loadState(appName, 'enabled_preview_providers', 
  * Those mimes needs a proper preview to be displayed
  * if they are not enabled on the server, let's not activate them.
  */
- const previewSupportedMimes = [
+const previewSupportedMimes = [
 	'image/heic',
 	'image/heif',
 	'image/tiff',
