@@ -75,14 +75,17 @@ export default {
 
 	asyncComputed: {
 		data() {
-			switch (this.mime) {
-			case 'image/svg+xml':
+			// Avoid svg xss attack vector
+			if (this.mime === 'image/svg+xml') {
 				return this.getBase64FromImage()
-			case 'image/gif':
-				return this.davPath
-			default:
-				return this.previewpath
 			}
+
+			// Load the raw gif instead of the static preview
+			if (this.mime === 'image/gif') {
+				return this.davPath
+			}
+
+			return this.previewPath
 		},
 	},
 	watch: {
