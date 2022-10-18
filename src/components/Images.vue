@@ -85,7 +85,7 @@ export default {
 				return this.davPath
 			}
 
-			return this.previewPath
+			return this.previewpath
 		},
 	},
 	watch: {
