@@ -75,6 +75,10 @@ export default {
 				if (isPublic()) {
 					return generateUrl(`/apps/files_sharing/publicpreview/${getToken()}?file=${encodeFilePath(filename)}&${searchParams}`)
 				}
+				if (filename.startsWith('/photos/')) {
+					// May be a shared album; use Photos preview API
+					return generateUrl(`/apps/photos/api/v1/preview/${fileid}?${searchParams}`)
+				}
 				return generateUrl(`/core/preview?${searchParams}`)
 			}
 			return davPath
