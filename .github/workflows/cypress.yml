@@ -39,6 +39,7 @@ jobs:
       - name: Set up node ${{ steps.versions.outputs.nodeVersion }}
         uses: actions/setup-node@v3
         with:
+          cache: 'npm'
           node-version: ${{ steps.versions.outputs.nodeVersion }}
 
       - name: Set up npm ${{ steps.versions.outputs.npmVersion }}
@@ -87,4 +88,4 @@ jobs:
 
     steps:
       - name: Summary status
-        run: if ${{ needs.init.result != 'success' || ( needs.cypress.result != 'success' && needs.cypress.result != 'skipped' ) }}; then exit 1; fi
+        run: if ${{ needs.cypress.result != 'success' && needs.cypress.result != 'skipped' }}; then exit 1; fi
