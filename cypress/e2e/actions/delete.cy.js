@@ -20,33 +20,31 @@
  *
  */
 
-import { randHash } from '../utils/'
+import { randHash } from '../../utils'
 const randUser = randHash()
 
-describe('Open image.ico in viewer', function() {
+describe('Delete image.png in viewer', function() {
 	before(function() {
 		// Init user
-		cy.nextcloudCreateUser(randUser, 'password')
-		cy.login(randUser, 'password')
+		cy.nextcloudCreateUser(randUser)
 
 		// Upload test files
-		cy.uploadFile('image.ico', 'image/x-icon')
-		cy.visit('/apps/files')
-
-		// wait a bit for things to be settled
-		cy.wait(1000)
+		cy.uploadFile(randUser, 'image.png', 'image/png')
 	})
 	after(function() {
 		cy.logout()
 	})
 
-	it('See image.ico in the list', function() {
-		cy.get('.files-fileList tr[data-file="image.ico"]', { timeout: 10000 })
-			.should('contain', 'image.ico')
+	it('See image.png in the list', function() {
+		cy.login(randUser)
+		cy.visit('/apps/files')
+
+		cy.get('.files-fileList tr[data-file="image.png"]', { timeout: 10000 })
+			.should('contain', 'image.png')
 	})
 
 	it('Open the viewer on file click', function() {
-		cy.openFile('image.ico')
+		cy.openFile('image.png')
 		cy.get('body > .viewer').should('be.visible')
 	})
 
@@ -57,14 +55,21 @@ describe('Open image.ico in viewer', function() {
 			.and('not.have.class', 'icon-loading')
 	})
 
-	it('See the menu icon and title on the viewer header', function() {
-		cy.get('body > .viewer .modal-title').should('contain', 'image.ico')
-		cy.get('body > .viewer .modal-header button.action-item__menutoggle').should('be.visible')
-		cy.get('body > .viewer .modal-header button.header-close').should('be.visible')
+	it('Delete the image and close viewer', function() {
+		// open the menu
+		cy.get('body > .viewer .modal-header button.action-item__menutoggle').click()
+		// delete the file
+		cy.get('.action-button__icon.icon-delete').click()
 	})
 
-	it('Does not see navigation arrows', function() {
-		cy.get('body > .viewer button.prev').should('not.be.visible')
-		cy.get('body > .viewer button.next').should('not.be.visible')
+	it('Does not see the viewer anymore', function() {
+		cy.get('body > .viewer', { timeout: 10000 })
+			.should('not.exist')
+	})
+
+	it('Does not see image.png in the list anymore', function() {
+		cy.visit('/apps/files')
+		cy.get('.files-fileList tr[data-file="image.png"]', { timeout: 10000 })
+			.should('not.exist')
 	})
 })
