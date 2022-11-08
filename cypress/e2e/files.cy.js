@@ -29,6 +29,9 @@ describe('Files default view', function() {
 	})
 
 	it('See the default files list', function() {
+		cy.login('admin', 'admin')
+		cy.visit('/apps/files')
+
 		cy.get('.files-fileList tr').should('contain', 'welcome.txt')
 	})
 
