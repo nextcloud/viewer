@@ -542,18 +542,18 @@ export default {
 			}
 			// If no provided handler, or provided handler not found: try a supported handler with mime/mime-alias
 			if (!handler) {
-				handler = this.registeredHandlers[mime] ?? this.registeredHandlers[alias]
+				handler = this.registeredHandlers[alias] ?? this.registeredHandlers[mime]
+
+				// if we still don't have a handler for this mime, abort
+				if (!handler) {
+					logger.error('The following file could not be displayed', { fileInfo })
+					showError(t('viewer', 'There is no plugin available to display this file type'))
+					this.close()
+					return
+				}
 			}
 
 			this.theme = handler.theme ?? 'dark'
-			// if we don't have a handler for this mime, abort
-			if (!handler) {
-				logger.error('The following file could not be displayed', { fileInfo })
-				showError(t('viewer', 'There is no plugin available to display this file type'))
-				this.close()
-				return
-			}
-
 			this.handlerId = handler.id
 
 			// check if part of a group, if so retrieve full files list
@@ -595,7 +595,7 @@ export default {
 			fileInfo = this.fileList[this.currentIndex]
 
 			// show file
-			this.currentFile = new File(fileInfo, mime, handler.component)
+			this.currentFile = new File(fileInfo, mime, this.components[mime])
 			this.updatePreviousNext()
 
 			// if sidebar was opened before, let's update the file
