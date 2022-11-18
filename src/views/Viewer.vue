@@ -284,7 +284,8 @@ export default {
 			return this.Sidebar && this.Sidebar.file
 		},
 		sidebarOpenFilePath() {
-			return this.currentFile?.davPath?.split(getUserRoot())[1]
+			const relativePath = this.currentFile?.davPath?.split(getUserRoot())[1]
+			return relativePath?.split('/')?.map(decodeURIComponent)?.join('/')
 		},
 
 		/**

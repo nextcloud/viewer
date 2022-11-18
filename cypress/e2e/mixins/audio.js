@@ -20,7 +20,7 @@
  *
  */
 
-import { randHash } from '../../utils'
+import { randHash } from '../../utils/index.js'
 const randUser = randHash()
 
 /**
@@ -29,7 +29,7 @@ const randUser = randHash()
  * @param {string} fileName the audio to upload and test against
  * @param {string} mimeType the audio mime type
  */
-export default function(fileName = 'image1.jpg', mimeType = 'image/jpeg') {
+export default function(fileName = 'audio.ogg', mimeType = 'audio/ogg') {
 	before(function() {
 		// Init user
 		cy.nextcloudCreateUser(randUser)
@@ -49,12 +49,16 @@ export default function(fileName = 'image1.jpg', mimeType = 'image/jpeg') {
 			.should('contain', fileName)
 	})
 
-	it('Open the viewer on file click', function() {
+	it('Open the viewer on file click and wait for loading to end', function() {
+		// Match audio request
+		cy.intercept('GET', `/remote.php/dav/files/${randUser}/${fileName}`).as('source')
+
+		// Open the file and check Viewer existence
 		cy.openFile(fileName)
 		cy.get('body > .viewer').should('be.visible')
-	})
 
-	it('Does not see a loading animation', function() {
+		// Make sure loading is finished
+		cy.wait('@source').its('response.statusCode').should('eq', 206)
 		cy.get('body > .viewer', { timeout: 10000 })
 			.should('be.visible')
 			.and('have.class', 'modal-mask')
