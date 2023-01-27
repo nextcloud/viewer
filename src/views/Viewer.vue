@@ -618,7 +618,7 @@ export default {
 			this.currentFile = new File(fileInfo, mime, this.components[mime])
 			let openSidebar = true
 			if (document.documentElement.clientWidth < 1024) {
-				openSidebar = false
+				openSidebar = true
 			}
 			this.changeSidebar(openSidebar)
 			this.updatePreviousNext()
@@ -626,12 +626,12 @@ export default {
 
 		/**
 		 * Show sidebar if available and a file is already opened
-		 * 
-		 * @param {bool} openSidebar open the sidebar, defaults to true
+		 *
+		 * @param {boolean} openSidebar open the sidebar, defaults to true
 		 */
-		changeSidebar(openSidebar = true) {
-			if (this.sidebarFile && openSidebar) {
-				this.showSidebar()
+		changeSidebar(openSidebar = false) {
+			if (this.sidebarFile) {
+				this.showSidebar(openSidebar)
 			}
 		},
 
@@ -913,13 +913,15 @@ export default {
 
 		/**
 		 * Show the sharing sidebar
+		 *
+		 * @param {boolean} openSidebar open the sidebar, defaults to true
 		 */
 
-		async showSidebar() {
+		async showSidebar(openSidebar = false) {
 			// Open the sidebar sharing tab
 			// TODO: also hide figure, needs a proper method for it in server Sidebar
 
-			if (OCA?.Files?.Sidebar) {
+			if (OCA?.Files?.Sidebar && openSidebar) {
 				await OCA.Files.Sidebar.open(this.sidebarOpenFilePath)
 			}
 		},
