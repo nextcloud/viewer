@@ -616,15 +616,21 @@ export default {
 			// override mimetype if existing alias
 			const mime = fileInfo.mime
 			this.currentFile = new File(fileInfo, mime, this.components[mime])
-			this.changeSidebar()
+			let openSidebar = true
+			if (document.documentElement.clientWidth < 1024) {
+				openSidebar = false
+			}
+			this.changeSidebar(openSidebar)
 			this.updatePreviousNext()
 		},
 
 		/**
 		 * Show sidebar if available and a file is already opened
+		 * 
+		 * @param {bool} openSidebar open the sidebar, defaults to true
 		 */
-		changeSidebar() {
-			if (this.sidebarFile) {
+		changeSidebar(openSidebar = true) {
+			if (this.sidebarFile && openSidebar) {
 				this.showSidebar()
 			}
 		},
