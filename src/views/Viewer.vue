@@ -616,9 +616,9 @@ export default {
 			// override mimetype if existing alias
 			const mime = fileInfo.mime
 			this.currentFile = new File(fileInfo, mime, this.components[mime])
-			let openSidebar = true
+			let openSidebar = false
 			if (document.documentElement.clientWidth < 1024) {
-				openSidebar = true
+				// openSidebar = false
 			}
 			this.changeSidebar(openSidebar)
 			this.updatePreviousNext()
