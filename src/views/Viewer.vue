@@ -931,7 +931,6 @@ export default {
 				this.sidebarPosition = sidebar.getBoundingClientRect().left
 				this.trapElements = [sidebar]
 			}
-			this.updateSidebarPosition()
 		},
 
 		handleAppSidebarClose() {
