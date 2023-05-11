@@ -10,12 +10,19 @@ Show your latest holiday photos and videos like in the movies. Show a glimpse of
 
 ## 🏗 Development setup
 1. ☁ Clone this app into the `apps` folder of your Nextcloud: `git clone https://github.com/nextcloud/viewer.git`
-2. 👩‍💻 In the folder of the app, run the command `make` to install dependencies and build the Javascript.
+2. 👩‍💻 In the folder of the app, install dependencies with `npm ci` and build the Javascript with `npm run build`.
 3. ✅ Enable the app through the app management of your Nextcloud
 4. 🎉 Partytime!
 
 ### 🧙 Advanced development stuff
-To build the Javascript whenever you make changes, instead of the full `make` you can also run `make build-js`.
+To build the Javascript whenever you make changes, you can also run `npm run dev` for development builds.
+
+### 📷 Running cypress tests
+To run e2e cypress tests, execute `npm run cypress`.
+
+The `visual-regression` tests require additional care as they depend on installation of fonts in the application. To achieve repeatable results run the tests using `npm run cypress:visual-regression`. This will build the app with the required fonts and run the tests.
+
+If changes are required to the reference (base) screenshots used by the `visual-regression` tests, run `cypress:update-snapshots` and commit the updated screenshots.
 
 ## API
 
