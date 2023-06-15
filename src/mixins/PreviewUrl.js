@@ -38,6 +38,7 @@ export default {
 				previewUrl: this.previewUrl,
 				hasPreview: this.hasPreview,
 				davPath: this.davPath,
+				etag: this.$attrs.etag,
 			})
 		},
 
@@ -64,9 +65,10 @@ export default {
 		 * @param {boolean} data.hasPreview have the file an existing preview ?
 		 * @param {string} data.davPath the absolute dav path
 		 * @param {string} data.filename the file name
+		 * @param {string|null} data.etag the etag of the file
 		 * @return {string} the absolute url
 		 */
-		getPreviewIfAny({ fileid, filename, previewUrl, hasPreview, davPath }) {
+		getPreviewIfAny({ fileid, filename, previewUrl, hasPreview, davPath, etag }) {
 			if (previewUrl) {
 				return previewUrl
 			}
@@ -75,6 +77,7 @@ export default {
 				+ `&x=${Math.floor(screen.width * devicePixelRatio)}`
 				+ `&y=${Math.floor(screen.height * devicePixelRatio)}`
 				+ '&a=true'
+				+ (etag !== null ? `&etag=${etag.replace(/&quot;/g, '')}` : '')
 
 			if (hasPreview) {
 				// TODO: find a nicer standard way of doing this?
