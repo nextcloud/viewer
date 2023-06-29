@@ -12,6 +12,7 @@ env:
   # Adjust APP_NAME if your repository name is different
   APP_NAME: ${{ github.event.repository.name }}
   BRANCH: ${{ github.base_ref }}
+  DEBUG: '@cypress/github-action'
 
 jobs:
   init:
