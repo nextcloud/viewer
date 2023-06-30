@@ -22,8 +22,8 @@ export default defineConfig({
 	// Needed to trigger `after:run` events with cypress open
 	experimentalInteractiveRunEvents: true,
 
-	// faster video processing
-	videoCompression: false,
+	// Faster processing, video is broken on GH actions anyway
+	video: false,
 
 	// Visual regression testing
 	env: {
@@ -65,7 +65,9 @@ export default defineConfig({
 
 			// Remove container after run
 			on('after:run', () => {
-				stopNextcloud()
+				if (!process.env.CI) {
+					stopNextcloud()
+				}
 			})
 
 			// Before the browser launches
