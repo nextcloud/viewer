@@ -23,6 +23,7 @@
 import client from './DavClient.js'
 import { genFileInfo } from '../utils/fileUtils.js'
 import { createClient } from 'webdav'
+import { getRequestToken } from '@nextcloud/auth'
 
 const statData = `<?xml version="1.0"?>
 <d:propfind  xmlns:d="DAV:"
@@ -75,7 +76,7 @@ export default async function(path, options) {
  * @return {Promise<object>} the file list
  */
 export async function rawStat(origin, path, options) {
-	const response = await createClient(origin).stat(path, {
+	const response = await createClient(origin, { headers: { requesttoken: getRequestToken() || '' } }).stat(path, {
 		...options,
 		data: statData,
 		details: true,
