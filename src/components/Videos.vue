@@ -2,6 +2,7 @@
  - @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
  -
  - @author John Molakvoæ <skjnldsv@protonmail.com>
+ - @author Richard Steinmetz <richard@steinmetz.cloud>
  -
  - @license AGPL-3.0-or-later
  -
@@ -53,20 +54,28 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import VuePlyr from '@skjnldsv/vue-plyr'
+// eslint-disable-next-line n/no-missing-import
 import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
 import logger from '../services/logger.js'
 import { imagePath } from '@nextcloud/router'
+
+const VuePlyr = () => import(/* webpackChunkName: 'plyr' */'@skjnldsv/vue-plyr')
 
 const liveExt = ['jpg', 'jpeg', 'png']
 const liveExtRegex = new RegExp(`\\.(${liveExt.join('|')})$`, 'i')
 const blankVideo = imagePath('viewer', 'blank.mp4')
 
-Vue.use(VuePlyr)
-
 export default {
 	name: 'Videos',
+
+	components: {
+		VuePlyr,
+	},
+	data() {
+		return {
+			isFullscreenButtonVisible: false,
+		}
+	},
 
 	computed: {
 		livePhoto() {
@@ -106,10 +115,15 @@ export default {
 			}
 		},
 	},
+	// for some reason the video controls don't get mounted to the dom until after the component (Videos) is mounted,
+	// using the mounted() hook will leave us with an empty array
 
-	mounted() {
+	updated() {
 		// Prevent swiping to the next/previous item when scrubbing the timeline or changing volume
 		[...this.$el.querySelectorAll('.plyr__controls__item')].forEach(control => {
+			if (control.getAttribute('data-plyr') === 'fullscreen') {
+				control.addEventListener('click', this.hideHeaderAndFooter)
+			}
 			if (!control?.addEventListener) {
 				return
 			}
@@ -127,6 +141,17 @@ export default {
 	},
 
 	methods: {
+		hideHeaderAndFooter(e) {
+			// work arround to get the state of the fullscreen button, aria-selected attribute is not reliable
+			this.isFullscreenButtonVisible = !this.isFullscreenButtonVisible
+			if (this.isFullscreenButtonVisible) {
+				document.body.querySelector('main').classList.add('viewer__hidden-fullscreen')
+				document.body.querySelector('footer').classList.add('viewer__hidden-fullscreen')
+			} else {
+				document.body.querySelector('main').classList.remove('viewer__hidden-fullscreen')
+				document.body.querySelector('footer').classList.remove('viewer__hidden-fullscreen')
+			}
+		},
 		// Updates the dimensions of the modal
 		updateVideoSize() {
 			this.naturalHeight = this.$refs.video?.videoHeight
@@ -157,13 +182,13 @@ video {
 	z-index: 20050;
 	align-self: center;
 	max-width: 100%;
-	max-height: 100%;
+	max-height: 100% !important;
 	background-color: black;
 
 	justify-self: center;
 }
 
-::v-deep {
+:deep() {
 	.plyr:-webkit-full-screen video {
 		width: 100% !important;
 		height: 100% !important;
@@ -185,11 +210,22 @@ video {
 
 			&:hover,
 			&:focus {
-				color: var(--color-primary-text);
+				color: var(--color-primary-element-text);
 				background-color: var(--color-primary-element);
 			}
 		}
 	}
 }
+</style>
 
+<style lang="scss">
+main.viewer__hidden-fullscreen {
+	height: 100vh !important;
+	width: 100vw !important;
+	margin: 0 !important;
+}
+
+footer.viewer__hidden-fullscreen {
+	display: none !important;
+}
 </style>
