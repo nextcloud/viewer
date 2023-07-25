@@ -188,7 +188,7 @@ video {
 	justify-self: center;
 }
 
-:deep() {
+::v-deep {
 	.plyr:-webkit-full-screen video {
 		width: 100% !important;
 		height: 100% !important;
