@@ -495,6 +495,8 @@ export default {
 
 	methods: {
 		beforeOpen() {
+			this.takeSidebarPosition()
+
 			// initial loading start
 			this.initiated = true
 
@@ -945,10 +947,14 @@ export default {
 			this.nextFile.failed = true
 		},
 
+		takeSidebarPosition() {
+			const sidebarElement = document.querySelector('aside.app-sidebar')
+			this.sidebarPosition = sidebarElement?.getBoundingClientRect().left
+		},
+
 		/**
 		 * Show the sharing sidebar
 		 */
-
 		async showSidebar() {
 			// Open the sidebar sharing tab
 			// TODO: also hide figure, needs a proper method for it in server Sidebar
@@ -960,9 +966,9 @@ export default {
 
 		handleAppSidebarOpen() {
 			this.isSidebarShown = true
+			this.takeSidebarPosition()
 			const sidebar = document.querySelector('aside.app-sidebar')
 			if (sidebar) {
-				this.sidebarPosition = sidebar.getBoundingClientRect().left
 				this.trapElements = [sidebar]
 			}
 		},
@@ -983,10 +989,7 @@ export default {
 		},
 
 		onResize() {
-			const sidebar = document.querySelector('aside.app-sidebar')
-			if (sidebar) {
-				this.sidebarPosition = sidebar.getBoundingClientRect().left
-			}
+			this.takeSidebarPosition()
 		},
 
 		async onDelete() {
