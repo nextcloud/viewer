@@ -28,7 +28,6 @@ import { genFileInfo } from '../utils/fileUtils.js'
  *
  * @param {string} path the path relative to the user root
  * @param {object} [options] optional options for axios
- * @return {Array} the file list
  */
 export default async function(path, options) {
 	// getDirectoryContents doesn't accept / for root
