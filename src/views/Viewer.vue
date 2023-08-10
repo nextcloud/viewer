@@ -225,7 +225,7 @@ export default {
 
 	filters: {
 		uniqueKey(file) {
-			return file.fileid || file.source
+			return '' + file.fileid + file.source
 		},
 	},
 
@@ -397,6 +397,27 @@ export default {
 				'viewer--split': this.comparisonFile,
 			}
 		},
+
+		isSameFile() {
+			return (fileInfo = null, path = null) => {
+				if (
+					path && path === this.currentFile.path
+					&& !this.currentFile.source
+				) {
+					return true
+				}
+
+				if (
+					fileInfo && fileInfo.fileid === this.currentFile.fileid
+					&& fileInfo.mtime && fileInfo.mtime === this.currentFile.mtime
+					&& fileInfo.source && fileInfo.source === this.currentFile.source
+				) {
+					return true
+				}
+
+				return false
+			}
+		},
 	},
 
 	watch: {
@@ -558,7 +579,7 @@ export default {
 			this.cancelRequestFile()
 
 			// do not open the same file again
-			if (path === this.currentFile.path && !this.currentFile.source) {
+			if (this.isSameFile(null, path)) {
 				return
 			}
 
@@ -609,7 +630,7 @@ export default {
 			this.cancelRequestFolder()
 
 			// do not open the same file info again
-			if (fileInfo.basename === this.currentFile.basename && fileInfo.source !== this.currentFile.source) {
+			if (this.isSameFile(fileInfo)) {
 				return
 			}
 
