@@ -38,4 +38,5 @@ export default {
 		'video/x-matroska': 'video/webm',
 	},
 	component: Videos,
+	canCompare: true,
 }

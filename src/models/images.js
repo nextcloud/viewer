@@ -80,4 +80,5 @@ export default {
 		...enabledMimes,
 	],
 	component: Images,
+	canCompare: true,
 }
