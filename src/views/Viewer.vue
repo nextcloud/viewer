@@ -23,10 +23,9 @@
 
 <template>
 	<!-- Single-file rendering -->
-	<div v-if="el"
-		id="viewer"
-		:data-handler="handlerId">
-		<component :is="currentFile.modal"
+	<div v-if="el" id="viewer" :data-handler="handlerId">
+		<component
+			:is="currentFile.modal"
 			v-if="!currentFile.failed"
 			:key="currentFile.fileid"
 			ref="content"
@@ -38,17 +37,20 @@
 			:loaded.sync="currentFile.loaded"
 			:is-sidebar-shown="false"
 			class="viewer__file viewer__file--active"
-			@error="currentFailed" />
-		<Error v-else
-			:name="currentFile.basename" />
+			@error="currentFailed"
+		/>
+		<Error v-else :name="currentFile.basename" />
 	</div>
 
 	<!-- Modal view rendering -->
-	<NcModal v-else-if="initiated || currentFile.modal"
+	<NcModal
+		v-else-if="initiated || currentFile.modal"
 		id="viewer"
 		:additional-trap-elements="trapElements"
 		:class="modalClass"
-		:clear-view-delay="-1 /* disable fade-out because of accessibility reasons */"
+		:clear-view-delay="
+			-1 /* disable fade-out because of accessibility reasons */
+		"
 		:close-button-contained="false"
 		:dark="true"
 		:data-handler="handlerId"
@@ -65,68 +67,90 @@
 		size="full"
 		@close="close"
 		@previous="previous"
-		@next="next">
+		@next="next"
+	>
 		<!-- ACTIONS -->
 		<template #actions>
 			<!-- Inline items -->
-			<NcActionButton v-if="canEdit"
+			<NcActionButton
+				v-if="canEdit"
 				:close-after-click="true"
-				@click="onEdit">
+				@click="onEdit"
+			>
 				<template #icon>
 					<Pencil :size="20" />
 				</template>
-				{{ t('viewer', 'Edit') }}
+				{{ t("viewer", "Edit") }}
 			</NcActionButton>
 			<!-- Menu items -->
-			<NcActionButton :close-after-click="true"
-				@click="toggleFullScreen">
+			<NcActionButton :close-after-click="true" @click="toggleFullScreen">
 				<template #icon>
 					<Fullscreen v-if="!isFullscreenMode" :size="20" />
 					<FullscreenExit v-else :size="20" />
 				</template>
-				{{ isFullscreenMode ? t('viewer', 'Exit full screen') : t('viewer', 'Full screen') }}
+				{{
+					isFullscreenMode
+						? t("viewer", "Exit full screen")
+						: t("viewer", "Full screen")
+				}}
 			</NcActionButton>
-			<NcActionButton v-if="enableSidebar && Sidebar && sidebarOpenFilePath && !isSidebarShown"
+			<NcActionButton
+				v-if="
+					enableSidebar &&
+					Sidebar &&
+					sidebarOpenFilePath &&
+					!isSidebarShown
+				"
 				:close-after-click="true"
 				icon="icon-menu-sidebar"
-				@click="showSidebar">
-				{{ t('viewer', 'Open sidebar') }}
+				@click="showSidebar"
+			>
+				{{ t("viewer", "Open sidebar") }}
 			</NcActionButton>
-			<NcActionLink v-if="canDownload"
+			<NcActionLink
+				v-if="canDownload"
 				:download="currentFile.basename"
 				:close-after-click="true"
-				:href="downloadPath">
+				:href="downloadPath"
+			>
 				<template #icon>
 					<Download :size="24" />
 				</template>
-				{{ t('viewer', 'Download') }}
+				{{ t("viewer", "Download") }}
 			</NcActionLink>
-			<NcActionButton v-if="canDelete"
+			<NcActionButton
+				v-if="canDelete"
 				:close-after-click="true"
-				@click="onDelete">
+				@click="onDelete"
+			>
 				<template #icon>
 					<Delete :size="22" />
 				</template>
-				{{ t('viewer', 'Delete') }}
+				{{ t("viewer", "Delete") }}
 			</NcActionButton>
 		</template>
 
 		<div class="viewer__content" @click.self.exact="close">
 			<!-- PREVIOUS -->
-			<component :is="previousFile.modal"
+			<component
+				:is="previousFile.modal"
 				v-if="previousFile && !previousFile.failed"
 				:key="previousFile.fileid"
 				ref="previous-content"
 				v-bind="previousFile"
 				:file-list="fileList"
 				class="viewer__file--hidden viewer__file"
-				@error="previousFailed" />
-			<Error v-else-if="previousFile"
+				@error="previousFailed"
+			/>
+			<Error
+				v-else-if="previousFile"
 				class="hidden-visually"
-				:name="previousFile.basename" />
+				:name="previousFile.basename"
+			/>
 
 			<!-- CURRENT -->
-			<component :is="currentFile.modal"
+			<component
+				:is="currentFile.modal"
 				v-if="!currentFile.failed"
 				:key="currentFile.fileid"
 				ref="content"
@@ -140,65 +164,77 @@
 				:is-sidebar-shown="isSidebarShown"
 				:loaded.sync="currentFile.loaded"
 				class="viewer__file viewer__file--active"
-				@error="currentFailed" />
-			<Error v-else
-				:name="currentFile.basename" />
+				@error="currentFailed"
+			/>
+			<Error v-else :name="currentFile.basename" />
 
 			<!-- NEXT -->
-			<component :is="nextFile.modal"
+			<component
+				:is="nextFile.modal"
 				v-if="nextFile && !nextFile.failed"
 				:key="nextFile.fileid"
 				ref="next-content"
 				v-bind="nextFile"
 				:file-list="fileList"
 				class="viewer__file--hidden viewer__file"
-				@error="nextFailed" />
-			<Error v-else-if="nextFile"
+				@error="nextFailed"
+			/>
+			<Error
+				v-else-if="nextFile"
 				class="hidden-visually"
-				:name="nextFile.basename" />
+				:name="nextFile.basename"
+			/>
 		</div>
 	</NcModal>
 </template>
 
 <script>
-import Vue from 'vue'
+import Vue from "vue";
 
-import axios from '@nextcloud/axios'
-import '@nextcloud/dialogs/dist/index.css'
-import { showError } from '@nextcloud/dialogs'
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import axios from "@nextcloud/axios";
+import "@nextcloud/dialogs/dist/index.css";
+import { showError } from "@nextcloud/dialogs";
+import { emit, subscribe, unsubscribe } from "@nextcloud/event-bus";
 
-import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen.js'
-import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
+import isFullscreen from "@nextcloud/vue/dist/Mixins/isFullscreen.js";
+import isMobile from "@nextcloud/vue/dist/Mixins/isMobile.js";
 
-import { extractFilePaths, sortCompare } from '../utils/fileUtils.ts'
-import { getRootPath, getUserRoot } from '../utils/davUtils.ts'
-import canDownload from '../utils/canDownload.js'
-import cancelableRequest from '../utils/CancelableRequest.js'
-import Error from '../components/Error.vue'
-import File from '../models/file.js'
-import filesActionHandler from '../services/FilesActionHandler.js'
-import getFileInfo from '../services/FileInfo.ts'
-import getFileList from '../services/FileList.ts'
-import Mime from '../mixins/Mime.js'
-import logger from '../services/logger.js'
+import { extractFilePaths, sortCompare } from "../utils/fileUtils.ts";
+import { getRootPath, getUserRoot } from "../utils/davUtils.ts";
+import canDownload from "../utils/canDownload.js";
+import cancelableRequest from "../utils/CancelableRequest.js";
+import Error from "../components/Error.vue";
+import File from "../models/file.js";
+import filesActionHandler from "../services/FilesActionHandler.js";
+import getFileInfo from "../services/FileInfo.ts";
+import getFileList from "../services/FileList.ts";
+import Mime from "../mixins/Mime.js";
+import logger from "../services/logger.js";
 
-import Delete from 'vue-material-design-icons/Delete.vue'
-import Download from 'vue-material-design-icons/Download.vue'
-import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
-import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
-import Pencil from 'vue-material-design-icons/Pencil.vue'
+import Delete from "vue-material-design-icons/Delete.vue";
+import Download from "vue-material-design-icons/Download.vue";
+import Fullscreen from "vue-material-design-icons/Fullscreen.vue";
+import FullscreenExit from "vue-material-design-icons/FullscreenExit.vue";
+import Pencil from "vue-material-design-icons/Pencil.vue";
 
 // Dynamic loading
-const NcModal = () => import(
-	/* webpackChunkName: 'components' */
-	/* webpackPrefetch: true */
-	'@nextcloud/vue/dist/Components/NcModal.js')
-const NcActionLink = () => import(/* webpackChunkName: 'components' */'@nextcloud/vue/dist/Components/NcActionLink.js')
-const NcActionButton = () => import(/* webpackChunkName: 'components' */'@nextcloud/vue/dist/Components/NcActionButton.js')
+const NcModal = () =>
+	import(
+		/* webpackChunkName: 'components' */
+		/* webpackPrefetch: true */
+		"@nextcloud/vue/dist/Components/NcModal.js"
+	);
+const NcActionLink = () =>
+	import(
+		/* webpackChunkName: 'components' */ "@nextcloud/vue/dist/Components/NcActionLink.js"
+	);
+const NcActionButton = () =>
+	import(
+		/* webpackChunkName: 'components' */ "@nextcloud/vue/dist/Components/NcActionButton.js"
+	);
 
 export default {
-	name: 'Viewer',
+	name: "Viewer",
 
 	components: {
 		Delete,
@@ -247,60 +283,65 @@ export default {
 			isSidebarShown: false,
 			isFullscreenMode: false,
 			canSwipe: true,
-			isStandalone: !(OCA && OCA.Files && 'fileActions' in OCA.Files),
+			isStandalone: !(OCA && OCA.Files && "fileActions" in OCA.Files),
 			theme: null,
 			root: getRootPath(),
-			handlerId: '',
+			handlerId: "",
 
 			trapElements: [],
-		}
+		};
 	},
 
 	computed: {
 		downloadPath() {
-			return this.currentFile.source ?? this.currentFile.davPath
+			return this.currentFile.source ?? this.currentFile.davPath;
 		},
 		hasPrevious() {
-			return this.fileList.length > 1
-				&& (this.canLoop || !this.isStartOfList)
+			return (
+				this.fileList.length > 1 &&
+				(this.canLoop || !this.isStartOfList)
+			);
 		},
 		hasNext() {
-			return this.fileList.length > 1
-				&& (this.canLoop || !this.isEndOfList)
+			return (
+				this.fileList.length > 1 && (this.canLoop || !this.isEndOfList)
+			);
 		},
 		file() {
-			return this.Viewer.file
+			return this.Viewer.file;
 		},
 		fileInfo() {
-			return this.Viewer.fileInfo
+			return this.Viewer.fileInfo;
 		},
 		files() {
-			return this.Viewer.files
+			return this.Viewer.files;
 		},
 		enableSidebar() {
-			return this.Viewer.enableSidebar
+			return this.Viewer.enableSidebar;
 		},
 		el() {
-			return this.Viewer.el
+			return this.Viewer.el;
 		},
 		loadMore() {
-			return this.Viewer.loadMore
+			return this.Viewer.loadMore;
 		},
 		canLoop() {
-			return this.Viewer.canLoop
+			return this.Viewer.canLoop;
 		},
 		canZoom() {
-			return !this.Viewer.el
+			return !this.Viewer.el;
 		},
 		isStartOfList() {
-			return this.currentIndex === 0
+			return this.currentIndex === 0;
 		},
 		isEndOfList() {
-			return this.currentIndex === this.fileList.length - 1
+			return this.currentIndex === this.fileList.length - 1;
 		},
 
 		isImage() {
-			return ['image/jpeg', 'image/png', 'image/webp'].includes(this.currentFile?.mime)
+			return ["image/jpeg", "image/png", "image/webp"].includes(
+				this.currentFile?.mime
+			);
 		},
 
 		/**
@@ -313,14 +354,19 @@ export default {
 		 *          sidebar, if any.
 		 */
 		sidebarFile() {
-			return this.Sidebar && this.Sidebar.file
+			return this.Sidebar && this.Sidebar.file;
 		},
 		sidebarOpenFilePath() {
 			try {
-				const relativePath = this.currentFile?.davPath?.split(getUserRoot())[1]
-				return relativePath?.split('/')?.map(decodeURIComponent)?.join('/')
+				const relativePath = this.currentFile?.davPath?.split(
+					getUserRoot()
+				)[1];
+				return relativePath
+					?.split("/")
+					?.map(decodeURIComponent)
+					?.join("/");
 			} catch (e) {
-				return false
+				return false;
 			}
 		},
 
@@ -330,7 +376,7 @@ export default {
 		 * @return {boolean}
 		 */
 		canDelete() {
-			return this.currentFile?.permissions?.includes('D')
+			return this.currentFile?.permissions?.includes("D");
 		},
 
 		/**
@@ -339,7 +385,7 @@ export default {
 		 * @return {boolean}
 		 */
 		canDownload() {
-			return canDownload()
+			return canDownload();
 		},
 
 		/**
@@ -349,157 +395,171 @@ export default {
 		 * @return {boolean}
 		 */
 		canEdit() {
-			return !this.isMobile
-				&& canDownload()
-				&& this.currentFile?.permissions?.includes('W')
-				&& this.isImage
+			return (
+				!this.isMobile &&
+				canDownload() &&
+				this.currentFile?.permissions?.includes("W") &&
+				this.isImage
+			);
 		},
 
 		modalClass() {
 			return {
-				'icon-loading': !this.currentFile.loaded && !this.currentFile.failed,
-				'theme--undefined': this.theme === null,
-				'theme--dark': this.theme === 'dark',
-				'theme--light': this.theme === 'light',
-				'theme--default': this.theme === 'default',
-				'image--fullscreen': this.isImage && this.isFullscreenMode,
-			}
+				"icon-loading":
+					!this.currentFile.loaded && !this.currentFile.failed,
+				"theme--undefined": this.theme === null,
+				"theme--dark": this.theme === "dark",
+				"theme--light": this.theme === "light",
+				"theme--default": this.theme === "default",
+				"image--fullscreen": this.isImage && this.isFullscreenMode,
+			};
 		},
 	},
 
 	watch: {
 		el(element) {
-			logger.info(element)
+			logger.info(element);
 			this.$nextTick(() => {
-				const viewerRoot = document.getElementById('viewer')
+				const viewerRoot = document.getElementById("viewer");
 				if (element) {
-					const el = document.querySelector(element)
+					const el = document.querySelector(element);
 					if (el) {
-						el.appendChild(viewerRoot)
+						el.appendChild(viewerRoot);
 					} else {
-						logger.warn('Could not find element ', { element })
+						logger.warn("Could not find element ", { element });
 					}
 				} else {
-					document.body.appendChild(viewerRoot)
+					document.body.appendChild(viewerRoot);
 				}
-			})
+			});
 		},
 
 		file(path) {
 			// we got a valid path! Load file...
-			if (path && path.trim() !== '') {
-				logger.info('Opening viewer for file ', { path })
-				this.openFile(path, OCA.Viewer.overrideHandlerId)
+			if (path && path.trim() !== "") {
+				logger.info("Opening viewer for file ", { path });
+				this.openFile(path, OCA.Viewer.overrideHandlerId);
 			} else {
 				// path is empty, we're closing!
-				this.cleanup()
+				this.cleanup();
 			}
 		},
 
 		fileInfo(fileInfo) {
 			if (fileInfo) {
-				logger.info('Opening viewer for fileInfo ', { fileInfo })
-				this.openFileInfo(fileInfo, OCA.Viewer.overrideHandlerId)
+				logger.info("Opening viewer for fileInfo ", { fileInfo });
+				this.openFileInfo(fileInfo, OCA.Viewer.overrideHandlerId);
 			} else {
 				// object is undefined, we're closing!
-				this.cleanup()
+				this.cleanup();
 			}
 		},
 
 		files(fileList) {
 			// the files list changed, let's update the current opened index
-			const currentIndex = fileList.findIndex(file => file.basename === this.currentFile.basename)
+			const currentIndex = fileList.findIndex(
+				(file) => file.basename === this.currentFile.basename
+			);
 			if (currentIndex > -1) {
-				this.currentIndex = currentIndex
-				logger.debug('The files list changed, new current file index is ' + currentIndex)
+				this.currentIndex = currentIndex;
+				logger.debug(
+					"The files list changed, new current file index is " +
+						currentIndex
+				);
 			}
 			// finally replace the fileList
-			this.fileList = fileList
+			this.fileList = fileList;
 		},
 
 		// user reached the end of list
 		async isEndOfList(isEndOfList) {
 			if (!isEndOfList) {
-				return
+				return;
 			}
 
 			// if we have a loadMore handler, let's fetch more files
-			if (this.loadMore && typeof this.loadMore === 'function') {
-				logger.debug('Fetching additional files...')
-				const list = await this.loadMore()
+			if (this.loadMore && typeof this.loadMore === "function") {
+				logger.debug("Fetching additional files...");
+				const list = await this.loadMore();
 
 				if (Array.isArray(list) && list.length > 0) {
-					this.fileList.push(...list)
+					this.fileList.push(...list);
 				}
 			}
 		},
-
 	},
 
 	beforeMount() {
 		// register on load
-		document.addEventListener('DOMContentLoaded', event => {
+		document.addEventListener("DOMContentLoaded", (event) => {
 			// register all primary components mimes
-			this.handlers.forEach(handler => {
-				this.registerHandler(handler)
-			})
+			this.handlers.forEach((handler) => {
+				this.registerHandler(handler);
+			});
 
 			// then register aliases. We need to have the components
 			// first so we can bind the alias to them.
-			this.handlers.forEach(handler => {
-				this.registerHandlerAlias(handler)
-			})
-			this.isLoaded = true
+			this.handlers.forEach((handler) => {
+				this.registerHandlerAlias(handler);
+			});
+			this.isLoaded = true;
 
 			// bind Sidebar if available
 			if (OCA?.Files?.Sidebar) {
-				this.Sidebar = OCA.Files.Sidebar.state
+				this.Sidebar = OCA.Files.Sidebar.state;
 			}
 
-			logger.info(`${this.handlers.length} viewer handlers registered`, { handlers: this.handlers })
-		})
+			logger.info(`${this.handlers.length} viewer handlers registered`, {
+				handlers: this.handlers,
+			});
+		});
 
-		window.addEventListener('resize', this.onResize)
+		window.addEventListener("resize", this.onResize);
 
 		if (this.isStandalone) {
-			logger.info('No OCA.Files app found, viewer is now in standalone mode')
+			logger.info(
+				"No OCA.Files app found, viewer is now in standalone mode"
+			);
 		}
 	},
 
 	mounted() {
 		// React to Files' Sidebar events.
-		subscribe('files:sidebar:opened', this.handleAppSidebarOpen)
-		subscribe('files:sidebar:closed', this.handleAppSidebarClose)
-		subscribe('files:node:updated', this.handleFileUpdated)
-		subscribe('viewer:trapElements:changed', this.handleTrapElementsChange)
-		window.addEventListener('keydown', this.keyboardDeleteFile)
-		window.addEventListener('keydown', this.keyboardDownloadFile)
-		window.addEventListener('keydown', this.keyboardEditFile)
-		this.addFullscreenEventListeners()
+		subscribe("files:sidebar:opened", this.handleAppSidebarOpen);
+		subscribe("files:sidebar:closed", this.handleAppSidebarClose);
+		subscribe("files:node:updated", this.handleFileUpdated);
+		subscribe("viewer:trapElements:changed", this.handleTrapElementsChange);
+		window.addEventListener("keydown", this.keyboardDeleteFile);
+		window.addEventListener("keydown", this.keyboardDownloadFile);
+		window.addEventListener("keydown", this.keyboardEditFile);
+		this.addFullscreenEventListeners();
 	},
 
 	beforeDestroy() {
-		window.removeEventListener('resize', this.onResize)
+		window.removeEventListener("resize", this.onResize);
 	},
 
 	destroyed() {
 		// Unsubscribe to Files Sidebar events.
-		unsubscribe('files:sidebar:opened', this.handleAppSidebarOpen)
-		unsubscribe('files:sidebar:closed', this.handleAppSidebarClose)
-		unsubscribe('viewer:trapElements:changed', this.handleTrapElementsChange)
-		window.removeEventListener('keydown', this.keyboardDeleteFile)
-		window.removeEventListener('keydown', this.keyboardDownloadFile)
-		window.removeEventListener('keydown', this.keyboardEditFile)
-		this.removeFullscreenEventListeners()
+		unsubscribe("files:sidebar:opened", this.handleAppSidebarOpen);
+		unsubscribe("files:sidebar:closed", this.handleAppSidebarClose);
+		unsubscribe(
+			"viewer:trapElements:changed",
+			this.handleTrapElementsChange
+		);
+		window.removeEventListener("keydown", this.keyboardDeleteFile);
+		window.removeEventListener("keydown", this.keyboardDownloadFile);
+		window.removeEventListener("keydown", this.keyboardEditFile);
+		this.removeFullscreenEventListeners();
 	},
 
 	methods: {
 		beforeOpen() {
 			// initial loading start
-			this.initiated = true
+			this.initiated = true;
 
 			if (OCA?.Files?.Sidebar?.setFullScreenMode) {
-				OCA.Files.Sidebar.setFullScreenMode(true)
+				OCA.Files.Sidebar.setFullScreenMode(true);
 			}
 		},
 
@@ -510,47 +570,52 @@ export default {
 		 * @param {string|null} overrideHandlerId the ID of the handler with which to view the files, if any
 		 */
 		async openFile(path, overrideHandlerId = null) {
-			this.beforeOpen()
+			this.beforeOpen();
 
 			// cancel any previous request
-			this.cancelRequestFile()
+			this.cancelRequestFile();
 
 			// do not open the same file again
 			if (path === this.currentFile.path) {
-				return
+				return;
 			}
 
-			const { request: fileRequest, cancel: cancelRequestFile } = cancelableRequest(getFileInfo)
-			this.cancelRequestFile = cancelRequestFile
+			const { request: fileRequest, cancel: cancelRequestFile } =
+				cancelableRequest(getFileInfo);
+			this.cancelRequestFile = cancelRequestFile;
 
 			// extract needed info from path
-			const [, fileName] = extractFilePaths(path)
+			const [, fileName] = extractFilePaths(path);
 
 			// prevent scrolling while opened
 			if (!this.el) {
-				document.body.style.overflow = 'hidden'
-				document.documentElement.style.overflow = 'hidden'
+				document.body.style.overflow = "hidden";
+				document.documentElement.style.overflow = "hidden";
 			}
 
 			// swap title with original one
-			const title = document.getElementsByTagName('head')[0].getElementsByTagName('title')[0]
+			const title = document
+				.getElementsByTagName("head")[0]
+				.getElementsByTagName("title")[0];
 			if (title && !title.dataset.old) {
-				title.dataset.old = document.title
-				this.updateTitle(fileName)
+				title.dataset.old = document.title;
+				this.updateTitle(fileName);
 			}
 
 			try {
 				// retrieve and store the file info
-				const fileInfo = await fileRequest(path)
-				console.debug('File info for ' + path + ' fetched', fileInfo)
-				await this.openFileInfo(fileInfo, overrideHandlerId)
+				const fileInfo = await fileRequest(path);
+				console.debug("File info for " + path + " fetched", fileInfo);
+				await this.openFileInfo(fileInfo, overrideHandlerId);
 			} catch (error) {
 				if (error?.response?.status === 404) {
-					logger.error('The file no longer exists, error: ', { error })
-					showError(t('viewer', 'This file no longer exists'))
-					this.close()
+					logger.error("The file no longer exists, error: ", {
+						error,
+					});
+					showError(t("viewer", "This file no longer exists"));
+					this.close();
 				} else {
-					console.error('Could not open file ' + path, error)
+					console.error("Could not open file " + path, error);
 				}
 			}
 		},
@@ -562,85 +627,107 @@ export default {
 		 * @param {string|null} overrideHandlerId the ID of the handler with which to view the files, if any
 		 */
 		async openFileInfo(fileInfo, overrideHandlerId = null) {
-			this.beforeOpen()
+			this.beforeOpen();
 			// cancel any previous request
-			this.cancelRequestFolder()
+			this.cancelRequestFolder();
 
 			// do not open the same file info again
 			if (fileInfo.basename === this.currentFile.basename) {
-				return
+				return;
 			}
 
 			// get original mime and alias
-			const mime = fileInfo.mime
-			const alias = mime.split('/')[0]
+			const mime = fileInfo.mime;
+			const alias = mime.split("/")[0];
 
-			let handler
+			let handler;
 			// Try provided handler, if any
 			if (overrideHandlerId !== null) {
-				const overrideHandler = Object.values(this.registeredHandlers).find(h => h.id === overrideHandlerId)
-				handler = overrideHandler ?? handler
+				const overrideHandler = Object.values(
+					this.registeredHandlers
+				).find((h) => h.id === overrideHandlerId);
+				handler = overrideHandler ?? handler;
 			}
 			// If no provided handler, or provided handler not found: try a supported handler with mime/mime-alias
 			if (!handler) {
-				handler = this.registeredHandlers[mime] ?? this.registeredHandlers[alias]
+				handler =
+					this.registeredHandlers[mime] ??
+					this.registeredHandlers[alias];
 			}
 
-			this.theme = handler.theme ?? 'dark'
+			this.theme = handler.theme ?? "dark";
 			// if we don't have a handler for this mime, abort
 			if (!handler) {
-				logger.error('The following file could not be displayed', { fileInfo })
-				showError(t('viewer', 'There is no plugin available to display this file type'))
-				this.close()
-				return
+				logger.error("The following file could not be displayed", {
+					fileInfo,
+				});
+				showError(
+					t(
+						"viewer",
+						"There is no plugin available to display this file type"
+					)
+				);
+				this.close();
+				return;
 			}
 
-			this.handlerId = handler.id
+			this.handlerId = handler.id;
 
 			// check if part of a group, if so retrieve full files list
-			const group = this.mimeGroups[mime]
+			const group = this.mimeGroups[mime];
 			if (this.files && this.files.length > 0) {
-				logger.debug('A files list have been provided. No folder content will be fetched.')
+				logger.debug(
+					"A files list have been provided. No folder content will be fetched."
+				);
 				// we won't sort files here, let's use the order the array has
-				this.fileList = this.files
+				this.fileList = this.files;
 
 				// store current position
-				this.currentIndex = this.fileList.findIndex(file => file.basename === fileInfo.basename)
+				this.currentIndex = this.fileList.findIndex(
+					(file) => file.basename === fileInfo.basename
+				);
 			} else if (group && this.el === null) {
 				const mimes = this.mimeGroups[group]
 					? this.mimeGroups[group]
-					: [mime]
+					: [mime];
 
 				// retrieve folder list
-				const { request: folderRequest, cancel: cancelRequestFolder } = cancelableRequest(getFileList)
-				this.cancelRequestFolder = cancelRequestFolder
-				const [dirPath] = extractFilePaths(fileInfo.filename)
-				const fileList = await folderRequest(dirPath)
+				const { request: folderRequest, cancel: cancelRequestFolder } =
+					cancelableRequest(getFileList);
+				this.cancelRequestFolder = cancelRequestFolder;
+				const [dirPath] = extractFilePaths(fileInfo.filename);
+				const fileList = await folderRequest(dirPath);
 
 				// filter out the unwanted mimes
-				const filteredFiles = fileList.filter(file => file.mime && mimes.indexOf(file.mime) !== -1)
+				const filteredFiles = fileList.filter(
+					(file) => file.mime && mimes.indexOf(file.mime) !== -1
+				);
 
 				// sort like the files list
 				// TODO: implement global sorting API
 				// https://github.com/nextcloud/server/blob/a83b79c5f8ab20ed9b4d751167417a65fa3c42b8/apps/files/lib/Controller/ApiController.php#L247
-				this.fileList = filteredFiles.sort((a, b) => sortCompare(a, b, 'basename'))
+				this.fileList = filteredFiles.sort((a, b) =>
+					sortCompare(a, b, "basename")
+				);
 
 				// store current position
-				this.currentIndex = this.fileList.findIndex(file => file.basename === fileInfo.basename)
+				this.currentIndex = this.fileList.findIndex(
+					(file) => file.basename === fileInfo.basename
+				);
 			} else {
-				this.currentIndex = 0
-				this.fileList = [fileInfo]
+				this.currentIndex = 0;
+				this.fileList = [fileInfo];
 			}
 
 			// get saved fileInfo
-			fileInfo = this.fileList[this.currentIndex]
+			fileInfo = this.fileList[this.currentIndex];
 
 			// show file
-			this.currentFile = new File(fileInfo, mime, handler.component)
-			this.updatePreviousNext()
+			this.currentFile = new File(fileInfo, mime, handler.component);
+			this.updatePreviousNext();
 
 			// if sidebar was opened before, let's update the file
-			this.changeSidebar()
+			this.changeSidebar();
 		},
 
 		/**
@@ -650,10 +737,10 @@ export default {
 		 */
 		openFileFromList(fileInfo) {
 			// override mimetype if existing alias
-			const mime = fileInfo.mime
-			this.currentFile = new File(fileInfo, mime, this.components[mime])
-			this.changeSidebar()
-			this.updatePreviousNext()
+			const mime = fileInfo.mime;
+			this.currentFile = new File(fileInfo, mime, this.components[mime]);
+			this.changeSidebar();
+			this.updatePreviousNext();
 		},
 
 		/**
@@ -661,7 +748,7 @@ export default {
 		 */
 		changeSidebar() {
 			if (this.sidebarFile) {
-				this.showSidebar()
+				this.showSidebar();
 			}
 		},
 
@@ -669,33 +756,38 @@ export default {
 		 * Update the previous and next file components
 		 */
 		updatePreviousNext() {
-			const prev = this.fileList[this.currentIndex - 1]
-			const next = this.fileList[this.currentIndex + 1]
+			const prev = this.fileList[this.currentIndex - 1];
+			const next = this.fileList[this.currentIndex + 1];
 
 			if (prev) {
-				const mime = prev.mime
+				const mime = prev.mime;
 				if (this.components[mime]) {
-					this.previousFile = new File(prev, mime, this.components[mime])
+					this.previousFile = new File(
+						prev,
+						mime,
+						this.components[mime]
+					);
 				}
 			} else {
 				// RESET
-				this.previousFile = null
+				this.previousFile = null;
 			}
 
 			if (next) {
-				const mime = next.mime
+				const mime = next.mime;
 				if (this.components[mime]) {
-					this.nextFile = new File(next, mime, this.components[mime])
+					this.nextFile = new File(next, mime, this.components[mime]);
 				}
 			} else {
 				// RESET
-				this.nextFile = null
+				this.nextFile = null;
 			}
-
 		},
 
 		updateTitle(fileName) {
-			document.title = `${fileName} - ${OCA.Theming?.name ?? oc_defaults.name}`
+			document.title = `${fileName} - ${
+				OCA.Theming?.name ?? oc_defaults.name
+			}`;
 		},
 
 		/**
@@ -709,92 +801,137 @@ export default {
 		 */
 		registerHandler(handler) {
 			// checking if handler is not already registered
-			if (handler.id && Object.values(this.registeredHandlers).findIndex((h) => h.id === handler.id) > -1) {
-				logger.error('The following handler is already registered', { handler })
-				return
+			if (
+				handler.id &&
+				Object.values(this.registeredHandlers).findIndex(
+					(h) => h.id === handler.id
+				) > -1
+			) {
+				logger.error("The following handler is already registered", {
+					handler,
+				});
+				return;
 			}
 
 			// checking valid handler id
-			if (!handler.id || handler.id.trim() === '' || typeof handler.id !== 'string') {
-				logger.error('The following handler doesn\'t have a valid id', { handler })
-				return
+			if (
+				!handler.id ||
+				handler.id.trim() === "" ||
+				typeof handler.id !== "string"
+			) {
+				logger.error("The following handler doesn't have a valid id", {
+					handler,
+				});
+				return;
 			}
 
 			// checking if no valid mimes data but alias. If so, skipping...
-			if (!(handler.mimes && Array.isArray(handler.mimes)) && handler.mimesAliases) {
-				return
+			if (
+				!(handler.mimes && Array.isArray(handler.mimes)) &&
+				handler.mimesAliases
+			) {
+				return;
 			}
 
 			// Nothing available to process! Failure
-			if (!(handler.mimes && Array.isArray(handler.mimes)) && !handler.mimesAliases) {
-				logger.error('The following handler doesn\'t have a valid mime array', { handler })
-				return
+			if (
+				!(handler.mimes && Array.isArray(handler.mimes)) &&
+				!handler.mimesAliases
+			) {
+				logger.error(
+					"The following handler doesn't have a valid mime array",
+					{ handler }
+				);
+				return;
 			}
 
 			// checking valid handler component data
-			if ((!handler.component || typeof handler.component !== 'object')) {
-				logger.error('The following handler doesn\'t have a valid component', { handler })
-				return
+			if (!handler.component || typeof handler.component !== "object") {
+				logger.error(
+					"The following handler doesn't have a valid component",
+					{ handler }
+				);
+				return;
 			}
 
 			// force apply mixin
-			handler.component.mixins = [...handler?.component?.mixins ?? [], Mime]
+			handler.component.mixins = [
+				...(handler?.component?.mixins ?? []),
+				Mime,
+			];
 
 			// parsing mimes registration
 			if (handler.mimes) {
-				handler.mimes.forEach(mime => {
+				handler.mimes.forEach((mime) => {
 					// checking valid mime
 					if (this.components[mime]) {
-						logger.error('The following mime is already registered', { mime, handler })
-						return
+						logger.error(
+							"The following mime is already registered",
+							{ mime, handler }
+						);
+						return;
 					}
 
 					// register file action and groups
-					this.registerAction({ mime, group: handler.group })
+					this.registerAction({ mime, group: handler.group });
 
 					// register mime's component
-					this.components[mime] = handler.component
-					Vue.component(handler.component.name, handler.component)
+					this.components[mime] = handler.component;
+					Vue.component(handler.component.name, handler.component);
 
 					// set the handler as registered
-					this.registeredHandlers[mime] = handler
-				})
+					this.registeredHandlers[mime] = handler;
+				});
 			}
 		},
 
 		registerHandlerAlias(handler) {
 			// parsing aliases registration
 			if (handler.mimesAliases) {
-				Object.keys(handler.mimesAliases).forEach(mime => {
-
-					if (handler.mimesAliases && typeof handler.mimesAliases !== 'object') {
-						logger.error('The following handler doesn\'t have a valid mimesAliases object', { handler })
-						return
-
+				Object.keys(handler.mimesAliases).forEach((mime) => {
+					if (
+						handler.mimesAliases &&
+						typeof handler.mimesAliases !== "object"
+					) {
+						logger.error(
+							"The following handler doesn't have a valid mimesAliases object",
+							{ handler }
+						);
+						return;
 					}
 
 					// this is the targeted alias
-					const alias = handler.mimesAliases[mime]
+					const alias = handler.mimesAliases[mime];
 
 					// checking valid mime
 					if (this.components[mime]) {
-						logger.error('The following mime is already registered', { mime, handler })
-						return
+						logger.error(
+							"The following mime is already registered",
+							{ mime, handler }
+						);
+						return;
 					}
 					if (!this.components[alias]) {
-						logger.error('The requested alias does not exists', { alias, mime, handler })
-						return
+						logger.error("The requested alias does not exists", {
+							alias,
+							mime,
+							handler,
+						});
+						return;
 					}
 
 					// register file action and groups if the request alias had a group
-					this.registerAction({ mime, group: this.mimeGroups[alias] })
+					this.registerAction({
+						mime,
+						group: this.mimeGroups[alias],
+					});
 
 					// register mime's component
-					this.components[mime] = this.components[alias]
+					this.components[mime] = this.components[alias];
 
 					// set the handler as registered
-					this.registeredHandlers[mime] = handler
-				})
+					this.registeredHandlers[mime] = handler;
+				});
 			}
 		},
 
@@ -802,23 +939,23 @@ export default {
 			if (!this.isStandalone) {
 				// unregistered handler, let's go!
 				OCA.Files.fileActions.registerAction({
-					name: 'view',
-					displayName: t('viewer', 'View'),
+					name: "view",
+					displayName: t("viewer", "View"),
 					mime,
 					permissions: OC.PERMISSION_READ,
 					actionHandler: filesActionHandler,
-				})
-				OCA.Files.fileActions.setDefault(mime, 'view')
+				});
+				OCA.Files.fileActions.setDefault(mime, "view");
 			}
 
 			// register groups
 			if (group) {
-				this.mimeGroups[mime] = group
+				this.mimeGroups[mime] = group;
 				// init if undefined
 				if (!this.mimeGroups[group]) {
-					this.mimeGroups[group] = []
+					this.mimeGroups[group] = [];
 				}
-				this.mimeGroups[group].push(mime)
+				this.mimeGroups[group].push(mime);
 			}
 		},
 
@@ -828,73 +965,79 @@ export default {
 		close() {
 			// This will set file to ''
 			// which then triggers cleanup.
-			OCA.Viewer.close()
+			OCA.Viewer.close();
 
 			if (OCA?.Files?.Sidebar) {
-				OCA.Files.Sidebar.setFullScreenMode(false)
+				OCA.Files.Sidebar.setFullScreenMode(false);
 			}
 
 			if (this.isFullscreenMode) {
-				this.exitFullscreen()
+				this.exitFullscreen();
 			}
 		},
 
 		keyboardDeleteFile(event) {
-			if (this.canDelete && event.key === 'Delete' && event.ctrlKey === true) {
-				this.onDelete()
+			if (
+				this.canDelete &&
+				event.key === "Delete" &&
+				event.ctrlKey === true
+			) {
+				this.onDelete();
 			}
 		},
 
 		keyboardDownloadFile(event) {
-			if (event.key === 's' && event.ctrlKey === true) {
-				event.preventDefault()
+			if (event.key === "s" && event.ctrlKey === true) {
+				event.preventDefault();
 				if (this.canDownload) {
-					const a = document.createElement('a')
-					a.href = this.currentFile.davPath
-					a.download = this.currentFile.basename
-					document.body.appendChild(a)
-					a.click()
-					document.body.removeChild(a)
+					const a = document.createElement("a");
+					a.href = this.currentFile.davPath;
+					a.download = this.currentFile.basename;
+					document.body.appendChild(a);
+					a.click();
+					document.body.removeChild(a);
 				}
 			}
 		},
 
 		keyboardEditFile(event) {
-			if (event.key === 'e' && event.ctrlKey === true) {
-				event.preventDefault()
+			if (event.key === "e" && event.ctrlKey === true) {
+				event.preventDefault();
 				if (this.canEdit) {
-					this.onEdit()
+					this.onEdit();
 				}
 			}
 		},
 
 		cleanup() {
 			// reset all properties
-			this.currentFile = {}
-			this.currentModal = null
-			this.fileList = []
-			this.initiated = false
-			this.theme = null
+			this.currentFile = {};
+			this.currentModal = null;
+			this.fileList = [];
+			this.initiated = false;
+			this.theme = null;
 
 			// cancel requests
-			this.cancelRequestFile()
-			this.cancelRequestFolder()
+			this.cancelRequestFile();
+			this.cancelRequestFolder();
 
 			// restore default
-			document.body.style.overflow = null
-			document.documentElement.style.overflow = null
+			document.body.style.overflow = null;
+			document.documentElement.style.overflow = null;
 
 			// Callback before updating the title
 			// If the callback creates a new entry in browser history
 			// the title update will affect the new entry
 			// rather then the previous one.
-			this.Viewer.onClose()
+			this.Viewer.onClose();
 
 			// swap back original title
-			const title = document.getElementsByTagName('head')[0].getElementsByTagName('title')[0]
+			const title = document
+				.getElementsByTagName("head")[0]
+				.getElementsByTagName("title")[0];
 			if (title && title.dataset.old) {
-				document.title = title.dataset.old
-				delete title.dataset.old
+				document.title = title.dataset.old;
+				delete title.dataset.old;
 			}
 		},
 
@@ -902,47 +1045,47 @@ export default {
 		 * Open previous available file
 		 */
 		previous() {
-			const oldFileInfo = this.fileList[this.currentIndex]
-			this.currentIndex--
+			const oldFileInfo = this.fileList[this.currentIndex];
+			this.currentIndex--;
 			if (this.currentIndex < 0) {
-				this.currentIndex = this.fileList.length - 1
+				this.currentIndex = this.fileList.length - 1;
 			}
 
-			const fileInfo = this.fileList[this.currentIndex]
-			this.openFileFromList(fileInfo)
-			this.Viewer.onPrev(fileInfo, oldFileInfo)
-			this.updateTitle(this.currentFile.basename)
+			const fileInfo = this.fileList[this.currentIndex];
+			this.openFileFromList(fileInfo);
+			this.Viewer.onPrev(fileInfo, oldFileInfo);
+			this.updateTitle(this.currentFile.basename);
 		},
 
 		/**
 		 * Open next available file
 		 */
 		next() {
-			const oldFileInfo = this.fileList[this.currentIndex]
-			this.currentIndex++
+			const oldFileInfo = this.fileList[this.currentIndex];
+			this.currentIndex++;
 			if (this.currentIndex > this.fileList.length - 1) {
-				this.currentIndex = 0
+				this.currentIndex = 0;
 			}
 
-			const fileInfo = this.fileList[this.currentIndex]
-			this.openFileFromList(fileInfo)
-			this.Viewer.onNext(fileInfo, oldFileInfo)
-			this.updateTitle(this.currentFile.basename)
+			const fileInfo = this.fileList[this.currentIndex];
+			this.openFileFromList(fileInfo);
+			this.Viewer.onNext(fileInfo, oldFileInfo);
+			this.updateTitle(this.currentFile.basename);
 		},
 
 		/**
 		 * Failures handlers
 		 */
 		previousFailed() {
-			this.previousFile.failed = true
+			this.previousFile.failed = true;
 		},
 
 		currentFailed() {
-			this.currentFile.failed = true
+			this.currentFile.failed = true;
 		},
 
 		nextFailed() {
-			this.nextFile.failed = true
+			this.nextFile.failed = true;
 		},
 
 		/**
@@ -954,71 +1097,75 @@ export default {
 			// TODO: also hide figure, needs a proper method for it in server Sidebar
 
 			if (this.enableSidebar && OCA?.Files?.Sidebar) {
-				await OCA.Files.Sidebar.open(this.sidebarOpenFilePath)
+				await OCA.Files.Sidebar.open(this.sidebarOpenFilePath);
 			}
 		},
 
 		handleAppSidebarOpen() {
-			this.isSidebarShown = true
-			const sidebar = document.querySelector('aside.app-sidebar')
+			this.isSidebarShown = true;
+			const sidebar = document.querySelector("aside.app-sidebar");
 			if (sidebar) {
-				this.sidebarPosition = sidebar.getBoundingClientRect().left
-				this.trapElements = [sidebar]
+				this.sidebarPosition = sidebar.getBoundingClientRect().left;
+				this.trapElements = [sidebar];
 			}
 		},
 
 		handleAppSidebarClose() {
-			this.isSidebarShown = false
-			this.trapElements = []
+			this.isSidebarShown = false;
+			this.trapElements = [];
 		},
 
 		// Update etag of updated file to break cache.
 		async handleFileUpdated(node) {
-			const index = this.fileList.findIndex(({ fileid: currentFileId }) => currentFileId === node.fileid)
+			const index = this.fileList.findIndex(
+				({ fileid: currentFileId }) => currentFileId === node.fileid
+			);
 
-			this.fileList.splice(index, 1, { ...node, etag: node.etag })
+			this.fileList.splice(index, 1, { ...node, etag: node.etag });
 			if (node.fileid === this.currentFile.fileid) {
-				this.currentFile.etag = node.etag
+				this.currentFile.etag = node.etag;
 			}
 		},
 
 		onResize() {
-			const sidebar = document.querySelector('aside.app-sidebar')
+			const sidebar = document.querySelector("aside.app-sidebar");
 			if (sidebar) {
-				this.sidebarPosition = sidebar.getBoundingClientRect().left
+				this.sidebarPosition = sidebar.getBoundingClientRect().left;
 			}
 		},
 
 		async onDelete() {
 			try {
-				const fileid = this.currentFile.fileid
-				const url = this.source ?? this.currentFile.davPath
+				const fileid = this.currentFile.fileid;
+				const url = this.source ?? this.currentFile.davPath;
 
-				await axios.delete(url)
-				emit('files:node:deleted', { fileid })
+				await axios.delete(url);
+				emit("files:node:deleted", { fileid });
 
 				// fileid is not unique, basename is
-				const currentIndex = this.fileList.findIndex(file => file.basename === this.currentFile.basename)
+				const currentIndex = this.fileList.findIndex(
+					(file) => file.basename === this.currentFile.basename
+				);
 				if (this.hasPrevious || this.hasNext) {
 					// Checking the previous or next file
-					this.hasPrevious ? this.previous() : this.next()
+					this.hasPrevious ? this.previous() : this.next();
 
-					this.fileList.splice(currentIndex, 1)
+					this.fileList.splice(currentIndex, 1);
 				} else {
-					this.close()
+					this.close();
 				}
 			} catch (error) {
-				console.error(error)
-				showError(error)
+				console.error(error);
+				showError(error);
 			}
 		},
 
 		onEdit() {
-			this.editing = true
+			this.editing = true;
 		},
 
 		handleTrapElementsChange(element) {
-			this.trapElements.push(element)
+			this.trapElements.push(element);
 		},
 
 		// Support full screen API on standard-compliant browsers and Safari (apparently except iPhone).
@@ -1027,56 +1174,69 @@ export default {
 
 		toggleFullScreen() {
 			if (this.isFullscreenMode) {
-				this.exitFullscreen()
+				this.exitFullscreen();
 			} else {
-				this.requestFullscreen()
+				this.requestFullscreen();
 			}
 		},
 
 		requestFullscreen() {
-			const el = document.documentElement
+			const el = document.documentElement;
 			if (el.requestFullscreen) {
-				el.requestFullscreen()
+				el.requestFullscreen();
 			} else if (el.webkitRequestFullscreen) {
-				el.webkitRequestFullscreen()
+				el.webkitRequestFullscreen();
 			}
 		},
 
 		exitFullscreen() {
 			if (document.exitFullscreen) {
-				document.exitFullscreen()
+				document.exitFullscreen();
 			} else if (document.webkitExitFullscreen) {
-				document.webkitExitFullscreen()
+				document.webkitExitFullscreen();
 			}
 		},
 
 		addFullscreenEventListeners() {
-			document.addEventListener('fullscreenchange', this.onFullscreenchange)
-			document.addEventListener('webkitfullscreenchange', this.onFullscreenchange)
+			document.addEventListener(
+				"fullscreenchange",
+				this.onFullscreenchange
+			);
+			document.addEventListener(
+				"webkitfullscreenchange",
+				this.onFullscreenchange
+			);
 		},
 
 		removeFullscreenEventListeners() {
-			document.addEventListener('fullscreenchange', this.onFullscreenchange)
-			document.addEventListener('webkitfullscreenchange', this.onFullscreenchange)
+			document.addEventListener(
+				"fullscreenchange",
+				this.onFullscreenchange
+			);
+			document.addEventListener(
+				"webkitfullscreenchange",
+				this.onFullscreenchange
+			);
 		},
 
 		onFullscreenchange() {
-			if (document.fullscreenElement === document.documentElement
-				|| document.webkitFullscreenElement === document.documentElement) {
-				this.isFullscreenMode = true
+			if (
+				document.fullscreenElement === document.documentElement ||
+				document.webkitFullscreenElement === document.documentElement
+			) {
+				this.isFullscreenMode = true;
 			} else {
-				this.isFullscreenMode = false
+				this.isFullscreenMode = false;
 			}
 		},
-
 	},
-}
+};
 </script>
 
 <style lang="scss" scoped>
 .viewer {
 	&.modal-mask {
-		transition: width ease 100ms, background-color .3s ease;
+		transition: width ease 100ms, background-color 0.3s ease;
 	}
 
 	:deep(.modal-container),
@@ -1107,8 +1267,7 @@ export default {
 	}
 
 	&__file {
-		transition: height 100ms ease,
-			width 100ms ease;
+		transition: height 100ms ease, width 100ms ease;
 
 		// display on page but make it invisible
 		&--hidden {
@@ -1120,11 +1279,11 @@ export default {
 
 	&.theme--dark:deep(.button-vue--vue-tertiary) {
 		&:hover {
-			background-color: rgba(255, 255, 255, .08) !important;
+			background-color: rgba(255, 255, 255, 0.08) !important;
 		}
 		&:focus,
 		&:focus-visible {
-			background-color: rgba(255, 255, 255, .08) !important;
+			background-color: rgba(255, 255, 255, 0.08) !important;
 			outline: 2px solid var(--color-primary-element) !important;
 		}
 	}
@@ -1135,7 +1294,7 @@ export default {
 
 	&.theme--light {
 		&.modal-mask {
-			background-color: rgba(255, 255, 255, .92) !important;
+			background-color: rgba(255, 255, 255, 0.92) !important;
 		}
 		:deep(.modal-name),
 		:deep(.modal-header .icons-menu button svg) {
@@ -1151,7 +1310,8 @@ export default {
 		:deep(.modal-header .icons-menu) {
 			color: var(--color-main-text) !important;
 
-			button svg, a {
+			button svg,
+			a {
 				color: var(--color-main-text) !important;
 			}
 		}
@@ -1179,22 +1339,22 @@ export default {
 		}
 	}
 }
-
 </style>
 
 <style lang="scss">
 .component-fade-enter-active,
 .component-fade-leave-active {
-	transition: opacity .3s ease;
+	transition: opacity 0.3s ease;
 }
 
-.component-fade-enter, .component-fade-leave-to {
+.component-fade-enter,
+.component-fade-leave-to {
 	opacity: 0;
 }
 
 // force white icon on single buttons
 #viewer.modal-mask--dark .action-item--single.icon-menu-sidebar {
-	background-image: url('../assets/menu-sidebar-white.svg');
+	background-image: url("../assets/menu-sidebar-white.svg");
 }
 
 #viewer.modal-mask--dark .action-item--single.icon-download {
@@ -1207,5 +1367,4 @@ export default {
 .ui-autocomplete {
 	z-index: 2050 !important;
 }
-
 </style>
