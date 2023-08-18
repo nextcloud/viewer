@@ -655,7 +655,10 @@ export default {
 					this.registeredHandlers[alias];
 			}
 
+<<<<<<< HEAD
 			this.theme = handler.theme ?? "dark";
+=======
+>>>>>>> 51a202c24b80302486dfb38fb52b1745f161d3c9
 			// if we don't have a handler for this mime, abort
 			if (!handler) {
 				logger.error("The following file could not be displayed", {
@@ -671,7 +674,13 @@ export default {
 				return;
 			}
 
+<<<<<<< HEAD
 			this.handlerId = handler.id;
+=======
+			this.theme = handler.theme ?? 'dark'
+			
+			this.handlerId = handler.id
+>>>>>>> 51a202c24b80302486dfb38fb52b1745f161d3c9
 
 			// check if part of a group, if so retrieve full files list
 			const group = this.mimeGroups[mime];
