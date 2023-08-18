@@ -36,8 +36,8 @@
 		}"
 		:src="data"
 		:style="{
-			marginTop: shiftY + 'px',
-			marginLeft: shiftX + 'px',
+			marginTop: (shiftY * 2) + 'px',
+			marginLeft: (shiftX * 2) + 'px',
 			maxHeight: zoomRatio * 100 + '%',
 			maxWidth: zoomRatio * 100 + '%',
 		}"
@@ -95,8 +95,7 @@ export default {
 			return Math.round(this.width * this.zoomRatio)
 		},
 		alt() {
-			const fileName = this.basename
-			return t('viewer', '"{fileName}"', { fileName })
+			return this.basename
 		},
 	},
 
@@ -240,7 +239,7 @@ export default {
 				const growY = this.zoomHeight - this.height
 
 				this.shiftX = Math.min(Math.max(moveX, -growX / 2), growX / 2)
-				this.shiftY = Math.min(Math.max(moveY, -growY / 2), growX / 2)
+				this.shiftY = Math.min(Math.max(moveY, -growY / 2), growY / 2)
 				this.dragX = pageX
 				this.dragY = pageY
 			}
