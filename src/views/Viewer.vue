@@ -24,8 +24,7 @@
 <template>
 	<!-- Single-file rendering -->
 	<div v-if="el" id="viewer" :data-handler="handlerId">
-		<component
-			:is="currentFile.modal"
+		<component:is="currentFile.modal"
 			v-if="!currentFile.failed"
 			:key="currentFile | uniqueKey"
 			ref="content"
@@ -37,14 +36,12 @@
 			:loaded.sync="currentFile.loaded"
 			:is-sidebar-shown="false"
 			class="viewer__file viewer__file--active"
-			@error="currentFailed"
-		/>
+			@error="currentFailed"/>
 		<Error v-else :name="currentFile.basename" />
 	</div>
 
 	<!-- Modal view rendering -->
-	<NcModal
-		v-else-if="initiated || currentFile.modal"
+	<NcModal v-else-if="initiated || currentFile.modal"
 		id="viewer"
 		:additional-trap-elements="trapElements"
 		:class="modalClass"
@@ -67,16 +64,13 @@
 		size="full"
 		@close="close"
 		@previous="previous"
-		@next="next"
-	>
+		@next="next">
 		<!-- ACTIONS -->
 		<template #actions>
 			<!-- Inline items -->
-			<NcActionButton
-				v-if="canEdit"
+			<NcActionButton v-if="canEdit"
 				:close-after-click="true"
-				@click="onEdit"
-			>
+				@click="onEdit">
 				<template #icon>
 					<Pencil :size="20" />
 				</template>
@@ -94,13 +88,7 @@
 						: t("viewer", "Full screen")
 				}}
 			</NcActionButton>
-			<NcActionButton
-				v-if="
-					enableSidebar &&
-					Sidebar &&
-					sidebarOpenFilePath &&
-					!isSidebarShown
-				"
+			<NcActionButton v-if="enableSidebar && Sidebar && sidebarOpenFilePath && !isSidebarShown"
 				:close-after-click="true"
 				icon="icon-menu-sidebar"
 				@click="showSidebar"
