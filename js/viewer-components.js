@@ -15766,4 +15766,4 @@ const computePosition = (reference, floating, options) => (0,_floating_ui_core__
 /***/ })
 
 }]);
-//# sourceMappingURL=viewer-components.js.map?v=889c75db72f8d2c070d1
+//# sourceMappingURL=viewer-components.js.map?v=dbbd6ead69671f790295
