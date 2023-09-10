@@ -50,6 +50,7 @@ const browserSupportedMimes = [
 	'image/png',
 	'image/svg+xml',
 	'image/webp',
+	'image/avif',
 	'image/x-icon',
 ]
 
