@@ -171,3 +171,33 @@ If you want to make your app compatible with this app, you can use the `OCA.View
     })
    ```
 3. if you feel like your mime should be integrated on this repo, you can also create a pull request with your object on the `models` directory and the view on the `components` directory. Please have a look at what's already here and take example of it. 🙇‍♀️
+
+### File extension aliases
+
+Not all file types have an unambiguous MIME type. Therefore, it is possible to map
+a combination of file extension and MIME type to a MIME alias:
+
+``` js
+ import FooView from 'FooView.vue'
+
+ OCA.Viewer.registerHandler({
+    id: 'foo',
+
+    group: 'media',
+
+    mimes: [
+         'image/jpg-foo',
+    ],
+
+    extensionAliases: [
+		{
+			extension: '.foo',
+			mime: 'application/octet-stream',
+			alias: 'image/jpg-foo',
+		},
+	],
+
+    // your Vue component view
+    component: FooView
+ })
+```

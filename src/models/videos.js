@@ -37,5 +37,12 @@ export default {
 	mimesAliases: {
 		'video/x-matroska': 'video/webm',
 	},
+	extensionAliases: [
+		{
+			extension: 'mp4',
+			mime: 'application/octet-stream',
+			alias: 'video/webm',
+		},
+	],
 	component: Videos,
 }

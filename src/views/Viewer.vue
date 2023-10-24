@@ -248,6 +248,7 @@ export default {
 
 			// Viewer variables
 			components: {},
+			extensionAliases: [],
 			mimeGroups: {},
 			registeredHandlers: {},
 
@@ -520,6 +521,11 @@ export default {
 			// first so we can bind the alias to them.
 			this.handlers.forEach(handler => {
 				this.registerHandlerAlias(handler)
+			})
+
+			// lastly we register extension aliases
+			this.handlers.forEach(handler => {
+				this.registerHandlerExtensionAlias(handler)
 			})
 			this.isLoaded = true
 
@@ -881,6 +887,50 @@ export default {
 			}
 		},
 
+		/**
+		 * @param {string} extension
+		 * @param {string} mime
+		 * @return {string|undefined} mime
+		 */
+		getExtensionAlias(extension, mime) {
+			return this.extensionAliases.find(ea => ea.extension === extension && ea.mime === mime)
+		},
+
+		registerHandlerExtensionAlias(handler) {
+			if (!handler.extensionAliases) {
+				return
+			}
+
+			if (handler.extensionAliases && !handler.extensionAliases.length) {
+				logger.error('The following handler doesn\'t have a valid extensionAliases array', { handler, extensionAlias })
+				return
+			}
+
+			// parsing extension registration
+			handler.extensionAliases.forEach(extensionAlias => {
+				// checking valid mime
+				if (!this.components[extensionAlias.alias]) {
+					logger.error('The requested alias does not exists', {
+						extensionAlias,
+						handler,
+					})
+					return
+				}
+				if (this.getExtensionAlias(extensionAlias.extension, extensionAlias.mime)) {
+					logger.error('The following extension alias has already been registered', {
+						extensionAlias,
+						handler,
+					})
+					return
+				}
+
+				this.extensionAliases.push(extensionAlias)
+
+				// set the handler as registered
+				this.registeredHandlers[extensionAlias.mime] = handler
+			})
+		},
+
 		registerLegacyAction({ mime, group }) {
 			if (!this.isStandalone && OCA?.Files?.fileActions) {
 				// unregistered handler, let's go!
@@ -930,7 +980,8 @@ export default {
 						// Faster to check if at least one node doesn't match the requirements
 						return !nodes.some(node => (
 							(node.permissions & Permission.READ) === 0
-							|| !this.Viewer.mimetypes.includes(node.mime)
+							|| (!this.Viewer.mimetypes.includes(node.mime)
+								&& !this.getExtensionAlias(node.extension, node.mime))
 						))
 					},
 					exec: filesActionHandler,
