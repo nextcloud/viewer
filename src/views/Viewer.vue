@@ -1216,7 +1216,7 @@ export default {
 		.modal-container {
 			// Ensure some space at the bottom
 			top: var(--header-height);
-			bottom: var(--header-height);
+			bottom: 0;
 			height: auto;
 			// let the mime components manage their own background-color
 			background-color: transparent;

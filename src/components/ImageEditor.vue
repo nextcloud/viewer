@@ -272,7 +272,7 @@ export default {
 	position: absolute;
 	z-index: 10100;
 	top: calc(var(--header-height) * -1);
-	bottom: calc(var(--header-height) * -1);
+	bottom: 0;
 	left: 0;
 	width: 100%;
 	height: 100vh;
