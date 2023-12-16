@@ -710,7 +710,7 @@ export default {
 			fileInfo = this.fileList[this.currentIndex]
 
 			// show file
-			this.currentFile = new File(fileInfo, mime, handler.component)
+			this.currentFile = new File(fileInfo, mime, this.components[mime])
 			this.comparisonFile = null
 			this.updatePreviousNext()
 
