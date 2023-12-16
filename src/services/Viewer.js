@@ -101,7 +101,7 @@ export default class Viewer {
 	registerHandler(handler) {
 		this._state.handlers.push(handler)
 		const handledMimes = [
-			...handler.mimes,
+			...handler.mimes || [],
 			...Object.keys(handler.mimesAliases || {}),
 		]
 		this._mimetypes.push.apply(this._mimetypes, handledMimes)
