@@ -37,4 +37,5 @@ export default {
 		'audio/webm',
 	],
 	component: Audios,
+	canCompare: true,
 }

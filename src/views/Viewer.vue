@@ -113,65 +113,67 @@
 
 		<div class="viewer__content" :class="contentClass" @click.self.exact="close">
 			<!-- COMPARE FILE -->
-			<component :is="comparisonFile.modal"
-				v-if="comparisonFile && !comparisonFile.failed && showComparison"
-				:key="comparisonFile | uniqueKey"
-				ref="comparison-content"
-				v-bind="comparisonFile"
-				:active="true"
-				:can-swipe="false"
-				:can-zoom="false"
-				:editing="false"
-				:is-full-screen="isFullscreen"
-				:is-sidebar-shown="isSidebarShown"
-				:loaded.sync="comparisonFile.loaded"
-				class="viewer__file viewer__file--active"
-				@error="comparisonFailed" />
+			<div v-if="comparisonFile && !comparisonFile.failed && showComparison" class="viewer__content--component">
+				<component :is="comparisonFile.modal"
+					:key="comparisonFile | uniqueKey"
+					ref="comparison-content"
+					v-bind="comparisonFile"
+					:active="true"
+					:can-swipe="false"
+					:can-zoom="true"
+					:editing="false"
+					:is-full-screen="isFullscreen"
+					:is-sidebar-shown="isSidebarShown"
+					:loaded.sync="comparisonFile.loaded"
+					class="viewer__file viewer__file--active"
+					@error="comparisonFailed" />
+			</div>
+			<div class="viewer__content--component">
+				<!-- PREVIOUS -->
+				<component :is="previousFile.modal"
+					v-if="previousFile && !previousFile.failed"
+					:key="previousFile | uniqueKey"
+					ref="previous-content"
+					v-bind="previousFile"
+					:file-list="fileList"
+					class="viewer__file--hidden viewer__file"
+					@error="previousFailed" />
+				<Error v-else-if="previousFile"
+					class="hidden-visually"
+					:name="previousFile.basename" />
 
-			<!-- PREVIOUS -->
-			<component :is="previousFile.modal"
-				v-if="previousFile && !previousFile.failed"
-				:key="previousFile | uniqueKey"
-				ref="previous-content"
-				v-bind="previousFile"
-				:file-list="fileList"
-				class="viewer__file--hidden viewer__file"
-				@error="previousFailed" />
-			<Error v-else-if="previousFile"
-				class="hidden-visually"
-				:name="previousFile.basename" />
+				<!-- CURRENT -->
+				<component :is="currentFile.modal"
+					v-if="!currentFile.failed"
+					:key="currentFile | uniqueKey"
+					ref="content"
+					v-bind="currentFile"
+					:active="true"
+					:can-swipe.sync="canSwipe"
+					:can-zoom="canZoom"
+					:editing.sync="editing"
+					:file-list="fileList"
+					:is-full-screen="isFullscreen"
+					:is-sidebar-shown="isSidebarShown"
+					:loaded.sync="currentFile.loaded"
+					class="viewer__file viewer__file--active"
+					@error="currentFailed" />
+				<Error v-else
+					:name="currentFile.basename" />
 
-			<!-- CURRENT -->
-			<component :is="currentFile.modal"
-				v-if="!currentFile.failed"
-				:key="currentFile | uniqueKey"
-				ref="content"
-				v-bind="currentFile"
-				:active="true"
-				:can-swipe.sync="canSwipe"
-				:can-zoom="canZoom"
-				:editing.sync="editing"
-				:file-list="fileList"
-				:is-full-screen="isFullscreen"
-				:is-sidebar-shown="isSidebarShown"
-				:loaded.sync="currentFile.loaded"
-				class="viewer__file viewer__file--active"
-				@error="currentFailed" />
-			<Error v-else
-				:name="currentFile.basename" />
-
-			<!-- NEXT -->
-			<component :is="nextFile.modal"
-				v-if="nextFile && !nextFile.failed"
-				:key="nextFile | uniqueKey"
-				ref="next-content"
-				v-bind="nextFile"
-				:file-list="fileList"
-				class="viewer__file--hidden viewer__file"
-				@error="nextFailed" />
-			<Error v-else-if="nextFile"
-				class="hidden-visually"
-				:name="nextFile.basename" />
+				<!-- NEXT -->
+				<component :is="nextFile.modal"
+					v-if="nextFile && !nextFile.failed"
+					:key="nextFile | uniqueKey"
+					ref="next-content"
+					v-bind="nextFile"
+					:file-list="fileList"
+					class="viewer__file--hidden viewer__file"
+					@error="nextFailed" />
+				<Error v-else-if="nextFile"
+					class="hidden-visually"
+					:name="nextFile.basename" />
+			</div>
 		</div>
 	</NcModal>
 </template>
@@ -685,7 +687,7 @@ export default {
 
 				// store current position
 				this.currentIndex = this.fileList.findIndex(file => file.basename === fileInfo.basename)
-			} else if (group && this.el === null) {
+			} else if (group && this.el === null && false) {
 				const mimes = this.mimeGroups[group]
 					? this.mimeGroups[group]
 					: [mime]
@@ -1215,8 +1217,16 @@ export default {
 		cursor: pointer;
 	}
 
+	.viewer__content--component {
+		width: 100%;
+		align-self: stretch;
+		display: flex;
+		align-content: center;
+		justify-content: center;
+	}
+
 	&--split {
-		.viewer__file--active {
+		.viewer__content--component {
 			width: 50%;
 		}
 	}
@@ -1225,7 +1235,6 @@ export default {
 		.modal-container {
 			// Ensure some space at the bottom
 			top: var(--header-height);
-			bottom: var(--header-height);
 			height: auto;
 			// let the mime components manage their own background-color
 			background-color: transparent;
@@ -1236,6 +1245,7 @@ export default {
 	&__content {
 		// center views
 		display: flex;
+		align-self: center;
 		align-items: center;
 		justify-content: center;
 		width: 100%;
