@@ -1110,12 +1110,19 @@ export default {
 		},
 
 		// Update etag of updated file to break cache.
+		/**
+		 *
+		 * @param {Node} node
+		 */
 		async handleFileUpdated(node) {
 			const index = this.fileList.findIndex(({ fileid: currentFileId }) => currentFileId === node.fileid)
 
-			this.fileList.splice(index, 1, { ...node, etag: node.etag })
+			// Ensure compatibility with the legacy data model that the Viewer is using. (see "model.ts").
+			// This can be removed once Viewer is migrated to the new Node API.
+			node.etag = node.attributes.etag
+			this.fileList.splice(index, 1, node)
 			if (node.fileid === this.currentFile.fileid) {
-				this.currentFile.etag = node.etag
+				this.currentFile.etag = node.attributes.etag
 			}
 		},
 
