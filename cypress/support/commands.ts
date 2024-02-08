@@ -116,8 +116,8 @@ Cypress.Commands.add(
 	'clickAction',
 	{ prevSubject: 'element' },
 	(subject, action) => {
-		subject.find('[data-cy-files-list-row-actions] button').click()
-		cy.get(`[data-cy-files-list-row-action="${action}"]`).click()
+		subject.find('[data-cy-files-list-row-actions] [aria-label="Actions"]').click()
+		cy.get(`[data-cy-files-list-row-action="${action}"] [role="menuitem"]`).click()
 	},
 )
 
