@@ -72,7 +72,7 @@ describe(`Download ${fileName} in viewer`, function() {
 			// Open the share menu
 			cy.get('.sharing-link-list > .sharing-entry [aria-label*=\'Actions for "Share link"\']').click()
 			cy.get('.action-button:contains(\'Customize link\')').click()
-			cy.get('label:contains(\'Hide download\')').as('hideDownloadBtn').click()
+			cy.get('span:contains(\'Hide download\')').as('hideDownloadBtn').click({ force: true })
 			cy.get('@hideDownloadBtn').prev('input[type=checkbox]').should('be.checked')
 
 			// Log out and access link share
