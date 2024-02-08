@@ -32,6 +32,10 @@ license: MIT
 version: 1.4.2
 license: MIT
 
+@linusborg/vue-simple-portal
+version: 0.1.5
+license: Apache-2.0
+
 @mdi/svg
 version: 7.3.67
 license: Apache-2.0
@@ -89,11 +93,11 @@ version: 2.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.4.0
+version: 8.6.2
 license: AGPL-3.0
 
 @nextcloud/vue-select
-version: 3.24.0
+version: 3.25.0
 license: MIT
 
 @popperjs/core
@@ -177,7 +181,7 @@ version: 3.0.6
 license: (MPL-2.0 OR Apache-2.0)
 
 emoji-mart-vue-fast
-version: 15.0.0
+version: 15.0.1
 license: BSD-3-Clause
 
 escape-html
@@ -295,6 +299,10 @@ license: MIT
 md5
 version: 2.3.0
 license: BSD-3-Clause
+
+nanoid
+version: 3.3.7
+license: MIT
 
 node-gettext
 version: 3.0.0
