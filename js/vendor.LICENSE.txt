@@ -1,15 +1,11 @@
 Included dependencies:
 
 @babel/runtime
-version: 7.22.5
-license: MIT
-
-@buttercup/fetch
-version: 0.1.1
+version: 7.24.0
 license: MIT
 
 @emotion/is-prop-valid
-version: 1.2.1
+version: 1.2.2
 license: MIT
 
 @emotion/memoize
@@ -25,11 +21,15 @@ version: 0.7.5
 license: MIT
 
 @floating-ui/core
-version: 1.3.1
+version: 1.6.0
 license: MIT
 
 @floating-ui/dom
-version: 1.4.2
+version: 1.6.3
+license: MIT
+
+@floating-ui/utils
+version: 0.2.1
 license: MIT
 
 @linusborg/vue-simple-portal
@@ -37,7 +37,7 @@ version: 0.1.5
 license: Apache-2.0
 
 @mdi/svg
-version: 7.3.67
+version: 7.4.47
 license: Apache-2.0
 
 @nextcloud/auth
@@ -53,7 +53,7 @@ version: 0.3.0
 license: GPL-3.0-or-later
 
 @nextcloud/calendar-js
-version: 6.0.1
+version: 6.1.0
 license: AGPL-3.0-or-later
 
 @nextcloud/capabilities
@@ -61,7 +61,7 @@ version: 1.1.0
 license: GPL-3.0-or-later
 
 @nextcloud/dialogs
-version: 5.0.0-beta.6
+version: 5.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/event-bus
@@ -69,7 +69,7 @@ version: 3.1.0
 license: GPL-3.0-or-later
 
 @nextcloud/files
-version: 3.0.0-beta.26
+version: 3.1.0
 license: AGPL-3.0-or-later
 
 @nextcloud/initial-state
@@ -89,11 +89,11 @@ version: 2.1.0
 license: GPL-3.0-or-later
 
 @nextcloud/router
-version: 2.2.0
+version: 2.2.1
 license: GPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.8.1
+version: 8.9.1
 license: AGPL-3.0
 
 @nextcloud/vue-select
@@ -105,11 +105,11 @@ version: 2.11.8
 license: MIT
 
 @scaleflex/icons
-version: 1.0.0-beta.99
+version: 2.1.23
 license: MIT
 
 @scaleflex/ui
-version: 1.0.0-beta.99
+version: 2.1.24
 license: MIT
 
 @skjnldsv/vue-plyr
@@ -132,20 +132,8 @@ ansi-regex
 version: 6.0.1
 license: MIT
 
-available-typed-arrays
-version: 1.0.5
-license: MIT
-
 axios
-version: 1.6.2
-license: MIT
-
-builtin-status-codes
-version: 3.0.0
-license: MIT
-
-call-bind
-version: 1.0.2
+version: 1.6.7
 license: MIT
 
 camelcase
@@ -161,7 +149,7 @@ version: 0.0.2
 license: BSD-3-Clause
 
 core-js
-version: 3.33.0
+version: 3.36.0
 license: MIT
 
 crypt
@@ -177,7 +165,7 @@ version: 1.2.1
 license: MIT
 
 dompurify
-version: 3.0.6
+version: 3.0.9
 license: (MPL-2.0 OR Apache-2.0)
 
 emoji-mart-vue-fast
@@ -188,12 +176,8 @@ escape-html
 version: 1.0.3
 license: MIT
 
-events
-version: 3.3.0
-license: MIT
-
 filerobot-image-editor
-version: 4.5.2
+version: 4.7.0
 license: MIT
 
 floating-vue
@@ -201,75 +185,19 @@ version: 1.0.0-beta.19
 license: MIT
 
 focus-trap
-version: 7.4.3
-license: MIT
-
-for-each
-version: 0.3.3
-license: MIT
-
-function-bind
-version: 1.1.1
-license: MIT
-
-get-intrinsic
-version: 1.2.1
-license: MIT
-
-gopd
-version: 1.0.1
-license: MIT
-
-has
-version: 1.0.3
-license: MIT
-
-has-proto
-version: 1.0.1
-license: MIT
-
-has-symbols
-version: 1.0.3
-license: MIT
-
-has-tostringtag
-version: 1.0.0
+version: 7.5.4
 license: MIT
 
 hoist-non-react-statics
 version: 3.3.2
 license: BSD-3-Clause
 
-https-browserify
-version: 1.0.0
-license: MIT
-
 ical.js
 version: 1.5.0
 license: MPL-2.0
 
-inherits
-version: 2.0.4
-license: ISC
-
-is-arguments
-version: 1.1.1
-license: MIT
-
 is-buffer
 version: 1.1.6
-license: MIT
-
-is-callable
-version: 1.2.7
-license: MIT
-
-is-generator-function
-version: 1.0.10
-license: MIT
-
-is-typed-array
-version: 1.1.10
 license: MIT
 
 its-fine
@@ -281,11 +209,11 @@ version: 8.4.3
 license: MIT
 
 linkify-string
-version: 4.1.1
+version: 4.1.3
 license: MIT
 
 linkifyjs
-version: 4.1.1
+version: 4.1.3
 license: MIT
 
 lodash.get
@@ -308,10 +236,6 @@ node-gettext
 version: 3.0.0
 license: (MIT)
 
-node-stdlib-browser
-version: 1.2.0
-license: MIT
-
 path-browserify
 version: 1.0.1
 license: MIT
@@ -324,14 +248,6 @@ prop-types
 version: 15.7.2
 license: MIT
 
-punycode
-version: 1.4.1
-license: MIT
-
-querystring-es3
-version: 0.2.1
-license: (MIT)
-
 react
 version: 18.2.0
 license: MIT
@@ -341,7 +257,7 @@ version: 18.2.0
 license: MIT
 
 react-filerobot-image-editor
-version: 4.5.1
+version: 4.7.1
 license: MIT
 
 react-is
@@ -356,33 +272,13 @@ react-reconciler
 version: 0.29.0
 license: MIT
 
-readable-stream
-version: 3.6.2
-license: MIT
-
-safe-buffer
-version: 5.2.1
-license: MIT
-
 scheduler
 version: 0.23.0
 license: MIT
 
 semver
-version: 7.5.3
+version: 7.6.0
 license: ISC
-
-stream-browserify
-version: 3.0.0
-license: MIT
-
-stream-http
-version: 3.2.0
-license: MIT
-
-string_decoder
-version: 1.3.0
-license: MIT
 
 string-length
 version: 5.0.1
@@ -412,16 +308,8 @@ tributejs
 version: 5.1.3
 license: MIT
 
-util
-version: 0.12.5
-license: MIT
-
-util-deprecate
-version: 1.0.2
-license: MIT
-
 uuid
-version: 9.0.0
+version: 9.0.1
 license: MIT
 
 vite-plugin-node-polyfills
@@ -445,7 +333,7 @@ version: 0.14.7
 license: MIT
 
 vue-material-design-icons
-version: 5.2.0
+version: 5.3.0
 license: MIT
 
 vue2-datepicker
@@ -453,13 +341,5 @@ version: 3.11.1
 license: MIT
 
 webdav
-version: 5.3.0
-license: MIT
-
-which-typed-array
-version: 1.1.9
-license: MIT
-
-xtend
-version: 4.0.2
+version: 5.4.0
 license: MIT
