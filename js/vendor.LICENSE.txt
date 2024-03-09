@@ -161,7 +161,7 @@ version: 0.2.7
 license: MIT
 
 debounce
-version: 1.2.1
+version: 2.0.0
 license: MIT
 
 dompurify
