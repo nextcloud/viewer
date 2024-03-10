@@ -1,6 +1,7 @@
 
 import { configureNextcloud, startNextcloud, stopNextcloud, waitOnNextcloud } from './cypress/dockerNode'
 import { defineConfig } from 'cypress'
+import cypressSplit from 'cypress-split'
 
 import browserify from '@cypress/browserify-preprocessor'
 import getCompareSnapshotsPlugin from 'cypress-visual-regression/dist/plugin'
@@ -22,8 +23,8 @@ export default defineConfig({
 	// Needed to trigger `after:run` events with cypress open
 	experimentalInteractiveRunEvents: true,
 
-	// Faster processing, video is broken on GH actions anyway
-	video: false,
+	// faster video processing
+	videoCompression: false,
 
 	// Visual regression testing
 	env: {
@@ -43,6 +44,8 @@ export default defineConfig({
 		async setupNodeEvents(on, config) {
 			// Fix browserslist extend https://github.com/cypress-io/cypress/issues/2983#issuecomment-570616682
 			on('file:preprocessor', browserify())
+
+			cypressSplit(on, config)
 			getCompareSnapshotsPlugin(on, config)
 
 			// Disable spell checking to prevent rendering differences
