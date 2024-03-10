@@ -54,18 +54,24 @@ describe(`Download ${fileName} in viewer`, function() {
 			.should('contain', 'image2.jpg')
 	})
 
-	it('Share the Photos folder with a share link and access the share link', function() {
+	it('Share the Photos folder with a share link, disable download and access the share link', function() {
 		cy.createLinkShare('/Photos').then(token => {
-			// Open the sidebar
-			cy.visit('/apps/files')
-			cy.get('.files-fileList tr[data-file="Photos"] .fileactions .action-share', { timeout: 10000 }).click()
+			cy.intercept('GET', '**/apps/files_sharing/api/v1/shares*').as('sharingAPI')
+
+			// Open the sidebar from the breadcrumbs
+			cy.get('ul.breadcrumb > li:last-child  a + span').click()
 			cy.get('aside.app-sidebar').should('be.visible')
 
-			// Open the share menu
-			cy.get(`.sharing-link-list > .sharing-entry > .action-item[href*='/s/${token}'] + .sharing-entry__actions .action-item__menutoggle`).click()
-			cy.get('label:contains(\'Hide download\')').as('hideDownloadBtn').click()
-			cy.get('@hideDownloadBtn').prev('input[type=checkbox]').should('be.checked')
+			// Wait for the sidebar to be done loading
+			cy.wait('@sharingAPI', { timeout: 10000 })
 
+			// Open the share menu
+			cy.get('.sharing-link-list > .sharing-entry button[aria-label*="Actions for "]').click()
+			cy.get('.action-button:contains(\'Customize link\')').click()
+			cy.get('.checkbox-radio-switch-checkbox').contains('Hide download').as('hideDownloadBtn')
+			// click the label
+			cy.get('@hideDownloadBtn').get('span').contains('Hide download').click()
+			cy.get('@hideDownloadBtn').get('input[type=checkbox]').should('be.checked')
 			// Log out and access link share
 			cy.logout()
 			cy.visit(`/s/${token}`)
