@@ -69,9 +69,14 @@ describe(`Download ${fileName} in viewer`, function() {
 			cy.get('.sharing-link-list > .sharing-entry button[aria-label*="Actions for "]').click()
 			cy.get('.action-button:contains(\'Customize link\')').click()
 			cy.get('.checkbox-radio-switch-checkbox').contains('Hide download').as('hideDownloadBtn')
+
+			cy.intercept('PUT', '**/apps/files_sharing/api/v1/shares/*').as('saveShareAPIRequest')
+
 			// click the label
 			cy.get('@hideDownloadBtn').get('span').contains('Hide download').click()
 			cy.get('@hideDownloadBtn').get('input[type=checkbox]').should('be.checked')
+			cy.wait('@saveShareAPIRequest', { timeout: 10000 })
+
 			// Log out and access link share
 			cy.logout()
 			cy.visit(`/s/${token}`)
@@ -90,9 +95,10 @@ describe(`Download ${fileName} in viewer`, function() {
 			.and('not.have.class', 'icon-loading')
 	})
 
-	it('See the title on the viewer header but not the Download button', function() {
+	it('See the title on the viewer header but not the Download nor the menu button', function() {
 		cy.get('body > .viewer .modal-title').should('contain', 'image1.jpg')
-		cy.get('body > .viewer .modal-header a.action-item .download-icon').should('not.exist')
+		cy.get('body a[download="image1.jpg"]').should('not.exist')
+		cy.get('body > .viewer .modal-header button.action-item__menutoggle').should('not.exist')
 		cy.get('body > .viewer .modal-header button.header-close').should('be.visible')
 	})
 
