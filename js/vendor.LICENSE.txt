@@ -1,7 +1,7 @@
 Included dependencies:
 
 @babel/runtime
-version: 7.24.0
+version: 7.24.1
 license: MIT
 
 @emotion/is-prop-valid
@@ -89,11 +89,11 @@ version: 2.1.0
 license: GPL-3.0-or-later
 
 @nextcloud/router
-version: 2.2.1
+version: 2.1.2
 license: GPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.9.1
+version: 8.11.1
 license: AGPL-3.0
 
 @nextcloud/vue-select
@@ -133,7 +133,7 @@ version: 6.0.1
 license: MIT
 
 axios
-version: 1.6.7
+version: 1.6.8
 license: MIT
 
 camelcase
@@ -149,7 +149,7 @@ version: 0.0.2
 license: BSD-3-Clause
 
 core-js
-version: 3.36.0
+version: 3.36.1
 license: MIT
 
 crypt
@@ -165,7 +165,7 @@ version: 2.0.0
 license: MIT
 
 dompurify
-version: 3.0.9
+version: 3.0.11
 license: (MPL-2.0 OR Apache-2.0)
 
 emoji-mart-vue-fast
@@ -201,7 +201,7 @@ version: 1.1.6
 license: MIT
 
 its-fine
-version: 1.1.1
+version: 1.1.2
 license: MIT
 
 konva
@@ -341,5 +341,5 @@ version: 3.11.1
 license: MIT
 
 webdav
-version: 5.4.0
+version: 5.5.0
 license: MIT
