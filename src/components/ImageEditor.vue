@@ -73,16 +73,16 @@ export default {
 					palette: {
 						'bg-secondary': 'var(--color-main-background)',
 						'bg-primary': 'var(--color-background-dark)',
+						'bg-hover': 'var(--color-background-hover)',
+						'bg-stateless': 'var(--color-background-dark)',
 						// Accent
 						'accent-primary': 'var(--color-primary-element)',
-						// Use by the slider
+						'accent-stateless': 'var(--color-primary-element)',
 						'border-active-bottom': 'var(--color-primary-element)',
-						'icons-primary': 'var(--color-main-text)',
 						// Active state
 						'bg-primary-active': 'var(--color-background-dark)',
 						'bg-primary-hover': 'var(--color-background-hover)',
 						'accent-primary-active': 'var(--color-main-text)',
-						// Used by the save button
 						'accent-primary-hover': 'var(--color-primary-element)',
 
 						warning: 'var(--color-error)',
@@ -216,7 +216,7 @@ export default {
 						return
 					}
 					this.onClose('warning-ignored', false)
-				}
+				},
 			)
 		},
 
