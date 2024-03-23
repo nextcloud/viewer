@@ -101,7 +101,7 @@ export default {
 				loadSprite: false,
 				fullscreen: {
 					iosNative: true,
-				}
+				},
 			}
 		},
 	},
