@@ -465,7 +465,7 @@ var b4=Object.defineProperty;var y4=(e,r,a)=>r in e?b4(e,r,{enumerable:!0,config
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- */const dT={"X-Requested-With":"XMLHttpRequest",requesttoken:x0()||""},XD=()=>HD(k1(),Hs()?{username:R1(),password:"",headers:dT}:{headers:dT});/*! third party licenses: js/vendor.LICENSE.txt *//**
+ */const dT=()=>({"X-Requested-With":"XMLHttpRequest",requesttoken:x0()||""}),XD=()=>HD(k1(),Hs()?{username:R1(),password:"",headers:dT()}:{headers:dT()});/*! third party licenses: js/vendor.LICENSE.txt *//**
  * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
  *
  * @author John Molakvoæ <skjnldsv@protonmail.com>
