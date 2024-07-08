@@ -183,7 +183,6 @@ video {
 	z-index: 20050;
 	align-self: center;
 	max-width: 100%;
-	max-height: 100% !important;
 	background-color: black;
 
 	justify-self: center;
