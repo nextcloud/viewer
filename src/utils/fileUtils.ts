@@ -27,7 +27,8 @@ import camelcase from 'camelcase'
 import { getRootPath, getToken, getUserRoot, isPublic } from './davUtils'
 import { isNumber } from './numberUtil'
 
-declare const OC: Nextcloud.v27.OC
+/// <reference types="@nextcloud/typings" />
+declare const OC: Nextcloud.v28.OC
 
 /**
  * Extract dir and name from file path
