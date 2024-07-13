@@ -161,7 +161,7 @@ version: 0.2.7
 license: MIT
 
 debounce
-version: 2.0.0
+version: 2.1.0
 license: MIT
 
 dompurify
@@ -177,7 +177,7 @@ version: 1.0.3
 license: MIT
 
 filerobot-image-editor
-version: 4.7.0
+version: 4.8.1
 license: MIT
 
 floating-vue
