@@ -425,7 +425,7 @@ var E4=Object.defineProperty;var D4=(e,r,a)=>r in e?E4(e,r,{enumerable:!0,config
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- */function Ij(e,r,a){const n="".concat(e.dirname,"/").concat(e.basename).replace(/^\/\//,"/"),i=[window.OCP.Files.Router.name,{...window.OCP.Files.Router.params},{...window.OCP.Files.Router.query},!0],s=()=>window.OCP.Files.Router.goToRoute(...i);ah(e,r,a),OCA.Viewer.open({path:n,onPrev:ah,onNext:ah,onClose:s})}function ah(e,r,a){window.OCP.Files.Router.goToRoute(null,{view:r.id,fileid:e.fileid},{dir:a,openfile:!0},!0)}/**
+ */function Ij(e,r,a){const n="".concat(e.dirname,"/").concat(e.basename).replace(/^\/\//,"/"),i=[window.OCP.Files.Router.name,{...window.OCP.Files.Router.params},{...window.OCP.Files.Router.query},!0],s=()=>{delete i[2].openfile,window.OCP.Files.Router.goToRoute(...i)};ah(e,r,a),OCA.Viewer.open({path:n,onPrev:ah,onNext:ah,onClose:s})}function ah(e,r,a){window.OCP.Files.Router.goToRoute(null,{view:r.id,fileid:e.fileid},{dir:a,openfile:!0},!0)}/**
  * @copyright Copyright (c) 2020 Azul <azul@riseup.net>
  *
  * @author Azul <azul@riseup.net>
