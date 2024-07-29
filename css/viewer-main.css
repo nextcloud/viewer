@@ -371,81 +371,81 @@ tr.file-picker__row td.row-name[data-v-48df4f27] {
 	padding: 10% 5%;
 	background-color: var(--color-main-background);
 }
-.viewer.modal-mask[data-v-dbe1c71f] {
+.viewer.modal-mask[data-v-09be59e8] {
   transition: width ease 100ms, background-color 0.3s ease;
 }
-.viewer[data-v-dbe1c71f] .modal-container, .viewer__content[data-v-dbe1c71f] {
+.viewer[data-v-09be59e8] .modal-container, .viewer__content[data-v-09be59e8] {
   overflow: visible !important;
   cursor: pointer;
 }
-.viewer--split .viewer__file--active[data-v-dbe1c71f] {
+.viewer--split .viewer__file--active[data-v-09be59e8] {
   width: 50%;
 }
-.viewer[data-v-dbe1c71f] .modal-wrapper .modal-container {
+.viewer[data-v-09be59e8] .modal-wrapper .modal-container {
   top: var(--header-height);
   bottom: var(--header-height);
   height: auto;
   background-color: transparent;
   box-shadow: none;
 }
-.viewer__content[data-v-dbe1c71f] {
+.viewer__content[data-v-09be59e8] {
   width: 100%;
   height: 100%;
 }
-.viewer__file-wrapper[data-v-dbe1c71f] {
+.viewer__file-wrapper[data-v-09be59e8] {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
 }
-.viewer__file-wrapper--hidden[data-v-dbe1c71f] {
+.viewer__file-wrapper--hidden[data-v-09be59e8] {
   position: absolute;
   z-index: -1;
   left: -10000px;
 }
-.viewer__file[data-v-dbe1c71f] {
+.viewer__file[data-v-09be59e8] {
   transition: height 100ms ease, width 100ms ease;
 }
-.viewer.theme--dark[data-v-dbe1c71f] .button-vue--vue-tertiary:hover {
+.viewer.theme--dark[data-v-09be59e8] .button-vue--vue-tertiary:hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
 }
-.viewer.theme--dark[data-v-dbe1c71f] .button-vue--vue-tertiary:focus, .viewer.theme--dark[data-v-dbe1c71f] .button-vue--vue-tertiary:focus-visible {
+.viewer.theme--dark[data-v-09be59e8] .button-vue--vue-tertiary:focus, .viewer.theme--dark[data-v-09be59e8] .button-vue--vue-tertiary:focus-visible {
   background-color: rgba(255, 255, 255, 0.08) !important;
   outline: 2px solid var(--color-primary-element) !important;
 }
-.viewer.theme--dark[data-v-dbe1c71f] .button-vue--vue-tertiary.action-item__menutoggle {
+.viewer.theme--dark[data-v-09be59e8] .button-vue--vue-tertiary.action-item__menutoggle {
   background-color: transparent;
 }
-.viewer.theme--undefined.modal-mask[data-v-dbe1c71f] {
+.viewer.theme--undefined.modal-mask[data-v-09be59e8] {
   background-color: transparent !important;
 }
-.viewer.theme--light.modal-mask[data-v-dbe1c71f] {
+.viewer.theme--light.modal-mask[data-v-09be59e8] {
   background-color: rgba(255, 255, 255, 0.92) !important;
 }
-.viewer.theme--light[data-v-dbe1c71f] .modal-name,
-.viewer.theme--light[data-v-dbe1c71f] .modal-header .icons-menu button svg {
+.viewer.theme--light[data-v-09be59e8] .modal-name,
+.viewer.theme--light[data-v-09be59e8] .modal-header .icons-menu button svg {
   color: #000 !important;
 }
-.viewer.theme--default.modal-mask[data-v-dbe1c71f] {
+.viewer.theme--default.modal-mask[data-v-09be59e8] {
   background-color: var(--color-main-background) !important;
 }
-.viewer.theme--default[data-v-dbe1c71f] .modal-name,
-.viewer.theme--default[data-v-dbe1c71f] .modal-header .icons-menu {
+.viewer.theme--default[data-v-09be59e8] .modal-name,
+.viewer.theme--default[data-v-09be59e8] .modal-header .icons-menu {
   color: var(--color-main-text) !important;
 }
-.viewer.theme--default[data-v-dbe1c71f] .modal-name button svg, .viewer.theme--default[data-v-dbe1c71f] .modal-name a,
-.viewer.theme--default[data-v-dbe1c71f] .modal-header .icons-menu button svg,
-.viewer.theme--default[data-v-dbe1c71f] .modal-header .icons-menu a {
+.viewer.theme--default[data-v-09be59e8] .modal-name button svg, .viewer.theme--default[data-v-09be59e8] .modal-name a,
+.viewer.theme--default[data-v-09be59e8] .modal-header .icons-menu button svg,
+.viewer.theme--default[data-v-09be59e8] .modal-header .icons-menu a {
   color: var(--color-main-text) !important;
 }
-.viewer.image--fullscreen[data-v-dbe1c71f] .modal-header .modal-name {
+.viewer.image--fullscreen[data-v-09be59e8] .modal-header .modal-name {
   opacity: 0;
 }
-.viewer.image--fullscreen[data-v-dbe1c71f] .modal-header .icons-menu {
+.viewer.image--fullscreen[data-v-09be59e8] .modal-header .icons-menu {
   background-color: rgba(0, 0, 0, 0.2);
 }
-.viewer.image--fullscreen[data-v-dbe1c71f] .modal-wrapper .modal-container {
+.viewer.image--fullscreen[data-v-09be59e8] .modal-wrapper .modal-container {
   top: 0;
   bottom: 0;
   height: 100%;
