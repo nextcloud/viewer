@@ -70,7 +70,7 @@ export default defineConfig({
 
 			// Before the browser launches
 			// starting Nextcloud testing container
-			return startNextcloud(process.env.BRANCH)
+			return startNextcloud(process.env.BRANCH || 'stable28')
 				.then((ip) => {
 					// Setting container's IP as base Url
 					config.baseUrl = `http://${ip}/index.php`
