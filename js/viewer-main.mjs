@@ -11038,13 +11038,13 @@ const onError = async (error) => {
   return Promise.reject(error);
 };
 var _a;
-const client = axios.create({
+const client$1 = axios.create({
   headers: {
     requesttoken: (_a = d$3()) != null ? _a : "",
     "X-Requested-With": "XMLHttpRequest"
   }
 });
-const cancelableClient = Object.assign(client, {
+const cancelableClient = Object.assign(client$1, {
   CancelToken: axios.CancelToken,
   isCancel: axios.isCancel
 });
@@ -11052,7 +11052,7 @@ cancelableClient.interceptors.response.use((r2) => r2, onError$2(cancelableClien
 cancelableClient.interceptors.response.use((r2) => r2, onError$1(cancelableClient));
 cancelableClient.interceptors.response.use((r2) => r2, onError);
 c$2((token) => {
-  client.defaults.headers.requesttoken = token;
+  client$1.defaults.headers.requesttoken = token;
 });
 function assertPath(path) {
   if (typeof path !== "string") {
@@ -25845,8 +25845,7 @@ r$1.hT;
 r$1.O4;
 r$1.Kd;
 r$1.YK;
-var an = r$1.UU;
-r$1.Gu;
+var an = r$1.UU, un = r$1.Gu;
 r$1.ky;
 r$1.h4;
 r$1.ch;
@@ -26517,7 +26516,7 @@ function davGetRootPath() {
   }
   return `/files/${l$2()?.uid}`;
 }
-davGetRootPath();
+const davRootPath = davGetRootPath();
 function davGetRemoteURL() {
   const url = U$2("dav");
   if (isPublicShare()) {
@@ -26525,7 +26524,31 @@ function davGetRemoteURL() {
   }
   return url;
 }
-davGetRemoteURL();
+const davRemoteURL = davGetRemoteURL();
+const davGetClient = function(remoteURL = davRemoteURL, headers = {}) {
+  const client2 = an(remoteURL, { headers });
+  function setHeaders(token) {
+    client2.setHeaders({
+      ...headers,
+      // Add this so the server knows it is an request from the browser
+      "X-Requested-With": "XMLHttpRequest",
+      // Inject user auth
+      requesttoken: token ?? ""
+    });
+  }
+  c$2(setHeaders);
+  setHeaders(d$3());
+  const patcher = un();
+  patcher.patch("fetch", (url, options2) => {
+    const headers2 = options2.headers;
+    if (headers2?.method) {
+      options2.method = headers2.method;
+      delete headers2.method;
+    }
+    return fetch(url, options2);
+  });
+  return client2;
+};
 var util$3 = {};
 (function(exports) {
   const nameStartChar = ":A-Za-z_\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD";
@@ -26699,48 +26722,6 @@ var re$1 = { exports: {} };
 })(re$1, re$1.exports);
 /*! third party licenses: js/vendor.LICENSE.txt */
 /**
- * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
- *
- * @author John Molakvoæ <skjnldsv@protonmail.com>
- *
- * @license AGPL-3.0-or-later
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- */
-const getRootPath = function() {
-  if (!isPublic()) {
-    return U$2(`dav${getUserRoot()}`);
-  } else {
-    return U$2("webdav").replace("/remote.php", "/public.php");
-  }
-};
-const getUserRoot = function() {
-  if (isPublic()) {
-    throw new Error("No user logged in");
-  }
-  return `/files/${l$2()?.uid}`;
-};
-const isPublic = function() {
-  return !l$2();
-};
-const getToken = function() {
-  const tokenInput = document.getElementById("sharingToken");
-  return tokenInput && tokenInput.value;
-};
-/*! third party licenses: js/vendor.LICENSE.txt */
-/**
  * @copyright Copyright (c) 2023 Hamza Mahjoubi <hamza.mahjoubi221@proton.me>
  *
  * @author Hamza Mahjoubi <hamza.mahjoubi221@proton.me>
@@ -26772,7 +26753,7 @@ async function getSortingConfig() {
   return { key, asc };
 }
 async function getViewConfigs() {
-  if (isPublic()) {
+  if (isPublicShare()) {
     return null;
   }
   const url = _$2("apps/files/api/v1/views");
@@ -26999,20 +26980,20 @@ const genFileInfo = function(obj) {
   return fileInfo;
 };
 function getDavPath({ filename, basename: basename3, source = "" }) {
-  if (isPublic()) {
+  if (isPublicShare()) {
     return _$2(
-      `/s/${getToken()}/download?path={dirname}&files={basename}`,
+      `/s/${getSharingToken()}/download?path={dirname}&files={basename}`,
       { dirname: dirname2(filename), basename: basename3 }
     );
   }
-  const prefixUser = getUserRoot();
+  const prefixUser = davRootPath;
   if (source && !source.includes(prefixUser)) {
     return null;
   }
   if (filename.startsWith(prefixUser)) {
     filename = filename.slice(prefixUser.length);
   }
-  return getRootPath() + encodePath(filename);
+  return davRemoteURL + encodePath(filename);
 }
 /**
  * @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
@@ -27253,21 +27234,7 @@ function pushToHistory({ fileid }) {
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-const getHeaders = () => {
-  return {
-    // Add this so the server knows it is an request from the browser
-    "X-Requested-With": "XMLHttpRequest",
-    // Add the request token to the request
-    requesttoken: d$3() || ""
-  };
-};
-const getClient = () => {
-  const client2 = an(
-    getRootPath(),
-    isPublic() ? { username: getToken(), password: "", headers: getHeaders() } : { headers: getHeaders() }
-  );
-  return client2;
-};
+const client = davGetClient();
 /*! third party licenses: js/vendor.LICENSE.txt */
 /**
  * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
@@ -27298,14 +27265,14 @@ const statData = `<?xml version="1.0"?>
 		</d:prop>
 	</d:propfind>`;
 async function getFileInfo(path, options2 = {}) {
-  const response = await getClient().stat(path, Object.assign({
+  const response = await client.stat(`${davRootPath}${path}`, Object.assign({
     data: statData,
     details: true
   }, options2));
   return genFileInfo(response.data);
 }
 async function rawStat(origin2, path, options2 = {}) {
-  const response = await an(origin2, { headers: { requesttoken: d$3() || "" } }).stat(path, {
+  const response = await davGetClient(origin2).stat(path, {
     ...options2,
     data: statData,
     details: true
@@ -27335,8 +27302,7 @@ async function rawStat(origin2, path, options2 = {}) {
  *
  */
 async function getFileList(path, options2 = {}) {
-  const fixedPath = path === "/" ? "" : path;
-  const response = await getClient().getDirectoryContents(fixedPath, Object.assign({
+  const response = await client.getDirectoryContents(`${davRootPath}${path}`, Object.assign({
     data: `<?xml version="1.0"?>
 			<d:propfind ${getDavNameSpaces()}>
 				<d:prop>
@@ -27448,8 +27414,8 @@ function getPreviewIfAny({ fileid, filename, previewUrl, hasPreview, davPath, et
   }
   const searchParams = `fileId=${fileid}&x=${Math.floor(screen.width * devicePixelRatio)}&y=${Math.floor(screen.height * devicePixelRatio)}&a=true` + (etag !== null ? `&etag=${etag.replace(/&quot;/g, "")}` : "");
   if (hasPreview) {
-    if (isPublic()) {
-      return _$2(`/apps/files_sharing/publicpreview/${getToken()}?file=${encodePath(filename)}&${searchParams}`);
+    if (isPublicShare()) {
+      return _$2(`/apps/files_sharing/publicpreview/${getSharingToken()}?file=${encodePath(filename)}&${searchParams}`);
     }
     return _$2(`/core/preview?${searchParams}`);
   }
@@ -28021,7 +27987,7 @@ const _sfc_main$D = {
       // TODO: remove OCA?.Files?.fileActions when public Files is Vue
       isStandalone: OCP?.Files === void 0 && OCA?.Files?.fileActions === void 0,
       theme: null,
-      root: getRootPath(),
+      root: davRemoteURL,
       handlerId: "",
       trapElements: []
     };
@@ -28086,7 +28052,7 @@ const _sfc_main$D = {
     },
     sidebarOpenFilePath() {
       try {
-        const relativePath = this.currentFile?.davPath?.split(getUserRoot())[1];
+        const relativePath = this.currentFile?.davPath?.split(davRootPath)[1];
         return relativePath?.split("/")?.map(decodeURIComponent)?.join("/");
       } catch (e2) {
         return false;
@@ -28756,7 +28722,7 @@ var __component__$D = /* @__PURE__ */ normalizeComponent$1(
   _sfc_staticRenderFns$D,
   false,
   null,
-  "222ec41e"
+  "e16cf4dc"
 );
 const ViewerComponent = __component__$D.exports;
 function setAsyncState(vm, stateObject, state) {
