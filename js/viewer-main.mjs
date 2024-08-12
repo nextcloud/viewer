@@ -22686,9 +22686,6 @@ function encodePath(path) {
 function basename2(path) {
   return path.replace(/\\/g, "/").replace(/.*\//, "");
 }
-function dirname2(path) {
-  return path.replace(/\\/g, "/").replace(/\/[^\/]*$/, "");
-}
 function _defineProperty$4(obj, key, value3) {
   if (key in obj) {
     Object.defineProperty(obj, key, { value: value3, enumerable: true, configurable: true, writable: true });
@@ -26979,19 +26976,13 @@ const genFileInfo = function(obj) {
   });
   return fileInfo;
 };
-function getDavPath({ filename, basename: basename3, source = "" }) {
-  if (isPublicShare()) {
-    return _$2(
-      `/s/${getSharingToken()}/download?path={dirname}&files={basename}`,
-      { dirname: dirname2(filename), basename: basename3 }
-    );
-  }
+function getDavPath({ filename, source = "" }) {
   const prefixUser = davRootPath;
   if (source && !source.includes(prefixUser)) {
     return null;
   }
-  if (filename.startsWith(prefixUser)) {
-    filename = filename.slice(prefixUser.length);
+  if (!filename.startsWith(prefixUser)) {
+    filename = `${davRootPath}${filename}`;
   }
   return davRemoteURL + encodePath(filename);
 }
@@ -27265,7 +27256,7 @@ const statData = `<?xml version="1.0"?>
 		</d:prop>
 	</d:propfind>`;
 async function getFileInfo(path, options2 = {}) {
-  const response = await client.stat(`${davRootPath}${path}`, Object.assign({
+  const response = await client.stat(path, Object.assign({
     data: statData,
     details: true
   }, options2));
@@ -27302,7 +27293,7 @@ async function rawStat(origin2, path, options2 = {}) {
  *
  */
 async function getFileList(path, options2 = {}) {
-  const response = await client.getDirectoryContents(`${davRootPath}${path}`, Object.assign({
+  const response = await client.getDirectoryContents(path, Object.assign({
     data: `<?xml version="1.0"?>
 			<d:propfind ${getDavNameSpaces()}>
 				<d:prop>
@@ -28233,6 +28224,9 @@ const _sfc_main$D = {
      * @param {string|null} overrideHandlerId the ID of the handler with which to view the files, if any
      */
     async openFile(path, overrideHandlerId = null) {
+      if (!path.startsWith(davRootPath)) {
+        path = `${davRootPath}${path}`;
+      }
       await this.beforeOpen();
       this.cancelRequestFile();
       if (this.isSameFile(null, path)) {
@@ -28722,7 +28716,7 @@ var __component__$D = /* @__PURE__ */ normalizeComponent$1(
   _sfc_staticRenderFns$D,
   false,
   null,
-  "e16cf4dc"
+  "9bc9aec6"
 );
 const ViewerComponent = __component__$D.exports;
 function setAsyncState(vm, stateObject, state) {
