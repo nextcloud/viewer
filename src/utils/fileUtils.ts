@@ -132,6 +132,10 @@ function getDavPath({ filename, basename, source = '' }: { filename: string, bas
 
 	const prefixUser = getUserRoot()
 
+	if (!filename || typeof filename !== 'string') {
+		return null
+	}
+
 	// If we have a source but we're not a dav resource, return null
 	if (source && !source.includes(prefixUser)) {
 		return null
