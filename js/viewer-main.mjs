@@ -26978,6 +26978,9 @@ const genFileInfo = function(obj) {
 };
 function getDavPath({ filename, source = "" }) {
   const prefixUser = davRootPath;
+  if (!filename || typeof filename !== "string") {
+    return null;
+  }
   if (source && !source.includes(prefixUser)) {
     return null;
   }
