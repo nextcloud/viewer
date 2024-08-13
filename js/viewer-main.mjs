@@ -27225,7 +27225,8 @@ function pushToHistory({ fileid }) {
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-const client = davGetClient();
+const davRemote = davGetRemoteURL();
+const client = davGetClient(`${davRemote}${davRootPath}`);
 /*! third party licenses: js/vendor.LICENSE.txt */
 /**
  * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
@@ -28224,9 +28225,6 @@ const _sfc_main$D = {
      * @param {string|null} overrideHandlerId the ID of the handler with which to view the files, if any
      */
     async openFile(path, overrideHandlerId = null) {
-      if (!path.startsWith(davRootPath)) {
-        path = `${davRootPath}${path}`;
-      }
       await this.beforeOpen();
       this.cancelRequestFile();
       if (this.isSameFile(null, path)) {
@@ -28716,7 +28714,7 @@ var __component__$D = /* @__PURE__ */ normalizeComponent$1(
   _sfc_staticRenderFns$D,
   false,
   null,
-  "9bc9aec6"
+  "e16cf4dc"
 );
 const ViewerComponent = __component__$D.exports;
 function setAsyncState(vm, stateObject, state) {
