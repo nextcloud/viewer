@@ -1,6 +1,6 @@
 /*! third party licenses: js/vendor.LICENSE.txt */
 const appName = "viewer";
-const appVersion = "3.0.0";
+const appVersion = "4.0.0";
 const global$1 = globalThis || void 0 || self;
 var define_global_process_env_default = {};
 /*!
@@ -121421,7 +121421,7 @@ const _sfc_main$3 = {
     const FilerobotImageEditor = (await __vitePreload(async () => {
       const { default: __vite_default__ } = await import(
         /* webpackChunkName: 'filerobot' */
-        "./index-CDRms4XZ.chunk.mjs"
+        "./index-CegslqU0.chunk.mjs"
       );
       return { default: __vite_default__ };
     }, true ? [] : void 0, import.meta.url)).default;
@@ -121927,7 +121927,7 @@ const Images = {
 };
 const VuePlyr$1 = () => __vitePreload(() => import(
   /* webpackChunkName: 'plyr' */
-  "./index.esm-DMW2M4EO.chunk.mjs"
+  "./index.esm-CewDJXBi.chunk.mjs"
 ), true ? [] : void 0, import.meta.url);
 const blankVideo = h$2("viewer", "blank.mp4");
 const _sfc_main$1 = {
@@ -122079,7 +122079,7 @@ const Videos = {
 };
 const VuePlyr = () => __vitePreload(() => import(
   /* webpackChunkName: 'plyr' */
-  "./index.esm-DMW2M4EO.chunk.mjs"
+  "./index.esm-CewDJXBi.chunk.mjs"
 ), true ? [] : void 0, import.meta.url);
 const _sfc_main = {
   name: "Audios",
