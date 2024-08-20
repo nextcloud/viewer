@@ -121704,7 +121704,7 @@ const _sfc_main$2 = {
      */
     async getBase64FromImage() {
       const file = await cancelableClient.get(this.src);
-      return `data:${this.mime};base64,${btoa(file.data)}`;
+      return `data:${this.mime};base64,${btoa(unescape(encodeURIComponent(file.data)))}`;
     },
     /**
      * Handle zooming
@@ -121861,7 +121861,7 @@ var __component__$2 = /* @__PURE__ */ normalizeComponent$1(
   _sfc_staticRenderFns$2,
   false,
   null,
-  "256fed76"
+  "3401a1bc"
 );
 const Images$1 = __component__$2.exports;
 /**
