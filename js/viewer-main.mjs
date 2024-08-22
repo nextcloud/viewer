@@ -27834,6 +27834,10 @@ const Mime = {
       type: Boolean,
       default: true
     },
+    canZoom: {
+      type: Boolean,
+      default: false
+    },
     // is the content loaded?
     // synced with parent
     loaded: {
@@ -27929,6 +27933,9 @@ const Mime = {
           this.height = this.naturalHeight;
           this.width = this.naturalWidth;
         }
+      } else {
+        this.height = this.naturalHeight;
+        this.width = this.naturalWidth;
       }
     },
     /**
@@ -28239,9 +28246,6 @@ const _sfc_main$D = {
     canLoop() {
       return this.Viewer.canLoop;
     },
-    canZoom() {
-      return !this.Viewer.el;
-    },
     isStartOfList() {
       return this.currentIndex === 0;
     },
@@ -28377,7 +28381,7 @@ const _sfc_main$D = {
     },
     // user reached the end of list
     async isEndOfList(isEndOfList) {
-      if (!isEndOfList) {
+      if (!isEndOfList || this.el) {
         return;
       }
       if (this.loadMore && typeof this.loadMore === "function") {
@@ -28900,7 +28904,7 @@ const _sfc_main$D = {
 };
 var _sfc_render$D = function render16() {
   var _vm = this, _c2 = _vm._self._c;
-  return _vm.el ? _c2("div", { attrs: { "id": "viewer", "data-handler": _vm.handlerId } }, [!_vm.currentFile.failed ? _c2(_vm.currentFile.modal, _vm._b({ key: _vm._f("uniqueKey")(_vm.currentFile), ref: "content", tag: "component", staticClass: "viewer__file viewer__file--active", attrs: { "active": true, "can-swipe": false, "file-list": [_vm.currentFile], "is-full-screen": false, "loaded": _vm.currentFile.loaded, "is-sidebar-shown": false }, on: { "update:loaded": function($event) {
+  return _vm.el ? _c2("div", { attrs: { "id": "viewer", "data-handler": _vm.handlerId } }, [!_vm.currentFile.failed ? _c2(_vm.currentFile.modal, _vm._b({ key: _vm._f("uniqueKey")(_vm.currentFile), ref: "content", tag: "component", staticClass: "viewer__file viewer__file--active", attrs: { "active": true, "can-swipe": false, "can-zoom": false, "file-list": [_vm.currentFile], "is-full-screen": false, "loaded": _vm.currentFile.loaded, "is-sidebar-shown": false }, on: { "update:loaded": function($event) {
     return _vm.$set(_vm.currentFile, "loaded", $event);
   }, "error": _vm.currentFailed } }, "component", _vm.currentFile, false)) : _c2("Error", { attrs: { "name": _vm.currentFile.basename } })], 1) : _vm.initiated || _vm.currentFile.modal ? _c2("NcModal", { staticClass: "viewer", class: _vm.modalClass, style: { width: _vm.isSidebarShown ? `${_vm.sidebarPosition}px` : null }, attrs: { "id": "viewer", "additional-trap-elements": _vm.trapElements, "clear-view-delay": -1, "close-button-contained": false, "dark": true, "data-handler": _vm.handlerId, "enable-slideshow": _vm.hasPrevious || _vm.hasNext, "slideshow-paused": _vm.editing, "enable-swipe": _vm.canSwipe && !_vm.editing, "has-next": _vm.hasNext, "has-previous": _vm.hasPrevious, "inline-actions": _vm.canEdit ? 1 : 0, "spread-navigation": true, "name": _vm.currentFile.basename, "view": _vm.currentFile.modal, "size": "full" }, on: { "close": _vm.close, "previous": _vm.previous, "next": _vm.next }, scopedSlots: _vm._u([{ key: "actions", fn: function() {
     return [_vm.canEdit ? _c2("NcActionButton", { attrs: { "close-after-click": true }, on: { "click": _vm.onEdit }, scopedSlots: _vm._u([{ key: "icon", fn: function() {
@@ -28918,7 +28922,7 @@ var _sfc_render$D = function render16() {
     return _vm.close.apply(null, arguments);
   } } }, [_vm.comparisonFile && !_vm.comparisonFile.failed && _vm.showComparison ? _c2("div", { staticClass: "viewer__file-wrapper" }, [_c2(_vm.comparisonFile.modal, _vm._b({ key: _vm._f("uniqueKey")(_vm.comparisonFile), ref: "comparison-content", tag: "component", staticClass: "viewer__file viewer__file--active", attrs: { "active": true, "can-swipe": false, "can-zoom": false, "editing": false, "is-full-screen": _vm.isFullscreen, "is-sidebar-shown": _vm.isSidebarShown, "loaded": _vm.comparisonFile.loaded }, on: { "update:loaded": function($event) {
     return _vm.$set(_vm.comparisonFile, "loaded", $event);
-  }, "error": _vm.comparisonFailed } }, "component", _vm.comparisonFile, false))], 1) : _vm._e(), _vm.previousFile ? _c2("div", { key: _vm._f("uniqueKey")(_vm.previousFile), staticClass: "viewer__file-wrapper viewer__file-wrapper--hidden", attrs: { "aria-hidden": "true", "inert": "" } }, [!_vm.previousFile.failed ? _c2(_vm.previousFile.modal, _vm._b({ ref: "previous-content", tag: "component", staticClass: "viewer__file", attrs: { "file-list": _vm.fileList }, on: { "error": _vm.previousFailed } }, "component", _vm.previousFile, false)) : _c2("Error", { attrs: { "name": _vm.previousFile.basename } })], 1) : _vm._e(), _c2("div", { key: _vm._f("uniqueKey")(_vm.currentFile), staticClass: "viewer__file-wrapper" }, [!_vm.currentFile.failed ? _c2(_vm.currentFile.modal, _vm._b({ ref: "content", tag: "component", staticClass: "viewer__file viewer__file--active", attrs: { "active": true, "can-swipe": _vm.canSwipe, "can-zoom": _vm.canZoom, "editing": _vm.editing, "file-list": _vm.fileList, "is-full-screen": _vm.isFullscreen, "is-sidebar-shown": _vm.isSidebarShown, "loaded": _vm.currentFile.loaded }, on: { "update:canSwipe": function($event) {
+  }, "error": _vm.comparisonFailed } }, "component", _vm.comparisonFile, false))], 1) : _vm._e(), _vm.previousFile ? _c2("div", { key: _vm._f("uniqueKey")(_vm.previousFile), staticClass: "viewer__file-wrapper viewer__file-wrapper--hidden", attrs: { "aria-hidden": "true", "inert": "" } }, [!_vm.previousFile.failed ? _c2(_vm.previousFile.modal, _vm._b({ ref: "previous-content", tag: "component", staticClass: "viewer__file", attrs: { "file-list": _vm.fileList }, on: { "error": _vm.previousFailed } }, "component", _vm.previousFile, false)) : _c2("Error", { attrs: { "name": _vm.previousFile.basename } })], 1) : _vm._e(), _c2("div", { key: _vm._f("uniqueKey")(_vm.currentFile), staticClass: "viewer__file-wrapper" }, [!_vm.currentFile.failed ? _c2(_vm.currentFile.modal, _vm._b({ ref: "content", tag: "component", staticClass: "viewer__file viewer__file--active", attrs: { "active": true, "can-swipe": _vm.canSwipe, "can-zoom": true, "editing": _vm.editing, "file-list": _vm.fileList, "is-full-screen": _vm.isFullscreen, "is-sidebar-shown": _vm.isSidebarShown, "loaded": _vm.currentFile.loaded }, on: { "update:canSwipe": function($event) {
     _vm.canSwipe = $event;
   }, "update:can-swipe": function($event) {
     _vm.canSwipe = $event;
@@ -28935,7 +28939,7 @@ var __component__$D = /* @__PURE__ */ normalizeComponent$1(
   _sfc_staticRenderFns$D,
   false,
   null,
-  "e16cf4dc"
+  "123bd91f"
 );
 const ViewerComponent = __component__$D.exports;
 function setAsyncState(vm, stateObject, state) {
@@ -121687,10 +121691,6 @@ const _sfc_main$2 = {
     NcLoadingIcon
   },
   props: {
-    canZoom: {
-      type: Boolean,
-      default: false
-    },
     editing: {
       type: Boolean,
       default: false
@@ -121703,7 +121703,11 @@ const _sfc_main$2 = {
       shiftY: 0,
       zoomRatio: 1,
       fallback: false,
-      livePhotoCanBePlayed: false
+      livePhotoCanBePlayed: false,
+      zooming: false,
+      pinchDistance: 0,
+      pinchStartZoomRatio: 1,
+      pointerCache: []
     };
   },
   computed: {
@@ -121721,7 +121725,10 @@ const _sfc_main$2 = {
     },
     imgStyle() {
       if (this.zoomRatio === 1) {
-        return {};
+        return {
+          height: this.zoomHeight + "px",
+          width: this.zoomWidth + "px"
+        };
       }
       return {
         marginTop: Math.round(this.shiftY * 2) + "px",
@@ -121765,9 +121772,9 @@ const _sfc_main$2 = {
     active(val2, old) {
       if (val2 === true && old === false) {
         this.resetZoom();
-        window.addEventListener("mouseout", this.dragEnd);
+        window.addEventListener("pointerout", this.pointerUp);
       } else if (val2 === false) {
-        window.removeEventListener("mouseout", this.dragEnd);
+        window.removeEventListener("pointerout", this.pointerUp);
       }
     }
   },
@@ -121793,6 +121800,39 @@ const _sfc_main$2 = {
       const file = await cancelableClient.get(this.src);
       return `data:${this.mime};base64,${btoa(unescape(encodeURIComponent(file.data)))}`;
     },
+    // Helper methods for zoom/pan operations
+    updateShift(newShiftX, newShiftY, newZoomRatio) {
+      const maxShiftX = this.width * newZoomRatio - this.width;
+      const maxShiftY = this.height * newZoomRatio - this.height;
+      this.shiftX = Math.min(Math.max(newShiftX, -maxShiftX / 2), maxShiftX / 2);
+      this.shiftY = Math.min(Math.max(newShiftY, -maxShiftY / 2), maxShiftY / 2);
+    },
+    // Change zoom ratio of the image to newZoomRatio.
+    // Try to make sure that image position at stableX, stableY
+    // in client coordinates stays in the same place on the screen.
+    updateZoomAndShift(stableX, stableY, newZoomRatio) {
+      if (!this.canZoom) {
+        return;
+      }
+      const element = this.$refs.image ?? this.$refs.video;
+      const scrollX = stableX - element.getBoundingClientRect().x - this.width * this.zoomRatio / 2;
+      const scrollY = stableY - element.getBoundingClientRect().y - this.height * this.zoomRatio / 2;
+      const scrollPercX = scrollX / (this.width * this.zoomRatio);
+      const scrollPercY = scrollY / (this.height * this.zoomRatio);
+      const growX = this.width * newZoomRatio - this.width * this.zoomRatio;
+      const growY = this.height * newZoomRatio - this.height * this.zoomRatio;
+      const newShiftX = this.shiftX - scrollPercX * growX;
+      const newShiftY = this.shiftY - scrollPercY * growY;
+      this.updateShift(newShiftX, newShiftY, newZoomRatio);
+      this.zoomRatio = newZoomRatio;
+    },
+    distanceBetweenTouches() {
+      const t02 = this.pointerCache[0];
+      const t110 = this.pointerCache[1];
+      const diffX = t110.x - t02.x;
+      const diffY = t110.y - t02.y;
+      return Math.sqrt(diffX * diffX + diffY * diffY);
+    },
     /**
      * Handle zooming
      *
@@ -121803,24 +121843,13 @@ const _sfc_main$2 = {
       if (!this.canZoom) {
         return;
       }
-      event.stopPropagation();
-      event.preventDefault();
-      const element = this.$refs.image ?? this.$refs.video;
-      const scrollX = event.clientX - element.x - this.width * this.zoomRatio / 2;
-      const scrollY = event.clientY - element.y - this.height * this.zoomRatio / 2;
-      const scrollPercX = scrollX / (this.width * this.zoomRatio);
-      const scrollPercY = scrollY / (this.height * this.zoomRatio);
       const isZoomIn = event.deltaY < 0;
       const newZoomRatio = isZoomIn ? Math.min(this.zoomRatio * 1.1, 5) : Math.max(this.zoomRatio / 1.1, 1);
       if (newZoomRatio === 1) {
         return this.resetZoom();
       }
-      const growX = this.width * newZoomRatio - this.width * this.zoomRatio;
-      const growY = this.height * newZoomRatio - this.height * this.zoomRatio;
       this.disableSwipe();
-      this.shiftX = this.shiftX - scrollPercX * growX;
-      this.shiftY = this.shiftY - scrollPercY * growY;
-      this.zoomRatio = newZoomRatio;
+      this.updateZoomAndShift(event.clientX, event.clientY, newZoomRatio);
     },
     resetZoom() {
       this.enableSwipe();
@@ -121828,47 +121857,70 @@ const _sfc_main$2 = {
       this.shiftX = 0;
       this.shiftY = 0;
     },
+    // Pinch-zoom implementation based on:
+    // https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events/Pinch_zoom_gestures
     /**
-     * Dragging handlers
+     * Dragging and (pinch) zooming handlers
      *
      * @param {DragEvent} event the event
      */
-    dragStart(event) {
-      const { pageX, pageY } = event;
-      this.dragX = pageX;
-      this.dragY = pageY;
-      this.dragging = true;
-      const element = this.$refs.image ?? this.$refs.video;
-      element.onmouseup = this.dragEnd;
-      element.onmousemove = this.dragHandler;
-    },
-    /**
-     * @param {DragEvent} event the event
-     */
-    dragEnd(event) {
-      event.preventDefault();
-      this.dragging = false;
-      const element = this.$refs.image ?? this.$refs.video;
-      if (element) {
-        element.onmouseup = null;
-        element.onmousemove = null;
+    pointerDown(event) {
+      this.pointerCache.push({ pointerId: event.pointerId, x: event.clientX, y: event.clientY });
+      if (this.pointerCache.length === 1) {
+        this.dragX = event.clientX;
+        this.dragY = event.clientY;
+        this.dragging = true;
+      }
+      if (this.pointerCache.length === 2) {
+        this.pinchDistance = this.distanceBetweenTouches();
+        this.pinchStartZoomRatio = this.zoomRatio;
+        this.zooming = true;
+        this.disableSwipe();
       }
     },
     /**
      * @param {DragEvent} event the event
      */
-    dragHandler(event) {
-      event.preventDefault();
-      const { pageX, pageY } = event;
-      if (this.dragging && this.zoomRatio > 1 && pageX > 0 && pageY > 0) {
-        const moveX = this.shiftX + (pageX - this.dragX);
-        const moveY = this.shiftY + (pageY - this.dragY);
-        const growX = this.zoomWidth - this.width;
-        const growY = this.zoomHeight - this.height;
-        this.shiftX = Math.min(Math.max(moveX, -growX / 2), growX / 2);
-        this.shiftY = Math.min(Math.max(moveY, -growY / 2), growY / 2);
-        this.dragX = pageX;
-        this.dragY = pageY;
+    pointerUp(event) {
+      const index2 = this.pointerCache.findIndex(
+        (cachedEv) => cachedEv.pointerId === event.pointerId
+      );
+      this.pointerCache.splice(index2, 1);
+      this.dragging = false;
+      this.zooming = false;
+    },
+    /**
+     * @param {DragEvent} event the event
+     */
+    pointerMove(event) {
+      if (!this.canZoom) {
+        return;
+      }
+      if (this.pointerCache.length > 0) {
+        const index2 = this.pointerCache.findIndex(
+          (cachedEv) => cachedEv.pointerId === event.pointerId
+        );
+        if (index2 >= 0) {
+          this.pointerCache[index2].x = event.clientX;
+          this.pointerCache[index2].y = event.clientY;
+        }
+      }
+      if (this.pointerCache.length === 1 && this.dragging && !this.zooming && this.zoomRatio > 1) {
+        const { clientX, clientY } = event;
+        const newShiftX = this.shiftX + (clientX - this.dragX);
+        const newShiftY = this.shiftY + (clientY - this.dragY);
+        this.updateShift(newShiftX, newShiftY, this.zoomRatio);
+        this.dragX = clientX;
+        this.dragY = clientY;
+      }
+      if (this.pointerCache.length === 2 && this.zooming) {
+        const newDistance = this.distanceBetweenTouches();
+        const newZoomRatio = Math.min(Math.max(this.pinchStartZoomRatio * (newDistance / this.pinchDistance), 1), 5);
+        const t02 = this.pointerCache[0];
+        const t110 = this.pointerCache[1];
+        const stableX = (t02.x + t110.x) / 2;
+        const stableY = (t02.y + t110.y) / 2;
+        this.updateZoomAndShift(stableX, stableY, newZoomRatio);
       }
     },
     onDblclick() {
@@ -121914,31 +121966,51 @@ var _sfc_render$2 = function render63() {
   return _c2("div", { staticClass: "image_container" }, [_vm.editing ? _c2("ImageEditor", { attrs: { "mime": _vm.mime, "src": _vm.src, "fileid": _vm.fileid }, on: { "close": _vm.onClose } }) : _vm.data !== null ? [!_vm.livePhotoCanBePlayed ? _c2("img", { ref: "image", class: {
     dragging: _vm.dragging,
     loaded: _vm.loaded,
-    zoomed: _vm.zoomRatio !== 1
+    zoomed: _vm.zoomRatio > 1
   }, style: _vm.imgStyle, attrs: { "alt": _vm.alt, "src": _vm.data }, on: { "~!error": function($event) {
     $event.preventDefault();
     $event.stopPropagation();
     return _vm.onFail.apply(null, arguments);
-  }, "load": _vm.updateImgSize, "wheel": _vm.updateZoom, "dblclick": function($event) {
+  }, "load": _vm.updateImgSize, "wheel": function($event) {
+    $event.stopPropagation();
+    $event.preventDefault();
+    return _vm.updateZoom.apply(null, arguments);
+  }, "dblclick": function($event) {
     $event.preventDefault();
     return _vm.onDblclick.apply(null, arguments);
-  }, "mousedown": function($event) {
+  }, "pointerdown": function($event) {
     $event.preventDefault();
-    return _vm.dragStart.apply(null, arguments);
+    return _vm.pointerDown.apply(null, arguments);
+  }, "pointerup": function($event) {
+    $event.preventDefault();
+    return _vm.pointerUp.apply(null, arguments);
+  }, "pointermove": function($event) {
+    $event.preventDefault();
+    return _vm.pointerMove.apply(null, arguments);
   } } }) : _vm._e(), _vm.livePhoto ? [_c2("video", { directives: [{ name: "show", rawName: "v-show", value: _vm.livePhotoCanBePlayed, expression: "livePhotoCanBePlayed" }], ref: "video", class: {
     dragging: _vm.dragging,
     loaded: _vm.loaded,
-    zoomed: _vm.zoomRatio !== 1
-  }, style: _vm.imgStyle, attrs: { "playsinline": true, "poster": _vm.data, "src": _vm.livePhotoSrc, "preload": "metadata" }, on: { "canplaythrough": _vm.doneLoadingLivePhoto, "loadedmetadata": _vm.updateImgSize, "wheel": _vm.updateZoom, "~!error": function($event) {
+    zoomed: _vm.zoomRatio > 1
+  }, style: _vm.imgStyle, attrs: { "playsinline": true, "poster": _vm.data, "src": _vm.livePhotoSrc, "preload": "metadata" }, on: { "canplaythrough": _vm.doneLoadingLivePhoto, "loadedmetadata": _vm.updateImgSize, "wheel": function($event) {
+    $event.stopPropagation();
+    $event.preventDefault();
+    return _vm.updateZoom.apply(null, arguments);
+  }, "~!error": function($event) {
     $event.preventDefault();
     $event.stopPropagation();
     return _vm.onFail.apply(null, arguments);
   }, "dblclick": function($event) {
     $event.preventDefault();
     return _vm.onDblclick.apply(null, arguments);
-  }, "mousedown": function($event) {
+  }, "pointerdown": function($event) {
     $event.preventDefault();
-    return _vm.dragStart.apply(null, arguments);
+    return _vm.pointerDown.apply(null, arguments);
+  }, "pointerup": function($event) {
+    $event.preventDefault();
+    return _vm.pointerUp.apply(null, arguments);
+  }, "pointermove": function($event) {
+    $event.preventDefault();
+    return _vm.pointerMove.apply(null, arguments);
   }, "ended": _vm.stopLivePhoto } }), _vm.width !== 0 ? _c2("button", { staticClass: "live-photo_play_button", style: { left: `calc(50% - ${_vm.width / 2}px)` }, attrs: { "disabled": !_vm.livePhotoCanBePlayed, "aria-description": _vm.t("viewer", "Play the live photo") }, on: { "click": _vm.playLivePhoto, "pointerenter": _vm.playLivePhoto, "focus": _vm.playLivePhoto, "pointerleave": _vm.stopLivePhoto, "blur": _vm.stopLivePhoto } }, [_vm.livePhotoCanBePlayed ? _c2("PlayCircleOutline") : _c2("NcLoadingIcon"), _vm._v(" " + _vm._s(_vm.t("viewer", "LIVE")) + " ")], 1) : _vm._e()] : _vm._e()] : _vm._e()], 2);
 };
 var _sfc_staticRenderFns$2 = [];
@@ -121948,7 +122020,7 @@ var __component__$2 = /* @__PURE__ */ normalizeComponent$1(
   _sfc_staticRenderFns$2,
   false,
   null,
-  "3401a1bc"
+  "ef7b99d0"
 );
 const Images$1 = __component__$2.exports;
 /**
