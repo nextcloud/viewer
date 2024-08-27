@@ -121644,6 +121644,9 @@ const _sfc_main$2 = {
       };
     },
     livePhoto() {
+      if (this.metadataFilesLivePhoto === void 0) {
+        return void 0;
+      }
       return findLivePhotoPeerFromFileId(this.metadataFilesLivePhoto, this.fileList);
     },
     livePhotoSrc() {
@@ -121861,7 +121864,7 @@ var __component__$2 = /* @__PURE__ */ normalizeComponent$1(
   _sfc_staticRenderFns$2,
   false,
   null,
-  "3401a1bc"
+  "34ef602b"
 );
 const Images$1 = __component__$2.exports;
 /**
