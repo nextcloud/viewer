@@ -23,6 +23,7 @@
 import Images from '../models/images.js'
 import Videos from '../models/videos.js'
 import Audios from '../models/audios.js'
+import Default from '../models/default.ts'
 
 /**
  * Handler type definition
@@ -77,6 +78,7 @@ export default class Viewer {
 		this.registerHandler(Images)
 		this.registerHandler(Videos)
 		this.registerHandler(Audios)
+		this.registerHandler(Default)
 
 		console.debug('OCA.Viewer initialized')
 	}
