@@ -697,8 +697,10 @@ export default {
 			this.theme = handler.theme ?? 'dark'
 			this.handlerId = handler.id
 
+			// fallback to default viewer group if enabled
+			const groupFallback = configModule.alwaysShowViewer ? this.mimeGroups[configModule.defaultMimeType] : undefined
 			// check if part of a group, if so retrieve full files list
-			const group = this.mimeGroups[mime]
+			const group = this.mimeGroups[mime] ?? groupFallback
 			if (this.files && this.files.length > 0) {
 				logger.debug('A files list have been provided. No folder content will be fetched.')
 				// we won't sort files here, let's use the order the array has
@@ -717,8 +719,8 @@ export default {
 				const [dirPath] = extractFilePaths(fileInfo.filename)
 				const fileList = await folderRequest(dirPath)
 
-				// filter out the unwanted mimes
-				const filteredFiles = fileList.filter(file => file.mime && mimes.indexOf(file.mime) !== -1)
+				// filter out the unwanted mimes if configModule.alwaysShowViewer not enabled
+				const filteredFiles = configModule.alwaysShowViewer ? fileList : fileList.filter(file => file.mime && mimes.indexOf(file.mime) !== -1)
 
 				// sort like the files list
 				// TODO: implement global sorting API
@@ -752,7 +754,7 @@ export default {
 		openFileFromList(fileInfo) {
 			// override mimetype if existing alias
 			const mime = fileInfo.mime
-			this.currentFile = new File(fileInfo, mime, this.components[mime])
+			this.currentFile = new File(fileInfo, mime, this.components[mime] || this.components[configModule.defaultMimeType])
 			this.changeSidebar()
 			this.updatePreviousNext()
 		},
