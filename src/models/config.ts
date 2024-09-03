@@ -9,4 +9,5 @@ const alwaysShowViewer = loadState<boolean>('viewer', 'always_show_viewer', fals
 
 export default {
 	alwaysShowViewer,
+	defaultMimeType: '*/*',
 }
