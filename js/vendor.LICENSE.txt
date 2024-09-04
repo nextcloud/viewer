@@ -1,7 +1,7 @@
 Included dependencies:
 
 @babel/runtime
-version: 7.25.4
+version: 7.25.6
 license: MIT
 
 @emotion/is-prop-valid
@@ -121,7 +121,7 @@ version: 7.5.0
 license: MIT
 
 @vueuse/components
-version: 11.0.1
+version: 11.0.3
 license: MIT
 
 @vueuse/core
@@ -137,7 +137,7 @@ version: 6.0.1
 license: MIT
 
 axios
-version: 1.7.4
+version: 1.7.7
 license: MIT
 
 camelcase
