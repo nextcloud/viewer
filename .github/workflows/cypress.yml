@@ -98,6 +98,9 @@ jobs:
       - name: Set up npm ${{ needs.init.outputs.npmVersion }}
         run: npm i -g npm@"${{ needs.init.outputs.npmVersion }}"
 
+      - name: Install standard font
+        run: sudo apt update && sudo apt install -y fonts-roboto
+
       - name: Run ${{ matrix.containers == 'component' && 'component' || 'E2E' }} cypress tests
         uses: cypress-io/github-action@1b70233146622b69e789ccdd4f9452adc638d25a # v6.6.1
         with:

@@ -3,7 +3,6 @@ import { configureVisualRegression } from 'cypress-visual-regression/dist/plugin
 import { defineConfig } from 'cypress'
 import cypressSplit from 'cypress-split'
 
-
 export default defineConfig({
 	projectId: 'xysa6x',
 
@@ -26,7 +25,7 @@ export default defineConfig({
 
 	// Visual regression testing
 	env: {
-		failSilently: false,
+		visualRegressionFailSilently: false,
 		visualRegressionType: 'regression',
 	},
 	screenshotsFolder: 'cypress/snapshots/actual',
