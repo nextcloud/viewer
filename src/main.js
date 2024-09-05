@@ -19,24 +19,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+import { generateFilePath } from '@nextcloud/router'
+import { translate as t } from '@nextcloud/l10n'
 import Vue from 'vue'
+
 import ViewerComponent from './views/Viewer.vue'
 import ViewerService from './services/Viewer.js'
-import { translate as t } from '@nextcloud/l10n'
-
-import { generateFilePath } from '@nextcloud/router'
 
 Vue.mixin({
 	methods: {
 		t,
 	},
 })
-
-// Inject proper font for cypress visual regression testing
-if (isTesting) {
-	// Import font so CI has the same
-	import(/* webpackChunkName: 'roboto-font' */'@fontsource/roboto')
-}
 
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
@@ -55,7 +49,7 @@ __webpack_public_path__ = generateFilePath('viewer', '', 'js/')
 // Init Viewer Service
 if (window.OCA) {
 	Object.assign(window.OCA, { Viewer: new ViewerService() })
-	OCA.Viewer.version = appVersion
+	window.OCA.Viewer.version = appVersion
 }
 
 // Create document root

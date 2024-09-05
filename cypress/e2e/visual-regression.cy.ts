@@ -46,6 +46,7 @@ describe('Visual regression tests', function() {
 	})
 
 	it('See files in the list', function() {
+		// TODO: Do we care about the file name being split by a ' ' in the text property?
 		cy.getFile('test-card.mp4', { timeout: 10000 })
 			.should('contain', 'test-card .mp4')
 		cy.getFile('test-card.png', { timeout: 10000 })
