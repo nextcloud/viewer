@@ -1,57 +1,70 @@
-/**
- * @copyright Copyright (c) 2023 Louis Chmn <louis@chmn.me>
- *
- * @author Louis Chmn <louis@chmn.me>
- *
- * @license AGPL-3.0-or-later
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+/*!
+ * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { BasicFileInfo } from './models'
+import type { FileInfo } from './fileUtils.js'
+
 import { encodePath } from '@nextcloud/paths'
 import { generateUrl } from '@nextcloud/router'
 import { getSharingToken, isPublicShare } from '@nextcloud/sharing/public'
+import { canDownload } from './canDownload'
+
+import axios from '@nextcloud/axios'
+import logger from '../services/logger.js'
 
 /**
- * @param root0
- * @param root0.fileid
- * @param root0.filename
- * @param root0.previewUrl
- * @param root0.hasPreview
- * @param root0.davPath
- * @param root0.etag
+ * Fetch a preview for download-disabled shares
+ * @param url The preview URL to fetch
+ */
+async function loadPrivatePreview(url: string): Promise<string> {
+	try {
+		const { data } = await axios.get(url, { headers: { 'X-NC-Preview': 'true' }, responseType: 'blob' })
+		const { promise, resolve } = Promise.withResolvers<string>()
+		const reader = new FileReader()
+		reader.addEventListener('load', () => resolve(reader.result!.toString()), false)
+		reader.readAsDataURL(data)
+
+		return promise
+	} catch (error) {
+		logger.error('Could not fetch preview image', { error })
+		throw error
+	}
+}
+
+/**
+ * @param fileInfo The file info
  * @return the preview url if the file have an existing preview or the absolute dav remote path if none.
  */
-export function getPreviewIfAny({ fileid, filename, previewUrl, hasPreview, davPath, etag }: BasicFileInfo): string {
-	if (previewUrl) {
-		return previewUrl
+export async function getPreviewIfAny(fileInfo: FileInfo): Promise<string> {
+	if (fileInfo.previewUrl) {
+		return fileInfo.previewUrl
 	}
 
+	const { fileid, filename, hasPreview, davPath, etag } = fileInfo
 	const searchParams = `fileId=${fileid}`
 		+ `&x=${Math.floor(screen.width * devicePixelRatio)}`
 		+ `&y=${Math.floor(screen.height * devicePixelRatio)}`
 		+ '&a=true'
-		+ (etag !== null ? `&etag=${etag.replace(/&quot;/g, '')}` : '')
+		+ (etag ? `&etag=${etag.replace(/&quot;/g, '')}` : '')
 
 	if (hasPreview) {
-		// TODO: find a nicer standard way of doing this?
+		let url: string
 		if (isPublicShare()) {
-			return generateUrl(`/apps/files_sharing/publicpreview/${getSharingToken()}?file=${encodePath(filename)}&${searchParams}`)
+			url = generateUrl(`/apps/files_sharing/publicpreview/${getSharingToken()}?file=${encodePath(filename)}&${searchParams}`)
+		} else {
+			url = generateUrl(`/core/preview?${searchParams}`)
 		}
-		return generateUrl(`/core/preview?${searchParams}`)
+
+		// Best case: We have download permission, so we can just use the URL
+		if (canDownload(fileInfo)) {
+			return url
+		}
+
+		// If not set correct header and fetch the image manually
+		return await loadPrivatePreview(url)
 	}
-	return davPath
+
+	// If nothing worked, we fallback to the dav path
+	return davPath!
 }
