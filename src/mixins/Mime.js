@@ -20,12 +20,11 @@
  *
  */
 import debounce from 'debounce'
-import PreviewUrl from '../mixins/PreviewUrl.js'
 import parsePath from 'path-parse'
+import { getDavPath } from '../utils/fileUtils.ts'
 
 export default {
 	inheritAttrs: false,
-	mixins: [PreviewUrl],
 	props: {
 		// Is the current component shown
 		active: {
@@ -115,6 +114,18 @@ export default {
 	},
 
 	computed: {
+		/**
+		 * Absolute dav remote path of the file
+		 *
+		 * @return {string}
+		 */
+		davPath() {
+			return getDavPath({
+				filename: this.filename,
+				basename: this.basename,
+			})
+		},
+
 		name() {
 			return parsePath(this.basename).name
 		},
