@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { BasicFileInfo } from './models'
+import type { FileInfo } from './fileUtils'
 
 const livePictureExt = ['jpg', 'jpeg', 'png']
 const livePictureExtRegex = new RegExp(`\\.(${livePictureExt.join('|')})$`, 'i')
@@ -13,8 +13,8 @@ const livePictureExtRegex = new RegExp(`\\.(${livePictureExt.join('|')})$`, 'i')
  * @param peerFileId
  * @param fileList
  */
-export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
-	return fileList.find(file => file.fileid === peerFileId)
+export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: FileInfo[]): FileInfo | undefined {
+	return fileList.find((file) => file.fileid === peerFileId)
 }
 
 /**
@@ -22,10 +22,10 @@ export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: BasicF
  * @param referenceFile
  * @param fileList
  */
-export function findLivePhotoPeerFromName(referenceFile: BasicFileInfo, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
+export function findLivePhotoPeerFromName(referenceFile: FileInfo, fileList: FileInfo[]): FileInfo | undefined {
 	return fileList.find(comparedFile => {
 		// if same filename and extension is allowed
 		return comparedFile.filename !== referenceFile.filename
-				&& (comparedFile.basename.startsWith(referenceFile.name) && livePictureExtRegex.test(comparedFile.basename))
+				&& (comparedFile.basename.startsWith(referenceFile.name ?? referenceFile.filename) && livePictureExtRegex.test(comparedFile.basename))
 	})
 }

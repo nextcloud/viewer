@@ -9,8 +9,6 @@ import { getLanguage } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
 import camelcase from 'camelcase'
 
-import { isNumber } from './numberUtil'
-
 export interface FileInfo {
 	/** ID of the file (not unique if shared, use source instead) */
 	fileid?: number
@@ -33,7 +31,7 @@ export interface FileInfo {
 	/** File type */
 	type: 'directory'|'file'
 	/** Attributes for file shares */
-	shareAttributes?: string|Array<{value:boolean|string|number|null|object|Array<unknown>, key: string, scope: string}>
+	shareAttributes?: string|Array<{ value: unknown, key: string, scope: string }>
 
 	// custom attributes not fetch from API
 
@@ -78,13 +76,7 @@ export function sortCompare(fileInfo1: FileInfo, fileInfo2: FileInfo, key: strin
 		return 1
 	}
 
-	// if this is a number, let's sort by integer
-	if (isNumber(fileInfo1[key]) && isNumber(fileInfo2[key])) {
-		const result = Number(fileInfo1[key]) - Number(fileInfo2[key])
-		return asc ? result : -result
-	}
-
-	// else we sort by string, so let's sort directories first
+	// let's sort directories first
 	if (fileInfo1.type === 'directory' && fileInfo2.type !== 'directory') {
 		return -1
 	} else if (fileInfo1.type !== 'directory' && fileInfo2.type === 'directory') {
@@ -97,8 +89,8 @@ export function sortCompare(fileInfo1: FileInfo, fileInfo2: FileInfo, key: strin
 	}
 	// finally sort by name
 	return asc
-		? fileInfo1[key].localeCompare(fileInfo2[key], getLanguage(), { numeric: true })
-		: -fileInfo1[key].localeCompare(fileInfo2[key], getLanguage(), { numeric: true })
+		? String(fileInfo1[key]).localeCompare(fileInfo2[key], getLanguage(), { numeric: true })
+		: -String(fileInfo1[key]).localeCompare(fileInfo2[key], getLanguage(), { numeric: true })
 }
 
 /**
@@ -107,29 +99,20 @@ export function sortCompare(fileInfo1: FileInfo, fileInfo2: FileInfo, key: strin
  * @param obj The stat response to convert
  */
 export function genFileInfo(obj: FileStat): FileInfo {
-	const fileInfo = {}
+	const fileStat = {
+		...(obj.props ?? {}),
+		...obj,
+		props: undefined,
+	}
 
-	Object.keys(obj).forEach(key => {
-		const data = obj[key]
-
-		// flatten object if any
-		if (!!data && typeof data === 'object' && !Array.isArray(data)) {
-			Object.assign(fileInfo, genFileInfo(data))
-		} else {
-			// format key and add it to the fileInfo
-			if (data === 'false') {
-				fileInfo[camelcase(key)] = false
-			} else if (data === 'true') {
-				fileInfo[camelcase(key)] = true
-			} else {
-				fileInfo[camelcase(key)] = isNumber(data)
-					? Number(data)
-					: data
-			}
-		}
-	})
-
-	return fileInfo as FileInfo
+	const fileInfo = Object.entries(fileStat)
+		// Make property names camel case
+		.map(([key, value]) => [camelcase(key), value])
+		// Convert boolean - Numbers are already parsed by the WebDAV client
+		.map(([key, value]) => [key, ['true', 'false'].includes(value as never) ? value === 'true' : value])
+		// remove undefined properties
+		.filter(([, value]) => value !== undefined)
+	return Object.fromEntries(fileInfo)
 }
 
 /**
