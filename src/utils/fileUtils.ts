@@ -25,8 +25,45 @@ import camelcase from 'camelcase'
 
 import { isNumber } from './numberUtil'
 import { davRemoteURL, davRootPath } from '@nextcloud/files'
+import { getLanguage } from '@nextcloud/l10n'
 
-declare const OC: Nextcloud.v29.OC
+export interface FileInfo {
+	/** ID of the file (not unique if shared, use source instead) */
+	fileid?: number
+	/** Filename (name with path) */
+	filename: string
+	/** Basename of the file */
+	basename: string
+	/** DAV source URL */
+	source: string
+	/** File size in bytes */
+	size: number
+	/** E-Tag */
+	etag?: string
+	/** MIME type */
+	mime?: string
+	/** Last modification date */
+	lastmod?: string
+	/** File is marked as favorite */
+	isFavorite?: boolean
+	/** File type */
+	type: 'directory'|'file'
+	/** Attributes for file shares */
+	shareAttributes?: string
+
+	// custom attributes not fetch from API
+
+	/** Does the file has an existing preview */
+	hasPreview?: boolean
+	/** URL of the preview image */
+	previewUrl?: string
+	/** The id of the peer live photo */
+	metadataFilesLivePhoto?: number
+	/** The absolute dav path */
+	davPath?: string
+	/** filename without extension */
+	name?: string
+}
 
 /**
  * Extract dir and name from file path
@@ -34,7 +71,7 @@ declare const OC: Nextcloud.v29.OC
  * @param {string} path the full path
  * @return {string[]} [dirPath, fileName]
  */
-const extractFilePaths = function(path) {
+export function extractFilePaths(path: string) {
 	const pathSections = path.split('/')
 	const fileName = pathSections[pathSections.length - 1]
 	const dirPath = pathSections.slice(0, pathSections.length - 1).join('/')
@@ -50,7 +87,7 @@ const extractFilePaths = function(path) {
  * @param {boolean} [asc] sort ascending?
  * @return {number}
  */
-const sortCompare = function(fileInfo1, fileInfo2, key, asc = true) {
+export function sortCompare(fileInfo1: FileInfo, fileInfo2: FileInfo, key: keyof FileInfo, asc = true) {
 
 	if (fileInfo1.isFavorite && !fileInfo2.isFavorite) {
 		return -1
@@ -72,24 +109,24 @@ const sortCompare = function(fileInfo1, fileInfo2, key, asc = true) {
 	}
 	// sort by date if key is lastmod
 	if (key === 'lastmod') {
-		const result = new Date(fileInfo1[key]).getTime() - new Date(fileInfo2[key]).getTime()
+		const first = fileInfo1[key] ?? 0
+		const second = fileInfo2[key] ?? 0
+		const result = new Date(first).getTime() - new Date(second).getTime()
 		return asc ? -result : result
 	}
 	// finally sort by name
 	return asc
-		? fileInfo1[key].localeCompare(fileInfo2[key], OC.getLanguage(), { numeric: true })
-		: -fileInfo1[key].localeCompare(fileInfo2[key], OC.getLanguage(), { numeric: true })
+		? String(fileInfo1[key]).localeCompare(String(fileInfo2[key]), getLanguage(), { numeric: true })
+		: -String(fileInfo1[key]).localeCompare(String(fileInfo2[key]), getLanguage(), { numeric: true })
 }
-
-export type FileInfo = object
 
 /**
  * Generate a fileinfo object based on the full dav properties
  * It will flatten everything and put all keys to camelCase
  * @param obj
  */
-const genFileInfo = function(obj: FileStat): FileInfo {
-	const fileInfo = {}
+export function genFileInfo(obj: FileStat): FileInfo {
+	const fileInfo: Partial<FileInfo> = {}
 
 	Object.keys(obj).forEach(key => {
 		const data = obj[key]
@@ -110,7 +147,7 @@ const genFileInfo = function(obj: FileStat): FileInfo {
 			}
 		}
 	})
-	return fileInfo
+	return fileInfo as FileInfo
 }
 
 /**
@@ -120,7 +157,7 @@ const genFileInfo = function(obj: FileStat): FileInfo {
  * @param fileInfo.filename the file full path
  * @param fileInfo.source the file source if any
  */
-function getDavPath({ filename, source = '' }: { filename: string, source?: string }): string|null {
+export function getDavPath({ filename, source = '' }: { filename: string, source?: string }): string|null {
 	// TODO: allow proper dav access without the need of basic auth
 	// https://github.com/nextcloud/server/issues/19700
 	const prefixUser = davRootPath
@@ -140,5 +177,3 @@ function getDavPath({ filename, source = '' }: { filename: string, source?: stri
 	}
 	return davRemoteURL + encodePath(filename)
 }
-
-export { extractFilePaths, sortCompare, genFileInfo, getDavPath }
