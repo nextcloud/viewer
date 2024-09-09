@@ -69,7 +69,7 @@ export default defineConfig({
 
 			// Before the browser launches
 			// starting Nextcloud testing container
-			const ip = await startNextcloud(process.env.BRANCH)
+			const ip = await startNextcloud(process.env.BRANCH ?? 'stable30')
 			// Setting container's IP as base Url
 			config.baseUrl = `http://${ip}/index.php`
 			await waitOnNextcloud(ip)
