@@ -723,8 +723,14 @@ export default {
 				const [dirPath] = extractFilePaths(fileInfo.filename)
 				const fileList = await folderRequest(dirPath)
 
-				// filter out the unwanted mimes if configModule.alwaysShowViewer not enabled
-				const filteredFiles = configModule.alwaysShowViewer ? fileList : fileList.filter(file => file.mime && mimes.indexOf(file.mime) !== -1)
+				let filteredFiles
+				if (configModule.alwaysShowViewer) {
+					// don't include directories, otherwise accept all mimes
+					filteredFiles = fileList.filter(({ type }) => type !== 'directory')
+				} else {
+					// filter out the unwanted mimes
+					filteredFiles = fileList.filter(file => file.mime && mimes.indexOf(file.mime) !== -1)
+				}
 
 				// sort like the files list
 				// TODO: implement global sorting API
