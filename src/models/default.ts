@@ -4,12 +4,13 @@
  */
 
 import Default from '../components/Default.vue'
+import config from './config.ts'
 
 export default {
 	id: 'default',
 	group: 'other',
 	mimes: [
-		'*/*',
+		config.defaultMimeType,
 	],
 	mimesAliases: {},
 	component: Default,
