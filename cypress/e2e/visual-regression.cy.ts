@@ -54,7 +54,7 @@ describe('Visual regression tests', function() {
 	})
 
 	it('Open the viewer on file click', function() {
-		cy.intercept('GET', '**/viewer/css/fonts/roboto-*').as('roboto-font')
+		cy.intercept('GET', '**/viewer/js/*roboto_index_css*').as('roboto-font')
 		cy.intercept('GET', '**/core/preview*').as('image1')
 		cy.intercept('GET', '/remote.php/dav/files/*/test-card.mp4').as('video')
 		cy.openFile('test-card.mp4')
@@ -66,7 +66,7 @@ describe('Visual regression tests', function() {
 	})
 
 	it('See the menu icon and title on the viewer header', function() {
-		cy.get('body > .viewer .modal-name').should('contain', 'test-card.mp4')
+		cy.get('body > .viewer .modal-header__name').should('contain', 'test-card.mp4')
 		cy.get('body > .viewer .modal-header button.action-item__menutoggle').should('be.visible')
 		cy.get('body > .viewer .modal-header button.header-close').should('be.visible')
 	})
@@ -125,7 +125,7 @@ describe('Visual regression tests', function() {
 		cy.openFile('test-card.png')
 
 		cy.get('body > .viewer').should('be.visible')
-		cy.get('body > .viewer .modal-name').should('contain', 'test-card.png')
+		cy.get('body > .viewer .modal-header__name').should('contain', 'test-card.png')
 		cy.get('body > .viewer .modal-container img').should('have.length', 1)
 		cy.get('body > .viewer .modal-container img').should('have.attr', 'src')
 		cy.get('body > .viewer button.prev').should('be.visible')
