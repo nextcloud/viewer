@@ -58,7 +58,7 @@ jobs:
       - name: Install node dependencies & build app
         run: |
           npm ci
-          TESTING=true npm run build --if-present
+          npm run build --if-present
 
       - name: Save context
         uses: buildjet/cache/save@e376f15c6ec6dc595375c78633174c7e5f92dc0e # v3
@@ -98,6 +98,9 @@ jobs:
       - name: Set up npm ${{ needs.init.outputs.npmVersion }}
         run: npm i -g npm@"${{ needs.init.outputs.npmVersion }}"
 
+      - name: Install standard font
+        run: sudo apt update && sudo apt install -y fonts-roboto
+
       - name: Run ${{ matrix.containers == 'component' && 'component' || 'E2E' }} cypress tests
         uses: cypress-io/github-action@1b70233146622b69e789ccdd4f9452adc638d25a # v6.6.1
         with:
@@ -112,7 +115,6 @@ jobs:
           # https://github.com/cypress-io/github-action/issues/124
           COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
           # Needed for some specific code workarounds
-          TESTING: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           SPLIT: ${{ matrix.total-containers }}
