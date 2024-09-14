@@ -590,6 +590,13 @@ export default {
 				OCA.Files.Sidebar.setFullScreenMode(true)
 			}
 			this.sortingConfig = await getSortingConfig()
+
+			// Load Roboto font for visual regression tests
+			if (window.loadRoboto) {
+				logger.debug('⚠️ Loading roboto font for visual regression tests')
+				import('@fontsource/roboto/index.css')
+				delete window.loadRoboto
+			}
 		},
 
 		/**
@@ -1297,7 +1304,7 @@ export default {
 		&.modal-mask {
 			background-color: rgba(255, 255, 255, .92) !important;
 		}
-		:deep(.modal-name),
+		:deep(.modal-header__name),
 		:deep(.modal-header .icons-menu button svg) {
 			color: #000 !important;
 		}
@@ -1307,7 +1314,7 @@ export default {
 		&.modal-mask {
 			background-color: var(--color-main-background) !important;
 		}
-		:deep(.modal-name),
+		:deep(.modal-header__name),
 		:deep(.modal-header .icons-menu) {
 			color: var(--color-main-text) !important;
 
@@ -1320,7 +1327,7 @@ export default {
 	&.image--fullscreen {
 		// Special display mode for images in full screen
 		:deep(.modal-header) {
-			.modal-name {
+			.modal-header__name {
 				// Hide file name
 				opacity: 0;
 			}
