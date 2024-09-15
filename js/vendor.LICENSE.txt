@@ -97,7 +97,7 @@ version: 0.1.1
 license: AGPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.17.1
+version: 8.18.0
 license: AGPL-3.0-or-later
 
 @nextcloud/vue-select
@@ -165,7 +165,7 @@ version: 0.2.7
 license: MIT
 
 debounce
-version: 2.1.0
+version: 2.1.1
 license: MIT
 
 dompurify
