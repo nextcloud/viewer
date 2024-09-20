@@ -28,16 +28,11 @@
 export default function(node, view, dir) {
 	// replace potential leading double slashes
 	const path = `${node.dirname}/${node.basename}`.replace(/^\/\//, '/')
-	const oldRoute = [
-		window.OCP.Files.Router.name,
-		{ ...window.OCP.Files.Router.params },
-		{ ...window.OCP.Files.Router.query },
-		true,
-	]
 	const onClose = () => {
 		// This can sometime be called with the openfile set to true already. But we don't want to keep openfile when closing the viewer.
-		delete oldRoute[2].openfile
-		window.OCP.Files.Router.goToRoute(...oldRoute)
+		const newQuery = { ...window.OCP.Files.Router.query }
+		delete newQuery.openfile
+		window.OCP.Files.Router.goToRoute(null, window.OCP.Files.Router.params, newQuery)
 	}
 	pushToHistory(node, view, dir)
 	OCA.Viewer.open({ path, onPrev: pushToHistory, onNext: pushToHistory, onClose })
