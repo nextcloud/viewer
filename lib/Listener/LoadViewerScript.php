@@ -43,7 +43,7 @@ class LoadViewerScript implements IEventListener {
 
 	public function __construct(
 		IInitialState $initialStateService,
-		IPreview $previewManager
+		IPreview $previewManager,
 	) {
 		$this->initialStateService = $initialStateService;
 		$this->previewManager = $previewManager;
