@@ -194,7 +194,6 @@ import Vue from 'vue'
 import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { registerFileAction, FileAction, Permission, DefaultType, Node } from '@nextcloud/files'
 import getSortingConfig from '../services/FileSortingConfig.ts'
 
 import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen.js'
@@ -206,7 +205,6 @@ import canDownload from '../utils/canDownload.js'
 import cancelableRequest from '../utils/CancelableRequest.js'
 import Error from '../components/Error.vue'
 import File from '../models/file.js'
-import filesActionHandler from '../services/FilesActionHandler.js'
 import legacyFilesActionHandler from '../services/LegacyFilesActionHandler.js'
 import getFileInfo from '../services/FileInfo.ts'
 import getFileList from '../services/FileList.ts'
@@ -215,7 +213,6 @@ import logger from '../services/logger.js'
 
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Download from 'vue-material-design-icons/Download.vue'
-import EyeSvg from '@mdi/svg/svg/eye.svg?raw'
 import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
@@ -287,8 +284,7 @@ export default {
 			isSidebarShown: false,
 			isFullscreenMode: false,
 			canSwipe: true,
-			// TODO: remove OCA?.Files?.fileActions when public Files is Vue
-			isStandalone: OCP?.Files === undefined && OCA?.Files?.fileActions === undefined,
+			isStandalone: false,
 			theme: null,
 			root: getRootPath(),
 			handlerId: '',
@@ -524,6 +520,12 @@ export default {
 	},
 
 	beforeMount() {
+		this.isStandalone = window.OCP?.Files === undefined && window.OCA?.Files?.fileActions === undefined
+
+		if (this.isStandalone) {
+			logger.info('No OCP.Files app found, viewer is now in standalone mode')
+		}
+
 		// register on load
 		document.addEventListener('DOMContentLoaded', () => {
 			// register all primary components mimes
@@ -543,16 +545,10 @@ export default {
 				this.Sidebar = OCA.Files.Sidebar.state
 			}
 
-			this.registerFileActions()
-
 			logger.info(`${this.handlers.length} viewer handlers registered`, { handlers: this.handlers })
 		})
 
 		window.addEventListener('resize', this.onResize)
-
-		if (this.isStandalone) {
-			logger.info('No OCP.Files app found, viewer is now in standalone mode')
-		}
 	},
 
 	mounted() {
@@ -937,31 +933,6 @@ export default {
 					this.mimeGroups[group] = []
 				}
 				this.mimeGroups[group].push(mime)
-			}
-		},
-
-		registerFileActions() {
-			if (!this.isStandalone) {
-				registerFileAction(new FileAction({
-					id: 'view',
-					displayName() {
-						return t('viewer', 'View')
-					},
-					iconSvgInline: () => EyeSvg,
-					default: DefaultType.DEFAULT,
-					enabled: (nodes) => {
-						// Disable if not located in user root
-						if (nodes.some(node => !(node.isDavRessource && node.root?.startsWith('/files')))) {
-							return false
-						}
-						// Faster to check if at least one node doesn't match the requirements
-						return !nodes.some(node => (
-							(node.permissions & Permission.READ) === 0
-							|| !this.Viewer.mimetypes.includes(node.mime)
-						))
-					},
-					exec: filesActionHandler,
-				}))
 			}
 		},
 
