@@ -15,6 +15,11 @@ if (isTesting) {
 	console.debug('TESTING MODE ENABLED')
 }
 
+webpackConfig.entry = {
+	main: path.join(__dirname, 'src', 'main.js'),
+	init: path.join(__dirname, 'src', 'init.js'),
+}
+
 // vue-plyr uses .mjs file
 webpackRules.RULE_JS.test = /\.m?js$/
 webpackRules.RULE_JS.exclude = BabelLoaderExcludeNodeModulesExcept([
