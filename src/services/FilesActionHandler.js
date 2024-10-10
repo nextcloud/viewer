@@ -20,12 +20,18 @@
  *
  */
 
+// eslint-disable-next-line import/no-unresolved
+import EyeSvg from '@mdi/svg/svg/eye.svg?raw'
+
+import { DefaultType, FileAction, Node, Permission, registerFileAction, View } from '@nextcloud/files'
+import { translate as t } from '@nextcloud/l10n'
+
 /**
  * @param {Node} node The file to open
- * @param {any} view any The files view
+ * @param {View} view any The files view
  * @param {string} dir the directory path
  */
-export default function(node, view, dir) {
+function filesActionHandler(node, view, dir) {
 	// replace potential leading double slashes
 	const path = `${node.dirname}/${node.basename}`.replace(/^\/\//, '/')
 	const onClose = () => {
@@ -50,4 +56,30 @@ function pushToHistory(node, view, dir) {
 		{ dir, openfile: true },
 		true,
 	)
+}
+
+/**
+ *
+ */
+export function registerViewerAction() {
+	registerFileAction(new FileAction({
+		id: 'view',
+		displayName() {
+			return t('viewer', 'View')
+		},
+		iconSvgInline: () => EyeSvg,
+		default: DefaultType.DEFAULT,
+		enabled: (nodes) => {
+			// Disable if not located in user root
+			if (nodes.some(node => !(node.isDavRessource && node.root?.startsWith('/files')))) {
+				return false
+			}
+			// Faster to check if at least one node doesn't match the requirements
+			return !nodes.some(node => (
+				(node.permissions & Permission.READ) === 0
+				|| !window.OCA.Viewer.mimetypes.includes(node.mime)
+			))
+		},
+		exec: filesActionHandler,
+	}))
 }

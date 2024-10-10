@@ -86,8 +86,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import AsyncComputed from 'vue-async-computed'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 
 import axios from '@nextcloud/axios'
@@ -98,8 +96,6 @@ import { NcLoadingIcon } from '@nextcloud/vue'
 import ImageEditor from './ImageEditor.vue'
 import { findLivePhotoPeerFromFileId } from '../utils/livePhotoUtils'
 import { getDavPath } from '../utils/fileUtils'
-
-Vue.use(AsyncComputed)
 
 export default {
 	name: 'Images',
