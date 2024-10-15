@@ -22,9 +22,9 @@
 import { generateFilePath } from '@nextcloud/router'
 import { translate as t } from '@nextcloud/l10n'
 import Vue from 'vue'
+import AsyncComputed from 'vue-async-computed'
 
 import ViewerComponent from './views/Viewer.vue'
-import ViewerService from './services/Viewer.js'
 
 Vue.mixin({
 	methods: {
@@ -46,12 +46,6 @@ __webpack_nonce__ = btoa(OC.requestToken)
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('viewer', '', 'js/')
 
-// Init Viewer Service
-if (window.OCA) {
-	Object.assign(window.OCA, { Viewer: new ViewerService() })
-	window.OCA.Viewer.version = appVersion
-}
-
 // Create document root
 const ViewerRoot = document.createElement('div')
 ViewerRoot.id = 'viewer'
@@ -63,6 +57,8 @@ const VideoControls = document.createElement('div')
 VideoControls.innerHTML = PLYR_ICONS
 VideoControls.style.display = 'none'
 document.body.appendChild(VideoControls)
+
+Vue.use(AsyncComputed)
 
 // Init vue
 export default new Vue({
