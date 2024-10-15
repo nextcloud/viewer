@@ -45,8 +45,8 @@ version: 2.4.0
 license: GPL-3.0-or-later
 
 @nextcloud/axios
-version: 2.5.0
-license: GPL-3.0
+version: 2.5.1
+license: GPL-3.0-or-later
 
 @nextcloud/browser-storage
 version: 0.4.0
@@ -97,11 +97,11 @@ version: 0.1.1
 license: AGPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.18.0
+version: 8.19.0
 license: AGPL-3.0-or-later
 
 @nextcloud/vue-select
-version: 3.25.0
+version: 3.25.1
 license: MIT
 
 @popperjs/core
@@ -125,11 +125,11 @@ version: 11.0.3
 license: MIT
 
 @vueuse/core
-version: 11.0.3
+version: 11.1.0
 license: MIT
 
 @vueuse/shared
-version: 11.0.3
+version: 11.1.0
 license: MIT
 
 ansi-regex
