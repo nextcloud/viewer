@@ -65,7 +65,7 @@ version: 3.3.1
 license: GPL-3.0-or-later
 
 @nextcloud/files
-version: 3.9.0
+version: 3.9.1
 license: AGPL-3.0-or-later
 
 @nextcloud/initial-state
@@ -97,11 +97,11 @@ version: 0.1.1
 license: AGPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.18.0
+version: 8.19.0
 license: AGPL-3.0-or-later
 
 @nextcloud/vue-select
-version: 3.25.0
+version: 3.25.1
 license: MIT
 
 @popperjs/core
@@ -118,6 +118,18 @@ license: MIT
 
 @skjnldsv/vue-plyr
 version: 7.5.0
+license: MIT
+
+@vue/reactivity
+version: 3.5.12
+license: MIT
+
+@vue/runtime-core
+version: 3.5.12
+license: MIT
+
+@vue/shared
+version: 3.5.12
 license: MIT
 
 @vueuse/components
