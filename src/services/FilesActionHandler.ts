@@ -40,7 +40,16 @@ function filesActionHandler(node, view, dir) {
 		window.OCP.Files.Router.goToRoute(null, window.OCP.Files.Router.params, newQuery)
 	}
 	pushToHistory(node, view, dir)
-	OCA.Viewer.open({ path, onPrev: pushToHistory, onNext: pushToHistory, onClose })
+	window.OCA.Viewer.open({
+		path,
+		onPrev(fileInfo) {
+			pushToHistory(fileInfo, view, dir)
+		},
+		onNext(fileInfo) {
+			pushToHistory(fileInfo, view, dir)
+		},
+		onClose,
+	})
 }
 
 /**
