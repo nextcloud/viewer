@@ -37,7 +37,16 @@ async function execAction(node: Node, view: View, dir: string): Promise<boolean|
 	}
 
 	pushToHistory(node, view, dir)
-	window.OCA.Viewer.open({ path: node.path, onPrev: pushToHistory, onNext: pushToHistory, onClose })
+	window.OCA.Viewer.open({
+		path: node.path,
+		onPrev(fileInfo: Node) {
+			pushToHistory(fileInfo, view, dir)
+		},
+		onNext(fileInfo: Node) {
+			pushToHistory(fileInfo, view, dir)
+		},
+		onClose,
+	})
 
 	return null
 }
