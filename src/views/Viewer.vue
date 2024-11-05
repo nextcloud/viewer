@@ -1020,7 +1020,6 @@ export default {
 		 * Open previous available file
 		 */
 		previous() {
-			const oldFileInfo = this.fileList[this.currentIndex]
 			this.currentIndex--
 			if (this.currentIndex < 0) {
 				this.currentIndex = this.fileList.length - 1
@@ -1028,7 +1027,7 @@ export default {
 
 			const fileInfo = this.fileList[this.currentIndex]
 			this.openFileFromList(fileInfo)
-			this.Viewer.onPrev(fileInfo, oldFileInfo)
+			this.Viewer.onPrev(fileInfo)
 			this.updateTitle(this.currentFile.basename)
 		},
 
@@ -1036,7 +1035,6 @@ export default {
 		 * Open next available file
 		 */
 		next() {
-			const oldFileInfo = this.fileList[this.currentIndex]
 			this.currentIndex++
 			if (this.currentIndex > this.fileList.length - 1) {
 				this.currentIndex = 0
@@ -1044,7 +1042,8 @@ export default {
 
 			const fileInfo = this.fileList[this.currentIndex]
 			this.openFileFromList(fileInfo)
-			this.Viewer.onNext(fileInfo, oldFileInfo)
+			this.Viewer.onNext(fileInfo)
+
 			this.updateTitle(this.currentFile.basename)
 		},
 
