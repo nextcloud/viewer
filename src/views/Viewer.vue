@@ -1211,8 +1211,12 @@ export default {
 	}
 
 	&--split {
+		display: flex;
+
 		.viewer__file--active {
 			width: 50%;
+			left: 0;
+			position: relative;
 		}
 	}
 
