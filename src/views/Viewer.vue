@@ -188,7 +188,7 @@
 
 <script>
 import '@nextcloud/dialogs/style.css'
-import Vue from 'vue'
+import Vue, { defineComponent } from 'vue'
 
 import axios from '@nextcloud/axios'
 import { showError } from '@nextcloud/dialogs'
@@ -225,7 +225,7 @@ const NcModal = () => import(
 const NcActionLink = () => import(/* webpackChunkName: 'components' */'@nextcloud/vue/dist/Components/NcActionLink.js')
 const NcActionButton = () => import(/* webpackChunkName: 'components' */'@nextcloud/vue/dist/Components/NcActionButton.js')
 
-export default {
+export default defineComponent({
 	name: 'Viewer',
 
 	components: {
@@ -963,7 +963,7 @@ export default {
 				event.preventDefault()
 				if (this.canDownload) {
 					const a = document.createElement('a')
-					a.href = this.currentFile.davPath
+					a.href = this.currentFile.source ?? this.currentFile.davPath
 					a.download = this.currentFile.basename
 					document.body.appendChild(a)
 					a.click()
@@ -1116,16 +1116,25 @@ export default {
 		async onDelete() {
 			try {
 				const fileid = this.currentFile.fileid
-				const url = this.source ?? this.currentFile.davPath
+				const url = this.currentFile.source ?? this.currentFile.davPath
+
+				// Fake node to emit the event until Viewer is migrated to the new Node API.
+				const node = new NcFile({
+					source: url,
+					fileid,
+					mime: this.currentFile.mime,
+					owner: this.currentFile.ownerId,
+					root: url.includes('remote.php/dav') ? davGetRootPath() : undefined,
+				})
 
 				await axios.delete(url)
-				emit('files:node:deleted', { fileid })
+				emit('files:node:deleted', node)
 
-				// fileid is not unique, basename is not unqiue, filename is
+				// fileid is not unique, basename is not unique, filename is
 				const currentIndex = this.fileList.findIndex(file => file.filename === this.currentFile.filename)
 				if (this.hasPrevious || this.hasNext) {
 					// Checking the previous or next file
-					this.hasPrevious ? this.previous() : this.next()
+					this.hasNext ? this.next() : this.previous()
 
 					this.fileList.splice(currentIndex, 1)
 				} else {
@@ -1194,7 +1203,7 @@ export default {
 		},
 
 	},
-}
+})
 </script>
 
 <style lang="scss" scoped>
