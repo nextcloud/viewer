@@ -66,9 +66,11 @@
  */
 
 /**
- * @copyright Copyright (c) 2020 Azul <azul@riseup.net>
+ * @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @author Azul <azul@riseup.net>
+ * @author Marco Ambrosini <marcoambrosini@pm.me>
+ * @author John Molakvoæ <skjnldsv@protonmail.com>
+ * @author Louis Chemineau <louis@chmn.me>
  *
  * @license AGPL-3.0-or-later
  *
@@ -88,9 +90,9 @@
  */
 
 /**
- * @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
+ * @copyright Copyright (c) 2020 Azul <azul@riseup.net>
  *
- * @author John Molakvoæ <skjnldsv@protonmail.com>
+ * @author Azul <azul@riseup.net>
  *
  * @license AGPL-3.0-or-later
  *
