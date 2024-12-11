@@ -10,7 +10,7 @@
 		:data-handler="handlerId">
 		<component :is="currentFile.modal"
 			v-if="!currentFile.failed"
-			:key="currentFile | uniqueKey"
+			:key="getKeyForFile(currentFile)"
 			ref="content"
 			:active="true"
 			:can-swipe="false"
@@ -100,9 +100,10 @@
 			@click.self.exact="close"
 			@contextmenu="preventContextMenu">
 			<!-- COMPARE FILE -->
-			<div v-if="comparisonFile && !comparisonFile.failed && showComparison" class="viewer__file-wrapper">
+			<div v-if="comparisonFile && !comparisonFile.failed && showComparison"
+				:key="getKeyForFile(comparisonFile)"
+				class="viewer__file-wrapper">
 				<component :is="comparisonFile.modal"
-					:key="comparisonFile | uniqueKey"
 					ref="comparison-content"
 					v-bind="comparisonFile"
 					:active="true"
@@ -118,7 +119,7 @@
 
 			<!-- PREVIOUS -->
 			<div v-if="previousFile"
-				:key="previousFile | uniqueKey"
+				:key="getKeyForFile(previousFile)"
 				class="viewer__file-wrapper viewer__file-wrapper--hidden"
 				aria-hidden="true"
 				inert>
@@ -134,7 +135,7 @@
 			</div>
 
 			<!-- CURRENT -->
-			<div :key="currentFile | uniqueKey" class="viewer__file-wrapper">
+			<div :key="getKeyForFile(currentFile)" class="viewer__file-wrapper">
 				<component :is="currentFile.modal"
 					v-if="!currentFile.failed"
 					ref="content"
@@ -155,7 +156,7 @@
 
 			<!-- NEXT -->
 			<div v-if="nextFile"
-				:key="nextFile | uniqueKey"
+				:key="getKeyForFile(nextFile)"
 				class="viewer__file-wrapper viewer__file-wrapper--hidden"
 				aria-hidden="true"
 				inert>
@@ -221,12 +222,6 @@ export default defineComponent({
 		NcActionLink,
 		NcModal,
 		Pencil,
-	},
-
-	filters: {
-		uniqueKey(file) {
-			return '' + file.fileid + file.source
-		},
 	},
 
 	mixins: [isFullscreen, isMobile],
@@ -1170,6 +1165,9 @@ export default defineComponent({
 			}
 		},
 
+		getKeyForFile(file) {
+			return file.fileid || file.source
+		},
 	},
 })
 </script>
