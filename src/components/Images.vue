@@ -11,63 +11,63 @@
 			:fileid="fileid"
 			@close="onClose" />
 
-		<template v-else-if="data !== null">
-			<img v-if="!livePhotoCanBePlayed"
-				ref="image"
-				:alt="alt"
+		<IconImageBroken v-if="!data" :size="64" />
+
+		<img v-else-if="!livePhotoCanBePlayed"
+			ref="image"
+			:alt="alt"
+			:class="{
+				dragging,
+				loaded,
+				zoomed: zoomRatio > 1
+			}"
+			:src="data"
+			:style="imgStyle"
+			@error.capture.prevent.stop.once="onFail"
+			@load="updateImgSize"
+			@wheel.stop.prevent="updateZoom"
+			@dblclick.prevent="onDblclick"
+			@pointerdown.prevent="pointerDown"
+			@pointerup.prevent="pointerUp"
+			@pointermove.prevent="pointerMove">
+
+		<template v-else-if="livePhoto">
+			<video v-show="livePhotoCanBePlayed"
+				ref="video"
 				:class="{
 					dragging,
 					loaded,
 					zoomed: zoomRatio > 1
 				}"
-				:src="data"
 				:style="imgStyle"
-				@error.capture.prevent.stop.once="onFail"
-				@load="updateImgSize"
+				:playsinline="true"
+				:poster="data"
+				:src="livePhotoSrc"
+				preload="metadata"
+				@canplaythrough="doneLoadingLivePhoto"
+				@loadedmetadata="updateImgSize"
 				@wheel.stop.prevent="updateZoom"
+				@error.capture.prevent.stop.once="onFail"
 				@dblclick.prevent="onDblclick"
 				@pointerdown.prevent="pointerDown"
 				@pointerup.prevent="pointerUp"
-				@pointermove.prevent="pointerMove">
-
-			<template v-if="livePhoto">
-				<video v-show="livePhotoCanBePlayed"
-					ref="video"
-					:class="{
-						dragging,
-						loaded,
-						zoomed: zoomRatio > 1
-					}"
-					:style="imgStyle"
-					:playsinline="true"
-					:poster="data"
-					:src="livePhotoSrc"
-					preload="metadata"
-					@canplaythrough="doneLoadingLivePhoto"
-					@loadedmetadata="updateImgSize"
-					@wheel.stop.prevent="updateZoom"
-					@error.capture.prevent.stop.once="onFail"
-					@dblclick.prevent="onDblclick"
-					@pointerdown.prevent="pointerDown"
-					@pointerup.prevent="pointerUp"
-					@pointermove.prevent="pointerMove"
-					@ended="stopLivePhoto" />
-				<button v-if="width !== 0"
-					class="live-photo_play_button"
-					:style="{left: `calc(50% - ${width/2}px)`}"
-					:disabled="!livePhotoCanBePlayed"
-					:aria-description="t('viewer', 'Play the live photo')"
-					@click="playLivePhoto"
-					@pointerenter="playLivePhoto"
-					@focus="playLivePhoto"
-					@pointerleave="stopLivePhoto"
-					@blur="stopLivePhoto">
-					<PlayCircleOutline v-if="livePhotoCanBePlayed" />
-					<NcLoadingIcon v-else />
-					<!-- TRANSLATORS Label of the button used at the top left corner of live photos to play them -->
-					{{ t('viewer', 'LIVE') }}
-				</button>
-			</template>
+				@pointermove.prevent="pointerMove"
+				@ended="stopLivePhoto" />
+			<button v-if="width !== 0"
+				class="live-photo_play_button"
+				:style="{left: `calc(50% - ${width/2}px)`}"
+				:disabled="!livePhotoCanBePlayed"
+				:aria-description="t('viewer', 'Play the live photo')"
+				@click="playLivePhoto"
+				@pointerenter="playLivePhoto"
+				@focus="playLivePhoto"
+				@pointerleave="stopLivePhoto"
+				@blur="stopLivePhoto">
+				<PlayCircleOutline v-if="livePhotoCanBePlayed" />
+				<NcLoadingIcon v-else />
+				<!-- TRANSLATORS Label of the button used at the top left corner of live photos to play them -->
+				{{ t('viewer', 'LIVE') }}
+			</button>
 		</template>
 	</div>
 </template>
@@ -76,6 +76,7 @@
 import Vue from 'vue'
 import AsyncComputed from 'vue-async-computed'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
+import IconImageBroken from 'vue-material-design-icons/ImageBroken.vue'
 
 import axios from '@nextcloud/axios'
 import { basename } from '@nextcloud/paths'
@@ -85,6 +86,7 @@ import { NcLoadingIcon } from '@nextcloud/vue'
 import ImageEditor from './ImageEditor.vue'
 import { findLivePhotoPeerFromFileId } from '../utils/livePhotoUtils'
 import { getDavPath } from '../utils/fileUtils'
+import { getPreviewIfAny } from '../utils/previewUtils'
 
 Vue.use(AsyncComputed)
 
@@ -92,6 +94,7 @@ export default {
 	name: 'Images',
 
 	components: {
+		IconImageBroken,
 		ImageEditor,
 		PlayCircleOutline,
 		NcLoadingIcon,
@@ -175,23 +178,35 @@ export default {
 
 			// Load the raw gif instead of the static preview
 			if (this.mime === 'image/gif') {
+				// if the source failed fallback to the preview
+				if (this.fallback) {
+					return this.previewPath
+				}
 				return this.src
 			}
 
-			// If there is no preview and we have a direct source
-			// load it instead
-			if (this.source && !this.hasPreview && !this.previewUrl) {
-				return this.source
+			// First try the preview if any
+			if (!this.fallback && this.previewPath) {
+				return this.previewPath
 			}
 
 			// If loading the preview failed once, let's load the original file
-			if (this.fallback) {
-				return this.src
-			}
+			return this.src
+		},
 
-			return this.previewPath
+		async previewPath() {
+			return await getPreviewIfAny({
+				...this.$attrs,
+				fileid: this.fileid,
+				filename: this.filename,
+				previewUrl: this.previewUrl,
+				hasPreview: this.hasPreview,
+				davPath: this.davPath,
+				etag: this.$attrs.etag,
+			})
 		},
 	},
+
 	watch: {
 		active(val, old) {
 			// the item was hidden before and is now the current view
