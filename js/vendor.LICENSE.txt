@@ -57,7 +57,7 @@ version: 1.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/dialogs
-version: 5.3.7
+version: 5.3.8
 license: AGPL-3.0-or-later
 
 @nextcloud/event-bus
@@ -65,7 +65,7 @@ version: 3.3.1
 license: GPL-3.0-or-later
 
 @nextcloud/files
-version: 3.10.0
+version: 3.10.1
 license: AGPL-3.0-or-later
 
 @nextcloud/initial-state
@@ -97,7 +97,7 @@ version: 0.1.1
 license: AGPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.19.0
+version: 8.21.0
 license: AGPL-3.0-or-later
 
 @nextcloud/vue-select
@@ -177,7 +177,7 @@ version: 0.2.7
 license: MIT
 
 debounce
-version: 2.1.1
+version: 2.2.0
 license: MIT
 
 dompurify
@@ -245,7 +245,7 @@ version: 2.3.0
 license: BSD-3-Clause
 
 nanoid
-version: 3.3.7
+version: 3.3.8
 license: MIT
 
 node-gettext
