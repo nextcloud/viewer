@@ -39,6 +39,15 @@ function filesActionHandler(node, view, dir) {
 		delete newQuery.openfile
 		window.OCP.Files.Router.goToRoute(null, window.OCP.Files.Router.params, newQuery)
 	}
+
+	const onPopState = () => {
+		if (window.OCP.Files.Router.query.openfile !== 'true') {
+			window.OCA.Viewer.close()
+			window.removeEventListener('popstate', onPopState)
+		}
+	}
+	window.addEventListener('popstate', onPopState)
+
 	pushToHistory(node, view, dir)
 	window.OCA.Viewer.open({
 		path,
