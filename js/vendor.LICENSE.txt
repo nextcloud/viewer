@@ -21,11 +21,11 @@ version: 0.7.5
 license: MIT
 
 @floating-ui/core
-version: 0.3.1
+version: 1.6.0
 license: MIT
 
 @floating-ui/dom
-version: 0.1.10
+version: 1.6.3
 license: MIT
 
 @floating-ui/utils
@@ -73,7 +73,7 @@ version: 2.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/l10n
-version: 2.2.0
+version: 3.1.0
 license: GPL-3.0-or-later
 
 @nextcloud/logger
@@ -141,7 +141,7 @@ version: 11.3.0
 license: MIT
 
 @vueuse/shared
-version: 11.3.0
+version: 11.0.3
 license: MIT
 
 ansi-regex
