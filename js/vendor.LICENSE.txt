@@ -21,11 +21,11 @@ version: 0.7.5
 license: MIT
 
 @floating-ui/core
-version: 1.6.0
+version: 0.3.1
 license: MIT
 
 @floating-ui/dom
-version: 1.6.3
+version: 0.1.10
 license: MIT
 
 @floating-ui/utils
@@ -73,7 +73,7 @@ version: 2.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/l10n
-version: 3.1.0
+version: 2.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/logger
@@ -97,7 +97,7 @@ version: 0.1.1
 license: AGPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.21.0
+version: 8.22.0
 license: AGPL-3.0-or-later
 
 @nextcloud/vue-select
@@ -120,18 +120,6 @@ license: MIT
 version: 7.5.0
 license: MIT
 
-@vue/reactivity
-version: 3.5.13
-license: MIT
-
-@vue/runtime-core
-version: 3.5.13
-license: MIT
-
-@vue/shared
-version: 3.5.13
-license: MIT
-
 @vueuse/components
 version: 11.0.3
 license: MIT
@@ -141,7 +129,7 @@ version: 11.3.0
 license: MIT
 
 @vueuse/shared
-version: 11.0.3
+version: 11.3.0
 license: MIT
 
 ansi-regex
