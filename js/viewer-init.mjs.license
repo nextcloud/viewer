@@ -5,7 +5,6 @@ SPDX-License-Identifier: GPL-3.0-or-later
 SPDX-License-Identifier: MIT
 SPDX-License-Identifier: MPL-2.0
 SPDX-FileCopyrightText: Andrey Sitnik <andrey@sitnik.ru>
-SPDX-FileCopyrightText: Anthony Fu <anthonyfu117@hotmail.com>
 SPDX-FileCopyrightText: Austin Andrews
 SPDX-FileCopyrightText: Benjamin Fox <foxbenjaminfox@gmail.com>
 SPDX-FileCopyrightText: Borys Serebrov
@@ -118,9 +117,6 @@ This file is generated from multiple sources. Included packages:
 	- license: MIT
 - vue-color
 	- version: 2.8.1
-	- license: MIT
-- vue-demi
-	- version: 0.14.10
 	- license: MIT
 - vue-material-design-icons
 	- version: 5.3.1
