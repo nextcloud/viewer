@@ -1057,9 +1057,8 @@ export default defineComponent({
 			this.trapElements = []
 		},
 
-		// Update etag of updated file to break cache.
 		/**
-		 *
+		 * Update ETag of updated file to break cache.
 		 * @param {Node} node
 		 */
 		async handleFileUpdated(node) {

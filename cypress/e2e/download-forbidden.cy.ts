@@ -35,8 +35,7 @@ describe('Disable download button if forbidden', { testIsolation: true }, () => 
 			.should('contain', 'image1 .jpg')
 	})
 
-	// TODO: Fix no-download files on server
-	it.skip('See the image can be shown', () => {
+	it('See the image can be shown', () => {
 		cy.getFile('image1.jpg').should('be.visible')
 		cy.openFile('image1.jpg')
 		cy.get('body > .viewer').should('be.visible')
