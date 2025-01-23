@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "956e6189c8549b898775c72a672ccc6e",
+    "content-hash": "6b84765ea544ea474834d611b4d4eff8",
     "packages": [],
     "packages-dev": [
         {
@@ -910,30 +910,29 @@
         },
         {
             "name": "nextcloud/ocp",
-            "version": "dev-master",
+            "version": "dev-stable31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nextcloud-deps/ocp.git",
-                "reference": "9394e57afcffaebd744b6fbd80d40cd4713960c3"
+                "reference": "3ac4be37f04642c663a2fc711f3848f69f3713f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/9394e57afcffaebd744b6fbd80d40cd4713960c3",
-                "reference": "9394e57afcffaebd744b6fbd80d40cd4713960c3",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/3ac4be37f04642c663a2fc711f3848f69f3713f1",
+                "reference": "3ac4be37f04642c663a2fc711f3848f69f3713f1",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.0 || ~8.1 || ~8.2 || ~8.3",
+                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4",
                 "psr/clock": "^1.0",
                 "psr/container": "^2.0.2",
                 "psr/event-dispatcher": "^1.0",
                 "psr/log": "^3.0.2"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "31.0.0-dev"
+                    "dev-stable31": "31.0.0-dev"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -944,14 +943,18 @@
                 {
                     "name": "Christoph Wurst",
                     "email": "christoph@winzerhof-wurst.at"
+                },
+                {
+                    "name": "Joas Schilling",
+                    "email": "coding@schilljs.com"
                 }
             ],
-            "description": "Composer package containing Nextcloud's public API (classes, interfaces)",
+            "description": "Composer package containing Nextcloud's public OCP API and the unstable NCU API",
             "support": {
                 "issues": "https://github.com/nextcloud-deps/ocp/issues",
-                "source": "https://github.com/nextcloud-deps/ocp/tree/master"
+                "source": "https://github.com/nextcloud-deps/ocp/tree/stable31"
             },
-            "time": "2024-10-15T00:43:28+00:00"
+            "time": "2025-01-23T08:35:12+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -3995,8 +3998,8 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "platform-overrides": {
         "php": "8.1"
     },
