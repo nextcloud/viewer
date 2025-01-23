@@ -93,16 +93,14 @@ describe(`Download ${fileName} in viewer`, function() {
 		cy.get('body > .viewer').should('be.visible')
 	})
 
-	// TODO: FIX DOWNLOAD DISABLED SHARES
-	it.skip('Does not see a loading animation', function() {
+	it('Does not see a loading animation', function() {
 		cy.get('body > .viewer', { timeout: 10000 })
 			.should('be.visible')
 			.and('have.class', 'modal-mask')
 			.and('not.have.class', 'icon-loading')
 	})
 
-	// TODO: FIX DOWNLOAD DISABLED SHARES
-	it.skip('See the title on the viewer header but not the Download nor the menu button', function() {
+	it('See the title on the viewer header but not the Download nor the menu button', function() {
 		cy.get('body > .viewer .modal-header__name').should('contain', 'image1.jpg')
 		cy.get('body a[download="image1.jpg"]').should('not.exist')
 		cy.get('body > .viewer .modal-header button.action-item__menutoggle').should('not.exist')
