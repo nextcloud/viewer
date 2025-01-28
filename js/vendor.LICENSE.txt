@@ -1,7 +1,7 @@
 Included dependencies:
 
 @babel/runtime
-version: 7.26.0
+version: 7.26.7
 license: MIT
 
 @emotion/unitless
@@ -9,11 +9,11 @@ version: 0.8.1
 license: MIT
 
 @floating-ui/core
-version: 0.3.1
+version: 1.6.9
 license: MIT
 
 @floating-ui/dom
-version: 0.1.10
+version: 1.6.13
 license: MIT
 
 @floating-ui/utils
@@ -61,7 +61,7 @@ version: 2.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/l10n
-version: 2.2.0
+version: 3.1.0
 license: GPL-3.0-or-later
 
 @nextcloud/logger
@@ -181,7 +181,7 @@ version: 1.0.0-beta.19
 license: MIT
 
 focus-trap
-version: 7.6.2
+version: 7.6.4
 license: MIT
 
 ical.js
@@ -253,11 +253,11 @@ version: 4.9.1
 license: MIT
 
 react-konva
-version: 19.0.1
+version: 18.2.10
 license: MIT
 
 react-reconciler
-version: 0.31.0
+version: 0.29.2
 license: MIT
 
 scheduler
