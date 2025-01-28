@@ -28,7 +28,7 @@
 		:data-handler="handlerId">
 		<component :is="currentFile.modal"
 			v-if="!currentFile.failed"
-			:key="currentFile | uniqueKey"
+			:key="uniqueKey(currentFile)"
 			ref="content"
 			:active="true"
 			:can-swipe="false"
@@ -117,7 +117,7 @@
 			<!-- COMPARE FILE -->
 			<div v-if="comparisonFile && !comparisonFile.failed && showComparison" class="viewer__file-wrapper">
 				<component :is="comparisonFile.modal"
-					:key="comparisonFile | uniqueKey"
+					:key="uniqueKey(comparisonFile)"
 					ref="comparison-content"
 					v-bind="comparisonFile"
 					:active="true"
@@ -132,8 +132,8 @@
 			</div>
 
 			<!-- PREVIOUS -->
-			<div v-if="previousFile"
-				:key="previousFile | uniqueKey"
+			<div v-if="hasPreviousFile"
+				:key="uniqueKey(previousFile)"
 				class="viewer__file-wrapper viewer__file-wrapper--hidden"
 				aria-hidden="true"
 				inert>
@@ -149,7 +149,7 @@
 			</div>
 
 			<!-- CURRENT -->
-			<div :key="currentFile | uniqueKey" class="viewer__file-wrapper">
+			<div :key="uniqueKey(currentFile)" class="viewer__file-wrapper">
 				<component :is="currentFile.modal"
 					v-if="!currentFile.failed"
 					ref="content"
@@ -169,8 +169,8 @@
 			</div>
 
 			<!-- NEXT -->
-			<div v-if="nextFile"
-				:key="nextFile | uniqueKey"
+			<div v-if="hasNextFile"
+				:key="uniqueKey(nextFile)"
 				class="viewer__file-wrapper viewer__file-wrapper--hidden"
 				aria-hidden="true"
 				inert>
@@ -240,12 +240,6 @@ export default defineComponent({
 		NcActionLink,
 		NcModal,
 		Pencil,
-	},
-
-	filters: {
-		uniqueKey(file) {
-			return '' + file.fileid + file.source
-		},
 	},
 
 	mixins: [isFullscreen, isMobile],
@@ -339,6 +333,15 @@ export default defineComponent({
 		},
 		isEndOfList() {
 			return this.currentIndex === this.fileList.length - 1
+		},
+
+		hasPreviousFile() {
+			// Check if empty object
+			return Object.keys(this.previousFile).length > 0
+		},
+		hasNextFile() {
+			// Check if empty object
+			return Object.keys(this.nextFile).length > 0
 		},
 
 		isImage() {
@@ -580,6 +583,9 @@ export default defineComponent({
 	},
 
 	methods: {
+		uniqueKey(file) {
+			return '' + file.fileid + file.source
+		},
 		async beforeOpen() {
 			// initial loading start
 			this.initiated = true
@@ -780,7 +786,7 @@ export default defineComponent({
 				}
 			} else {
 				// RESET
-				this.previousFile = null
+				this.previousFile = {}
 			}
 
 			if (next) {
@@ -790,7 +796,7 @@ export default defineComponent({
 				}
 			} else {
 				// RESET
-				this.nextFile = null
+				this.nextFile = {}
 			}
 
 		},
