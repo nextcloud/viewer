@@ -61,7 +61,7 @@ version: 2.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/l10n
-version: 3.1.0
+version: 3.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/logger
@@ -85,7 +85,7 @@ version: 0.1.1
 license: AGPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.22.0
+version: 8.23.1
 license: AGPL-3.0-or-later
 
 @nextcloud/vue-select
@@ -106,6 +106,18 @@ license: MIT
 
 @skjnldsv/vue-plyr
 version: 7.5.0
+license: MIT
+
+@vue/reactivity
+version: 3.5.13
+license: MIT
+
+@vue/runtime-core
+version: 3.5.13
+license: MIT
+
+@vue/shared
+version: 3.5.13
 license: MIT
 
 @vueuse/components
@@ -161,7 +173,7 @@ version: 2.2.0
 license: MIT
 
 dompurify
-version: 3.2.3
+version: 3.2.4
 license: (MPL-2.0 OR Apache-2.0)
 
 emoji-mart-vue-fast
@@ -208,10 +220,6 @@ linkifyjs
 version: 4.2.0
 license: MIT
 
-lodash.get
-version: 4.4.2
-license: MIT
-
 lodash.merge
 version: 4.6.2
 license: MIT
@@ -223,10 +231,6 @@ license: BSD-3-Clause
 nanoid
 version: 3.3.8
 license: MIT
-
-node-gettext
-version: 3.0.0
-license: (MIT)
 
 path-browserify
 version: 1.0.1
@@ -305,7 +309,7 @@ version: 2.6.2
 license: 0BSD
 
 vite-plugin-node-polyfills
-version: 0.22.0
+version: 0.23.0
 license: MIT
 
 vue
