@@ -25,17 +25,16 @@ export default {
     },
     mounted() {
         const openSheetMusicDisplay = new OpenSheetMusicDisplay(this.$refs.canvas, {
-            autoResize: false,
+            autoResize: true,
             darkMode: true
         });
-        openSheetMusicDisplay.setLogLevel('debug')
+        const _this = this;
         openSheetMusicDisplay.load(this.src)
             .then(function () {
                 openSheetMusicDisplay.render()
                 openSheetMusicDisplay.setPageFormat("A4_P")
+                _this.doneLoading()                
             })
-        console.log(this.src, this.filename, this);
-
     }
 }
 
@@ -44,5 +43,12 @@ export default {
 </script>
 
 <template>
-    <div ref="canvas" style="width: 800px; background: white;"></div>
+    <div class="sheet-container" ref="canvas"></div>
 </template>
+
+<style scoped lang="scss">
+.sheet-container {
+    width: 85vw;
+    height: 100%;
+}
+</style>
