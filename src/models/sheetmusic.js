@@ -9,9 +9,13 @@ export default {
 	id: 'sheetmusic',
 	group: 'media',
 	mimes: [
+		// These are the official mime types but nextcloud has no proper mechanism to 
+		// update existing files to match them
 		'application/vnd.recordare.musicxml',
 		'application/vnd.recordare.musicxml+xml',
-		'application/xml'
+		// this registers a binary file for the sheet viewer. 
+		// The Viewer itself checks if it can make sense of it
+		'application/octet-stream', 
 	],
 	component: Sheetmusic,
 }
