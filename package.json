@@ -59,6 +59,7 @@
     "debounce": "^2.2.0",
     "filerobot-image-editor": "^4.8.1",
     "nextcloud-server": "^0.15.10",
+    "opensheetmusicdisplay": "^1.8.9",
     "path-parse": "^1.0.7",
     "react-filerobot-image-editor": "^4.9.1",
     "vue": "^2.7.16",
