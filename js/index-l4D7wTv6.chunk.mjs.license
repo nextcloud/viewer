@@ -20,7 +20,7 @@ SPDX-FileCopyrightText: scheduler developers
 
 This file is generated from multiple sources. Included packages:
 - @babel/runtime
-	- version: 7.26.7
+	- version: 7.26.10
 	- license: MIT
 - @emotion/unitless
 	- version: 0.8.1
