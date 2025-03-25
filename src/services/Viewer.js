@@ -6,6 +6,7 @@
 import Images from '../models/images.js'
 import Videos from '../models/videos.js'
 import Audios from '../models/audios.js'
+import Sheetmusic from '../models/sheetmusic.js'
 import logger from './logger.js'
 
 /**
@@ -61,6 +62,7 @@ export default class Viewer {
 		this.registerHandler(Images)
 		this.registerHandler(Videos)
 		this.registerHandler(Audios)
+		this.registerHandler(Sheetmusic)
 
 		logger.debug('OCA.Viewer initialized')
 	}
