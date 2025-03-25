@@ -81,7 +81,7 @@
     "@nextcloud/stylelint-config": "^3.0.1",
     "@nextcloud/vite-config": "^1.5.0",
     "@types/dockerode": "^3.3.35",
-    "@vue/tsconfig": "^0.5.1",
+    "@vue/tsconfig": "^0.7.0",
     "cypress": "^13.17.0",
     "cypress-split": "^1.24.7",
     "cypress-visual-regression": "^5.2.2",
