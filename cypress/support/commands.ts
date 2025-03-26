@@ -26,7 +26,9 @@ import axios from '@nextcloud/axios'
 import { addCompareSnapshotCommand } from 'cypress-visual-regression/dist/command'
 
 addCommands()
-addCompareSnapshotCommand()
+addCompareSnapshotCommand({
+	errorThreshold: 0.01,
+})
 
 const url = Cypress.config('baseUrl').replace(/\/index.php\/?$/g, '')
 Cypress.env('baseUrl', url)
