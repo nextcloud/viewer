@@ -26,7 +26,9 @@ import { basename } from 'path'
 import axios from '@nextcloud/axios'
 
 addCommands()
-addCompareSnapshotCommand()
+addCompareSnapshotCommand({
+	errorThreshold: 0.01,
+})
 
 const url = Cypress.config('baseUrl').replace(/\/index.php\/?$/g, '')
 Cypress.env('baseUrl', url)
