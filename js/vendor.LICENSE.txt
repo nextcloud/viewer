@@ -9,11 +9,11 @@ version: 0.8.1
 license: MIT
 
 @floating-ui/core
-version: 0.3.1
+version: 1.6.9
 license: MIT
 
 @floating-ui/dom
-version: 0.1.10
+version: 1.6.13
 license: MIT
 
 @floating-ui/utils
@@ -61,7 +61,7 @@ version: 2.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/l10n
-version: 2.2.0
+version: 3.2.0
 license: GPL-3.0-or-later
 
 @nextcloud/logger
