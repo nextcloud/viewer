@@ -71,8 +71,11 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.2.4
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.23.1
+	- version: 8.26.1
 	- license: AGPL-3.0-or-later
+- @vitejs/plugin-vue2
+	- version: 2.3.3
+	- license: MIT
 - @vue/reactivity
 	- version: 3.5.13
 	- license: MIT
@@ -127,6 +130,9 @@ This file is generated from multiple sources. Included packages:
 - viewer
 	- version: 4.0.0
 	- license: AGPL-3.0-or-later
+- vite
+	- version: 5.4.19
+	- license: MIT
 - vite-plugin-node-polyfills
 	- version: 0.23.0
 	- license: MIT
