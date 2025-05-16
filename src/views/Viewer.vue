@@ -699,6 +699,10 @@ export default defineComponent({
 			this.lightBackdrop = handler.theme === 'light' || (handler.theme === 'default' && defaultThemeIsLight)
 			this.handlerId = handler.id
 
+			this.currentFile = new File(fileInfo, mime, handler.component)
+			this.comparisonFile = null
+			this.updatePreviousNext()
+
 			// check if part of a group, if so retrieve full files list
 			const group = this.mimeGroups[mime]
 			if (this.files && this.files.length > 0) {
@@ -717,6 +721,10 @@ export default defineComponent({
 				const { request: folderRequest, cancel: cancelRequestFolder } = cancelableRequest(getFileList)
 				this.cancelRequestFolder = cancelRequestFolder
 				const [dirPath] = extractFilePaths(fileInfo.filename)
+
+				this.currentIndex = 0
+				this.fileList = [fileInfo]
+
 				const fileList = await folderRequest(dirPath)
 
 				// filter out the unwanted mimes
@@ -729,18 +737,11 @@ export default defineComponent({
 
 				// store current position
 				this.currentIndex = this.fileList.findIndex(file => file.filename === fileInfo.filename)
+				this.updatePreviousNext()
 			} else {
 				this.currentIndex = 0
 				this.fileList = [fileInfo]
 			}
-
-			// get saved fileInfo
-			fileInfo = this.fileList[this.currentIndex]
-
-			// show file
-			this.currentFile = new File(fileInfo, mime, handler.component)
-			this.comparisonFile = null
-			this.updatePreviousNext()
 
 			// if sidebar was opened before, let's update the file
 			this.changeSidebar()
