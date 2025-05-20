@@ -1,5 +1,6 @@
 SPDX-License-Identifier: (MPL-2.0 OR Apache-2.0)
 SPDX-License-Identifier: AGPL-3.0-or-later
+SPDX-License-Identifier: Apache-2.0
 SPDX-License-Identifier: GPL-3.0-or-later
 SPDX-License-Identifier: ISC
 SPDX-License-Identifier: MIT
@@ -7,6 +8,7 @@ SPDX-FileCopyrightText: @nextcloud/dialogs developers
 SPDX-FileCopyrightText: Alkemics
 SPDX-FileCopyrightText: Anthony Fu <anthonyfu117@hotmail.com>
 SPDX-FileCopyrightText: Anthony Fu <https://github.com/antfu>
+SPDX-FileCopyrightText: Austin Andrews
 SPDX-FileCopyrightText: Christoph Wurst
 SPDX-FileCopyrightText: Christoph Wurst <christoph@winzerhof-wurst.at>
 SPDX-FileCopyrightText: David Clark
@@ -34,6 +36,9 @@ This file is generated from multiple sources. Included packages:
 - @floating-ui/dom
 	- version: 0.1.10
 	- license: MIT
+- @mdi/svg
+	- version: 7.4.47
+	- license: Apache-2.0
 - @nextcloud/auth
 	- version: 2.4.0
 	- license: GPL-3.0-or-later
