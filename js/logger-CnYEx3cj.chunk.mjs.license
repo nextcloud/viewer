@@ -122,7 +122,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 5.0.0-dev.0
 	- license: AGPL-3.0-or-later
 - vite
-	- version: 5.4.15
+	- version: 5.4.19
 	- license: MIT
 - vite-plugin-node-polyfills
 	- version: 0.23.0
