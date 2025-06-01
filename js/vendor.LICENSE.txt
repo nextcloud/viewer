@@ -81,11 +81,11 @@ version: 0.2.4
 license: GPL-3.0-or-later
 
 @nextcloud/timezones
-version: 0.1.1
+version: 0.2.0
 license: AGPL-3.0-or-later
 
 @nextcloud/vue
-version: 8.26.0
+version: 8.27.0
 license: AGPL-3.0-or-later
 
 @nextcloud/vue-select
