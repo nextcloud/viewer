@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 SPDX-License-Identifier: MPL-2.0
 SPDX-FileCopyrightText: Andrey Sitnik <andrey@sitnik.ru>
 SPDX-FileCopyrightText: Anthony Fu <anthonyfu117@hotmail.com>
+SPDX-FileCopyrightText: Arnout Kazemier
 SPDX-FileCopyrightText: Austin Andrews
 SPDX-FileCopyrightText: Benjamin Fox <foxbenjaminfox@gmail.com>
 SPDX-FileCopyrightText: Borys Serebrov
@@ -29,6 +30,7 @@ SPDX-FileCopyrightText: Roeland Jago Douma
 SPDX-FileCopyrightText: Sindre Sorhus
 SPDX-FileCopyrightText: Thorsten Lünborg
 SPDX-FileCopyrightText: atomiks
+SPDX-FileCopyrightText: p-queue developers
 SPDX-FileCopyrightText: xiaokai <kexiaokai@gmail.com>
 SPDX-FileCopyrightText: xiemengxiong
 
@@ -55,10 +57,10 @@ This file is generated from multiple sources. Included packages:
 	- version: 3.2.0
 	- license: GPL-3.0-or-later
 - @nextcloud/timezones
-	- version: 0.1.1
+	- version: 0.2.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.23.1
+	- version: 8.27.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue-select
 	- version: 3.25.1
@@ -82,8 +84,11 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.2.7
 	- license: MIT
 - emoji-mart-vue-fast
-	- version: 15.0.3
+	- version: 15.0.4
 	- license: BSD-3-Clause
+- eventemitter3
+	- version: 5.0.1
+	- license: MIT
 - ical.js
 	- version: 2.1.0
 	- license: MPL-2.0
@@ -101,6 +106,12 @@ This file is generated from multiple sources. Included packages:
 	- license: BSD-3-Clause
 - nanoid
 	- version: 3.3.8
+	- license: MIT
+- p-queue
+	- version: 8.1.0
+	- license: MIT
+- p-timeout
+	- version: 6.1.4
 	- license: MIT
 - string-length
 	- version: 5.0.1
