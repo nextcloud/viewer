@@ -1,0 +1,90 @@
+SPDX-License-Identifier: 0BSD
+SPDX-License-Identifier: MIT
+SPDX-FileCopyrightText: @emotion/unitless developers
+SPDX-FileCopyrightText: Anton Lavrenov
+SPDX-FileCopyrightText: Cody Bennett (https://github.com/codyjasonbennett)
+SPDX-FileCopyrightText: Federico Zivolo <federico.zivolo@gmail.com>
+SPDX-FileCopyrightText: Glen Maddern
+SPDX-FileCopyrightText: John-David Dalton <john.david.dalton@gmail.com>
+SPDX-FileCopyrightText: Microsoft Corp.
+SPDX-FileCopyrightText: Scaleflex
+SPDX-FileCopyrightText: Sultan Tarimo <sultantarimo@me.com>
+SPDX-FileCopyrightText: The Babel Team (https://babel.dev/team)
+SPDX-FileCopyrightText: prop-types developers
+SPDX-FileCopyrightText: react developers
+SPDX-FileCopyrightText: react-dom developers
+SPDX-FileCopyrightText: react-konva developers
+SPDX-FileCopyrightText: react-reconciler developers
+SPDX-FileCopyrightText: scaleflex
+SPDX-FileCopyrightText: scheduler developers
+
+This file is generated from multiple sources. Included packages:
+- @babel/runtime
+	- version: 7.27.4
+	- license: MIT
+- @emotion/unitless
+	- version: 0.8.1
+	- license: MIT
+- @popperjs/core
+	- version: 2.11.8
+	- license: MIT
+- @scaleflex/icons
+	- version: 2.10.27
+	- license: MIT
+- @scaleflex/ui
+	- version: 2.10.27
+	- license: MIT
+- filerobot-image-editor
+	- version: 4.8.1
+	- license: MIT
+- its-fine
+	- version: 2.0.0
+	- license: MIT
+- konva
+	- version: 9.3.6
+	- license: MIT
+- konva
+	- version: 9.3.20
+	- license: MIT
+- lodash.merge
+	- version: 4.6.2
+	- license: MIT
+- prop-types
+	- version: 15.7.2
+	- license: MIT
+- react
+	- version: 18.3.1
+	- license: MIT
+- react
+	- version: 19.1.0
+	- license: MIT
+- react-dom
+	- version: 18.3.1
+	- license: MIT
+- react-dom
+	- version: 19.1.0
+	- license: MIT
+- react-filerobot-image-editor
+	- version: 4.9.1
+	- license: MIT
+- react-konva
+	- version: 19.0.4
+	- license: MIT
+- react-reconciler
+	- version: 0.32.0
+	- license: MIT
+- scheduler
+	- version: 0.23.2
+	- license: MIT
+- scheduler
+	- version: 0.26.0
+	- license: MIT
+- styled-components
+	- version: 6.1.18
+	- license: MIT
+- stylis
+	- version: 4.3.2
+	- license: MIT
+- tslib
+	- version: 2.6.2
+	- license: 0BSD
