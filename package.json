@@ -60,7 +60,7 @@
     "filerobot-image-editor": "^4.8.1",
     "nextcloud-server": "^0.15.10",
     "path-parse": "^1.0.7",
-    "react": "^18.3.1",
+    "react": "^19.1.0",
     "react-filerobot-image-editor": "^4.8.1",
     "react-konva": "^18.2.10",
     "vue": "^2.7.16",
