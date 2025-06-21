@@ -218,6 +218,7 @@ import Download from 'vue-material-design-icons/Download.vue'
 import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
+import { toggleEditor } from '../files_actions/viewerAction.ts'
 
 // Dynamic loading
 const NcModal = () => import(
@@ -561,6 +562,7 @@ export default defineComponent({
 		subscribe('files:sidebar:closed', this.handleAppSidebarClose)
 		subscribe('files:node:updated', this.handleFileUpdated)
 		subscribe('viewer:trapElements:changed', this.handleTrapElementsChange)
+		subscribe('editor:toggle', this.toggleEditor)
 		window.addEventListener('keydown', this.keyboardDeleteFile)
 		window.addEventListener('keydown', this.keyboardDownloadFile)
 		window.addEventListener('keydown', this.keyboardEditFile)
@@ -576,6 +578,7 @@ export default defineComponent({
 		unsubscribe('files:sidebar:opened', this.handleAppSidebarOpen)
 		unsubscribe('files:sidebar:closed', this.handleAppSidebarClose)
 		unsubscribe('viewer:trapElements:changed', this.handleTrapElementsChange)
+		unsubscribe('editor:toggle', this.toggleEditor)
 		window.removeEventListener('keydown', this.keyboardDeleteFile)
 		window.removeEventListener('keydown', this.keyboardDownloadFile)
 		window.removeEventListener('keydown', this.keyboardEditFile)
@@ -585,6 +588,10 @@ export default defineComponent({
 	methods: {
 		uniqueKey(file) {
 			return '' + file.fileid + file.source
+		},
+		toggleEditor(isOpen) {
+			toggleEditor(isOpen)
+			this.editing = isOpen
 		},
 		async beforeOpen() {
 			// initial loading start
@@ -634,7 +641,7 @@ export default defineComponent({
 
 			// swap title with original one
 			const title = document.getElementsByTagName('head')[0].getElementsByTagName('title')[0]
-			if (title && !title.dataset.old) {
+			if (title && !title.dataset.old && fileName !== '') {
 				title.dataset.old = document.title
 				this.updateTitle(fileName)
 			}
@@ -644,6 +651,9 @@ export default defineComponent({
 				const fileInfo = await fileRequest(path)
 				console.debug('File info for ' + path + ' fetched', fileInfo)
 				await this.openFileInfo(fileInfo, overrideHandlerId)
+				if (window.OCP.Files.Router.query.editing === 'true' && this.canEdit) {
+					this.toggleEditor(true)
+				}
 			} catch (error) {
 				if (error?.response?.status === 404) {
 					logger.error('The file no longer exists, error: ', { error })
@@ -699,6 +709,10 @@ export default defineComponent({
 			this.lightBackdrop = handler.theme === 'light' || (handler.theme === 'default' && defaultThemeIsLight)
 			this.handlerId = handler.id
 
+			this.currentFile = new File(fileInfo, mime, handler.component)
+			this.comparisonFile = null
+			this.updatePreviousNext()
+
 			// check if part of a group, if so retrieve full files list
 			const group = this.mimeGroups[mime]
 			if (this.files && this.files.length > 0) {
@@ -717,6 +731,10 @@ export default defineComponent({
 				const { request: folderRequest, cancel: cancelRequestFolder } = cancelableRequest(getFileList)
 				this.cancelRequestFolder = cancelRequestFolder
 				const [dirPath] = extractFilePaths(fileInfo.filename)
+
+				this.currentIndex = 0
+				this.fileList = [fileInfo]
+
 				const fileList = await folderRequest(dirPath)
 
 				// filter out the unwanted mimes
@@ -729,18 +747,11 @@ export default defineComponent({
 
 				// store current position
 				this.currentIndex = this.fileList.findIndex(file => file.filename === fileInfo.filename)
+				this.updatePreviousNext()
 			} else {
 				this.currentIndex = 0
 				this.fileList = [fileInfo]
 			}
-
-			// get saved fileInfo
-			fileInfo = this.fileList[this.currentIndex]
-
-			// show file
-			this.currentFile = new File(fileInfo, mime, handler.component)
-			this.comparisonFile = null
-			this.updatePreviousNext()
 
 			// if sidebar was opened before, let's update the file
 			this.changeSidebar()
@@ -1157,7 +1168,7 @@ export default defineComponent({
 		},
 
 		onEdit() {
-			this.editing = true
+			this.toggleEditor(true)
 		},
 
 		handleTrapElementsChange(element) {

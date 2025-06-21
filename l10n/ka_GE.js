@@ -1,7 +1,7 @@
 OC.L10N.register(
     "viewer",
     {
-    "Unsaved changes" : "შეუნახავი ცვლილებები",
+    "Cancel" : "უარყოფა",
     "Edit" : "შეცვლა",
     "Download" : "ჩამოტვირთვა",
     "Delete" : "წაშლა",
@@ -9,7 +9,6 @@ OC.L10N.register(
     "Save" : "შენახვა",
     "Back" : "უკან",
     "Reset" : "საწყის მდოგმარეობაში დაბრუნება",
-    "Cancel" : "უარყოფა",
     "Apply" : "გამოყენება",
     "Warning" : "გაფრთხილება",
     "Confirm" : "დადასტურება",

@@ -5,7 +5,7 @@
 import { basename, dirname, extname, join } from 'path'
 import { emit } from '@nextcloud/event-bus'
 import { Node } from '@nextcloud/files'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showError, showSuccess, DialogBuilder } from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
 
 import logger from '../services/logger.js'
@@ -141,15 +141,27 @@ export default {
 	},
 
 	methods: {
-		onClose(closingReason, haveNotSavedChanges) {
-			if (haveNotSavedChanges) {
-				this.onExitWithoutSaving()
-				return
-			}
+		onClose() {
 			window.removeEventListener('keydown', this.handleKeydown, true)
 			this.$emit('close')
 		},
-
+		/**
+		 * Check if a file exists at the given URL
+		 * @param {string} url The URL to check
+		 * @return {Promise<boolean>} True if the file exists, false otherwise
+		 */
+		 async fileExists(url) {
+			try {
+				await axios.head(url, { validateStatus: status => status === 200 || status === 404 })
+				const response = await axios.head(url)
+				return response.status === 200
+			} catch (error) {
+				if (error.response?.status === 404) {
+					return false
+				}
+				throw error
+			}
+		},
 		/**
 		 * User saved the image
 		 *
@@ -164,6 +176,51 @@ export default {
 			const { origin, pathname } = new URL(this.src)
 			const putUrl = origin + join(dirname(pathname), fullName)
 			logger.debug('Saving image...', { putUrl, src: this.src, fullName })
+
+			const fileExists = await this.fileExists(putUrl)
+			logger.debug('File exists', { fileExists })
+			if (fileExists) {
+				logger.debug('File exists, showing confirmation dialog')
+				try {
+					const isOriginal = fullName === basename(this.src)
+					const message = isOriginal
+						? t('viewer', 'You are about to overwrite the original file. Are you sure you want to continue?')
+						: t('viewer', 'A file with this name already exists. Do you want to overwrite it?')
+
+					let confirmed = false
+					const dialog = (new DialogBuilder())
+						.setName(t('viewer', 'Confirm overwrite'))
+						.setText(message)
+						.setButtons([
+							{
+								label: t('viewer', 'Cancel'),
+								type: 'secondary',
+								callback: () => {
+									confirmed = false
+								},
+							},
+							{
+								label: t('viewer', 'Overwrite'),
+								type: 'error',
+								callback: () => {
+									confirmed = true
+								},
+							},
+						])
+						.build()
+
+					await dialog.show()
+
+					if (!confirmed) {
+						logger.debug('User cancelled overwrite')
+						return
+					}
+				} catch (error) {
+					logger.error('Error showing confirmation dialog', { error })
+					showError(t('viewer', 'An error occurred while trying to confirm the file overwrite.'))
+					return
+				}
+			}
 
 			// toBlob is not very smart...
 			mimeType = mimeType.replace('jpg', 'jpeg')
@@ -200,28 +257,6 @@ export default {
 				logger.error('Error saving image', { error })
 				showError(t('viewer', 'Error saving image'))
 			}
-		},
-
-		/**
-		 * Show warning if unsaved changes
-		 */
-		onExitWithoutSaving() {
-			OC.dialogs.confirmDestructive(
-				translations.changesLoseWarningHint + '\n\n' + translations.discardChangesWarningHint,
-				t('viewer', 'Unsaved changes'),
-				{
-					type: OC.dialogs.YES_NO_BUTTONS,
-					confirm: t('viewer', 'Drop changes'),
-					confirmClasses: 'error',
-					cancel: translations.cancel,
-				},
-				(decision) => {
-					if (!decision) {
-						return
-					}
-					this.onClose('warning-ignored', false)
-				},
-			)
 		},
 
 		// Key Handlers, override default Viewer arrow and escape key
@@ -418,6 +453,10 @@ export default {
 	margin-left: 6px !important;
 }
 
+.FIE_tabs_toggle_btn{
+	display: none !important;
+}
+
 // Tabs
 .FIE_tabs {
 	padding: 6px !important;
@@ -551,15 +590,6 @@ export default {
 			stroke: var(--color-main-text);
 			fill: var(--color-main-text);
 		}
-	}
-}
-
-// Close editor button fixes
-.FIE_topbar-close-button {
-	svg path {
-		// The path viewbox is weird and
-		// not correct, this fixes it
-		transform: scale(1.6);
 	}
 }
 
