@@ -148,6 +148,7 @@
 					:is-sidebar-shown="isSidebarShown"
 					:loaded.sync="currentFile.loaded"
 					class="viewer__file viewer__file--active"
+					@update:editing="toggleEditor"
 					@error="currentFailed" />
 				<Error v-else
 					:name="currentFile.basename" />
@@ -187,7 +188,7 @@ import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen.js'
 import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 import { canDownload } from '../utils/canDownload.ts'
-import { extractFilePaths, sortCompare } from '../utils/fileUtils.ts'
+import { extractFilePaths, sortCompare, extractFilePathFromSource } from '../utils/fileUtils.ts'
 import getSortingConfig from '../services/FileSortingConfig.ts'
 import cancelableRequest from '../utils/CancelableRequest.js'
 import Error from '../components/Error.vue'
@@ -545,6 +546,7 @@ export default defineComponent({
 		subscribe('files:node:updated', this.handleFileUpdated)
 		subscribe('viewer:trapElements:changed', this.handleTrapElementsChange)
 		subscribe('editor:toggle', this.toggleEditor)
+		subscribe('files:node:created', this.handleNewFile)
 		window.addEventListener('keydown', this.keyboardDeleteFile)
 		window.addEventListener('keydown', this.keyboardDownloadFile)
 		window.addEventListener('keydown', this.keyboardEditFile)
@@ -658,6 +660,16 @@ export default defineComponent({
 					console.error('Could not open file ' + path, error)
 				}
 			}
+		},
+		handleNewFile(source) {
+			let path
+			try {
+				path = extractFilePathFromSource(source)
+			} catch (e) {
+				logger.error('Could not extract file path from source', { source, e })
+				return
+			}
+			this.openFile(path)
 		},
 
 		/**
