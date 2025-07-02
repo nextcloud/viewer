@@ -35,6 +35,7 @@ export default {
 	data() {
 		return {
 			imageEditor: null,
+			observer: null,
 		}
 	},
 
@@ -129,7 +130,23 @@ export default {
 		)
 		this.imageEditor.render()
 		window.addEventListener('keydown', this.handleKeydown, true)
-		window.addEventListener('DOMNodeInserted', this.handleSfxModal)
+
+		this.observer = new MutationObserver((mutations) => {
+			mutations.forEach((mutation) => {
+				if (mutation.type === 'childList') {
+					mutation.addedNodes.forEach((node) => {
+						if (node.classList.contains('FIE_root') || node.classList.contains('SfxModal-Wrapper')) {
+							emit('viewer:trapElements:changed', node)
+						}
+					})
+				}
+			})
+		})
+		// using body instead of the editor ref because save modal is not mounted in editor
+		this.observer.observe(document.body, {
+			childList: true,
+			subtree: true,
+		})
 
 	},
 
@@ -137,6 +154,7 @@ export default {
 		if (this.imageEditor) {
 			this.imageEditor.terminate()
 		}
+		this.observer.disconnect()
 		window.removeEventListener('keydown', this.handleKeydown, true)
 	},
 
@@ -286,17 +304,6 @@ export default {
 			}
 		},
 
-		/**
-		 * Watch out for Modal inject in document root
-		 * That way we can adjust the focusTrap
-		 *
-		 * @param {Event} event Dom insertion event
-		 */
-		handleSfxModal(event) {
-			if (event.target?.classList && event.target.classList.contains('SfxModal-Wrapper')) {
-				emit('viewer:trapElements:changed', event.target)
-			}
-		},
 	},
 }
 </script>
