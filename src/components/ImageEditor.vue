@@ -39,7 +39,6 @@ export default {
 	data() {
 		return {
 			imageEditor: null,
-			observer: null,
 		}
 	},
 
@@ -134,23 +133,7 @@ export default {
 		)
 		this.imageEditor.render()
 		window.addEventListener('keydown', this.handleKeydown, true)
-
-		this.observer = new MutationObserver((mutations) => {
-			mutations.forEach((mutation) => {
-				if (mutation.type === 'childList') {
-					mutation.addedNodes.forEach((node) => {
-						if (node.classList.contains('FIE_root') || node.classList.contains('SfxModal-Wrapper')) {
-							emit('viewer:trapElements:changed', node)
-						}
-					})
-				}
-			})
-		})
-		// using body instead of the editor ref because save modal is not mounted in editor
-		this.observer.observe(document.body, {
-			childList: true,
-			subtree: true,
-		})
+		window.addEventListener('DOMNodeInserted', this.handleSfxModal)
 
 	},
 
@@ -158,7 +141,6 @@ export default {
 		if (this.imageEditor) {
 			this.imageEditor.terminate()
 		}
-		this.observer.disconnect()
 		window.removeEventListener('keydown', this.handleKeydown, true)
 	},
 
@@ -253,11 +235,16 @@ export default {
 			try {
 				const blob = await new Promise(resolve => imageCanvas.toBlob(resolve, mimeType, quality))
 				const response = await axios.put(putUrl, new File([blob], fullName))
-
 				logger.info('Edited image saved!', { response })
 				showSuccess(t('viewer', 'Image saved'))
 				if (putUrl !== this.src) {
-					emit('files:node:created', { fileid: parseInt(response?.headers?.['oc-fileid']?.split('oc')[0]) || null })
+					const fileId = parseInt(response?.headers?.['oc-fileid']?.split('oc')[0]) || null
+					emit('editor:file:created', putUrl)
+					if (fileId) {
+						const newParams = window.OCP.Files.Router.params
+						newParams.fileId = fileId
+						window.OCP.Files.Router.goToRoute(null, newParams, window.OCP.Files.Router.query)
+					}
 				} else {
 					this.$emit('updated')
 					const updatedFile = await rawStat(origin, decodeURI(pathname))
@@ -308,6 +295,17 @@ export default {
 			}
 		},
 
+		/**
+		 * Watch out for Modal inject in document root
+		 * That way we can adjust the focusTrap
+		 *
+		 * @param {Event} event Dom insertion event
+		 */
+		handleSfxModal(event) {
+			if (event.target?.classList && event.target.classList.contains('SfxModal-Wrapper')) {
+				emit('viewer:trapElements:changed', event.target)
+			}
+		},
 	},
 }
 </script>
