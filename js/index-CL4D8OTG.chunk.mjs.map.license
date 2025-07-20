@@ -1,0 +1,96 @@
+SPDX-License-Identifier: BSD-3-Clause
+SPDX-License-Identifier: MIT
+SPDX-FileCopyrightText: @emotion/is-prop-valid developers
+SPDX-FileCopyrightText: @emotion/memoize developers
+SPDX-FileCopyrightText: @emotion/stylis developers
+SPDX-FileCopyrightText: @emotion/unitless developers
+SPDX-FileCopyrightText: Anton Lavrenov
+SPDX-FileCopyrightText: Cody Bennett (https://github.com/codyjasonbennett)
+SPDX-FileCopyrightText: Federico Zivolo <federico.zivolo@gmail.com>
+SPDX-FileCopyrightText: Glen Maddern
+SPDX-FileCopyrightText: John-David Dalton <john.david.dalton@gmail.com>
+SPDX-FileCopyrightText: Michael Ridgway <mcridgway@gmail.com>
+SPDX-FileCopyrightText: Scaleflex
+SPDX-FileCopyrightText: The Babel Team (https://babel.dev/team)
+SPDX-FileCopyrightText: prop-types developers
+SPDX-FileCopyrightText: react developers
+SPDX-FileCopyrightText: react-dom developers
+SPDX-FileCopyrightText: react-is developers
+SPDX-FileCopyrightText: react-konva developers
+SPDX-FileCopyrightText: react-reconciler developers
+SPDX-FileCopyrightText: scaleflex
+SPDX-FileCopyrightText: scheduler developers
+
+This file is generated from multiple sources. Included packages:
+- @babel/runtime
+	- version: 7.27.4
+	- license: MIT
+- @emotion/is-prop-valid
+	- version: 1.2.2
+	- license: MIT
+- @emotion/memoize
+	- version: 0.8.1
+	- license: MIT
+- @emotion/stylis
+	- version: 0.8.5
+	- license: MIT
+- @emotion/unitless
+	- version: 0.7.5
+	- license: MIT
+- @popperjs/core
+	- version: 2.11.8
+	- license: MIT
+- @scaleflex/icons
+	- version: 2.6.3
+	- license: MIT
+- @scaleflex/ui
+	- version: 2.7.0
+	- license: MIT
+- filerobot-image-editor
+	- version: 4.8.1
+	- license: MIT
+- hoist-non-react-statics
+	- version: 3.3.2
+	- license: BSD-3-Clause
+- its-fine
+	- version: 1.2.5
+	- license: MIT
+- konva
+	- version: 9.3.6
+	- license: MIT
+- konva
+	- version: 9.3.20
+	- license: MIT
+- lodash.merge
+	- version: 4.6.2
+	- license: MIT
+- prop-types
+	- version: 15.7.2
+	- license: MIT
+- react
+	- version: 18.3.1
+	- license: MIT
+- react-dom
+	- version: 18.3.1
+	- license: MIT
+- react-filerobot-image-editor
+	- version: 4.8.1
+	- license: MIT
+- react-is
+	- version: 16.13.1
+	- license: MIT
+- react-is
+	- version: 19.1.0
+	- license: MIT
+- react-konva
+	- version: 18.2.10
+	- license: MIT
+- react-reconciler
+	- version: 0.29.2
+	- license: MIT
+- scheduler
+	- version: 0.23.2
+	- license: MIT
+- styled-components
+	- version: 5.3.11
+	- license: MIT
