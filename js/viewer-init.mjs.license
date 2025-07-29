@@ -90,7 +90,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 4.3.1
 	- license: MIT
 - linkifyjs
-	- version: 4.3.1
+	- version: 4.3.2
 	- license: MIT
 - md5
 	- version: 2.3.0
