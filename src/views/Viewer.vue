@@ -182,6 +182,7 @@ import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { File as NcFile, Node, davRemoteURL, davRootPath, davGetRootPath, sortNodes } from '@nextcloud/files'
 import { showError } from '@nextcloud/dialogs'
+import { t } from '@nextcloud/l10n'
 import axios from '@nextcloud/axios'
 
 import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen.js'
@@ -189,6 +190,7 @@ import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 import { canDownload } from '../utils/canDownload.ts'
 import { extractFilePaths, extractFilePathFromSource } from '../utils/fileUtils.ts'
+import { toggleEditor } from '../files_actions/viewerAction.ts'
 import getSortingConfig from '../services/FileSortingConfig.ts'
 import cancelableRequest from '../utils/CancelableRequest.js'
 import Error from '../components/Error.vue'
@@ -204,7 +206,6 @@ import Download from 'vue-material-design-icons/Download.vue'
 import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import Pencil from 'vue-material-design-icons/Pencil.vue'
-import { toggleEditor } from '../files_actions/viewerAction.ts'
 
 // Dynamic loading
 const NcModal = () => import('@nextcloud/vue/dist/Components/NcModal.js')
@@ -720,7 +721,7 @@ export default defineComponent({
 			}
 			// If no provided handler, or provided handler not found: try a supported handler with mime/mime-alias
 			if (!handler) {
-				handler = this.registeredHandlers[mime] ?? this.registeredHandlers[alias]
+				handler = this.registeredHandlers[mime].at(0) ?? this.registeredHandlers[alias].at(0) ?? null
 			}
 
 			// if we don't have a handler for this mime, abort
@@ -808,13 +809,13 @@ export default defineComponent({
 		openFileFromList(fileInfo) {
 			// override mimetype if existing alias
 			const mime = fileInfo.mime
-			this.currentFile = new File(fileInfo, mime, this.components[mime])
+			this.currentFile = new File(fileInfo, mime, this.components[mime].at(0))
 			this.changeSidebar()
 			this.updatePreviousNext()
 		},
 
 		async compareFile(fileInfo) {
-			this.comparisonFile = new File(fileInfo, fileInfo.mime, this.components[fileInfo.mime])
+			this.comparisonFile = new File(fileInfo, fileInfo.mime, this.components[fileInfo.mime].at(0))
 		},
 
 		/**
@@ -835,7 +836,7 @@ export default defineComponent({
 
 			if (prev) {
 				const mime = prev.mime
-				if (this.components[mime]) {
+				if (this.components[mime].at(0)) {
 					this.previousFile = new File(prev, mime, this.components[mime])
 				}
 			} else {
@@ -845,7 +846,7 @@ export default defineComponent({
 
 			if (next) {
 				const mime = next.mime
-				if (this.components[mime]) {
+				if (this.components[mime].at(0)) {
 					this.nextFile = new File(next, mime, this.components[mime])
 				}
 			} else {
@@ -870,7 +871,7 @@ export default defineComponent({
 		 */
 		registerHandler(handler) {
 			// checking if handler is not already registered
-			if (handler.id && Object.values(this.registeredHandlers).findIndex((h) => h.id === handler.id) > -1) {
+			if (handler.id && Object.values(this.registeredHandlers).flat().findIndex((h) => h.id === handler.id) > -1) {
 				logger.error('The following handler is already registered', { handler })
 				return
 			}
@@ -904,21 +905,23 @@ export default defineComponent({
 			// parsing mimes registration
 			if (handler.mimes) {
 				handler.mimes.forEach(mime => {
-					// checking valid mime
-					if (this.components[mime]) {
-						logger.error('The following mime is already registered', { mime, handler })
-						return
+					if (!this.components[mime]) {
+						this.components[mime] = []
+					}
+
+					if (!this.registeredHandlers[mime]) {
+						this.registeredHandlers[mime] = []
 					}
 
 					// register groups
 					this.registerGroups({ mime, group: handler.group })
 
 					// register mime's component
-					this.components[mime] = handler.component
+					this.components[mime].push(handler.component)
 					Vue.component(handler.component.name, handler.component)
 
 					// set the handler as registered
-					this.registeredHandlers[mime] = handler
+					this.registeredHandlers[mime].push(handler)
 				})
 			}
 		},
@@ -937,24 +940,22 @@ export default defineComponent({
 					// this is the targeted alias
 					const alias = handler.mimesAliases[mime]
 
-					// checking valid mime
-					if (this.components[mime]) {
-						logger.error('The following mime is already registered', { mime, handler })
-						return
+					if (!this.components[mime]) {
+						this.components[mime] = []
 					}
-					if (!this.components[alias]) {
-						logger.error('The requested alias does not exists', { alias, mime, handler })
-						return
+
+					if (!this.registeredHandlers[mime]) {
+						this.registeredHandlers[mime] = []
 					}
 
 					// register groups if the request alias had a group
 					this.registerGroups({ mime, group: this.mimeGroups[alias] })
 
 					// register mime's component
-					this.components[mime] = this.components[alias]
+					this.components[mime] = this.components[alias] || []
 
 					// set the handler as registered
-					this.registeredHandlers[mime] = handler
+					this.registeredHandlers[mime].push(handler)
 				})
 			}
 		},
