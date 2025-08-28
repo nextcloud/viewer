@@ -189,7 +189,6 @@ import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 import { canDownload } from '../utils/canDownload.ts'
 import { extractFilePaths, extractFilePathFromSource } from '../utils/fileUtils.ts'
-import { toggleEditor } from '../files_actions/viewerAction.ts'
 import cancelableRequest from '../utils/CancelableRequest.js'
 import Error from '../components/Error.vue'
 import fetchNode from '../services/FetchFile.ts'
