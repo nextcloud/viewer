@@ -189,15 +189,15 @@ import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
 
 import { canDownload } from '../utils/canDownload.ts'
 import { extractFilePaths, extractFilePathFromSource } from '../utils/fileUtils.ts'
-import getSortingConfig from '../services/FileSortingConfig.ts'
 import cancelableRequest from '../utils/CancelableRequest.js'
 import Error from '../components/Error.vue'
+import fetchNode from '../services/FetchFile.ts'
 import File from '../models/file.js'
 import getFileInfo from '../services/FileInfo.ts'
-import fetchNode from '../services/FetchFile.ts'
 import getFileList from '../services/FileList.ts'
-import Mime from '../mixins/Mime.js'
+import getSortingConfig from '../services/FileSortingConfig.ts'
 import logger from '../services/logger.js'
+import Mime from '../mixins/Mime.js'
 
 import Delete from 'vue-material-design-icons/Delete.vue'
 import Download from 'vue-material-design-icons/Download.vue'
@@ -661,7 +661,8 @@ export default defineComponent({
 				const fileInfo = await fileRequest(path)
 				console.debug('File info for ' + path + ' fetched', fileInfo)
 				await this.openFileInfo(fileInfo, overrideHandlerId)
-				if (window.OCP.Files.Router.query.editing === 'true' && this.canEdit) {
+				if (!this.isStandalone && this.canEdit
+					&& window.OCP?.Files?.Router?.query?.editing === 'true') {
 					this.toggleEditor(true)
 				}
 			} catch (error) {
