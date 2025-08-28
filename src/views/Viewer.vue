@@ -207,9 +207,9 @@ import { extractFilePaths, extractFilePathFromSource } from '../utils/fileUtils.
 import cancelableRequest from '../utils/CancelableRequest.js'
 import canDownload from '../utils/canDownload.js'
 import Error from '../components/Error.vue'
+import fetchNode from '../services/FetchFile.ts'
 import File from '../models/file.js'
 import getFileInfo from '../services/FileInfo.ts'
-import fetchNode from '../services/FetchFile.ts'
 import getFileList from '../services/FileList.ts'
 import legacyFilesActionHandler from '../services/LegacyFilesActionHandler.js'
 import logger from '../services/logger.js'
@@ -654,7 +654,8 @@ export default defineComponent({
 				const fileInfo = await fileRequest(path)
 				console.debug('File info for ' + path + ' fetched', fileInfo)
 				await this.openFileInfo(fileInfo, overrideHandlerId)
-				if (window.OCP.Files.Router.query.editing === 'true' && this.canEdit) {
+				if (!this.isStandalone && this.canEdit
+					&& window.OCP?.Files?.Router?.query?.editing === 'true') {
 					this.toggleEditor(true)
 				}
 			} catch (error) {
