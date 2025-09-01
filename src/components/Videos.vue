@@ -229,4 +229,16 @@ main.viewer__hidden-fullscreen {
 footer.viewer__hidden-fullscreen {
 	display: none !important;
 }
+
+#files-public-content:has(.plyr) {
+	height: 100%;
+
+	#preview {
+		height: 100%;
+
+		video {
+			display: inline-block;
+		}
+	}
+}
 </style>
