@@ -13,7 +13,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.0.7
 	- license: MIT
 - viewer
-	- version: 5.0.0-dev.0
+	- version: 6.0.0-dev.0
 	- license: AGPL-3.0-or-later
 - vue-material-design-icons
 	- version: 5.3.1
