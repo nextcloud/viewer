@@ -114,7 +114,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 5.1.3
 	- license: MIT
 - viewer
-	- version: 5.0.0-dev.0
+	- version: 6.0.0-dev.0
 	- license: AGPL-3.0-or-later
 - vue-async-computed
 	- version: 3.9.0
