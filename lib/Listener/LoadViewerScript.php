@@ -23,6 +23,7 @@ use OCP\Util;
  */
 class LoadViewerScript implements IEventListener {
 	private IInitialState $initialStateService;
+
 	private IPreview $previewManager;
 
 	public function __construct(
@@ -34,7 +35,7 @@ class LoadViewerScript implements IEventListener {
 	}
 
 	public function handle(Event $event): void {
-		if (!($event instanceof LoadViewer || $event instanceof LoadAdditionalScriptsEvent)) {
+		if (!$event instanceof LoadViewer && !$event instanceof LoadAdditionalScriptsEvent) {
 			return;
 		}
 
