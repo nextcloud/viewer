@@ -73,23 +73,19 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import AsyncComputed from 'vue-async-computed'
-import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
+import { basename } from '@nextcloud/paths'
+import { Node } from '@nextcloud/files'
+import { translate } from '@nextcloud/l10n'
+import axios from '@nextcloud/axios'
 import DOMPurify from 'dompurify'
 
-import axios from '@nextcloud/axios'
-import { basename } from '@nextcloud/paths'
-import { translate } from '@nextcloud/l10n'
 import { NcLoadingIcon } from '@nextcloud/vue'
-
+import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import ImageEditor from './ImageEditor.vue'
+
 import { findLivePhotoPeerFromFileId } from '../utils/livePhotoUtils'
 import { getDavPath } from '../utils/fileUtils'
 import { preloadMedia } from '../services/mediaPreloader'
-
-Vue.use(AsyncComputed)
-
 export default {
 	name: 'Images',
 
@@ -104,6 +100,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		node: {
+			type: Node,
+			required: true,
+		}
 	},
 	data() {
 		return {
@@ -122,7 +122,7 @@ export default {
 
 	computed: {
 		src() {
-			return this.source ?? this.davPath
+			return this.node.source ?? this.davPath
 		},
 		zoomHeight() {
 			return Math.round(this.height * this.zoomRatio)

@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import { defineCustomElement } from 'vue'
 import { loadState } from '@nextcloud/initial-state'
-import logger from '../services/logger.js'
+import { logger}  from '../services/logger.ts'
 import Images from '../components/Images.vue'
+import { registerHandler } from '../api_package/index.ts'
+import { t } from '@nextcloud/l10n'
 
-const enabledPreviewProviders = loadState(appName, 'enabled_preview_providers', [])
+const enabledPreviewProviders = loadState<string[]>('viewer', 'enabled_preview_providers', [])
 
 /**
  * Those mimes needs a proper preview to be displayed
@@ -55,12 +58,40 @@ if (ignoredMimes.length > 0) {
 	logger.warn('Some mimes were ignored because they are not enabled in the server previews config', { ignoredMimes })
 }
 
-export default {
-	id: 'images',
-	group: 'media',
-	mimes: [
-		...browserSupportedMimes,
-		...enabledMimes,
-	],
-	component: Images,
+export const tagname = 'oca-viewer-image'
+export function registerImageCustomElement() {
+	const ImageElement = defineCustomElement(Images, {
+		shadowRoot: false,
+	})
+
+	// Register the custom element.
+	customElements.define(tagname, ImageElement)
+}
+
+export function registerImageHandler() {
+	registerHandler({
+		id: 'images',
+		displayName: t('viewer', 'Images'),
+		tagname,
+
+		enabled: (nodes) => {
+			if (nodes.length === 0) {
+				return false
+			}
+
+			return nodes.every(node => {
+				// Always allow browser supported mimes
+				if (browserSupportedMimes.includes(node.mime)) {
+					return true
+				}
+
+				// Only allow preview supported mimes if they are enabled in the server config
+				if (enabledMimes.includes(node.mime)) {
+					return true
+				}
+				return false
+			})
+		},
+	})
+	logger.info('Image handler registered', { tagname, enabledMimes, browserSupportedMimes })
 }

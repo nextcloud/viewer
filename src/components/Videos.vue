@@ -37,14 +37,12 @@
 </template>
 
 <script lang='ts'>
-// eslint-disable-next-line n/no-missing-import
-import Vue from 'vue'
-import AsyncComputed from 'vue-async-computed'
 import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
+import type { File } from '@nextcloud/files'
 
 import { imagePath } from '@nextcloud/router'
 
-import logger from '../services/logger.js'
+import { logger } from '../services/logger.ts'
 import { findLivePhotoPeerFromName } from '../utils/livePhotoUtils'
 import { getPreviewIfAny } from '../utils/previewUtils'
 import { preloadMedia } from '../services/mediaPreloader.js'
@@ -53,13 +51,38 @@ const VuePlyr = () => import(/* webpackChunkName: 'plyr' */'@skjnldsv/vue-plyr')
 
 const blankVideo = imagePath('viewer', 'blank.mp4')
 
-Vue.use(AsyncComputed)
-
 export default {
 	name: 'Videos',
 
 	components: {
 		VuePlyr,
+	},
+
+	props: {
+		node: {
+			type: Node,
+			required: true,
+		},
+		nodes: {
+			type: Array as () => File[],
+			required: true,
+		},
+		isFullScreen: {
+			type: Boolean,
+			default: false,
+		},
+		isSidebarShown: {
+			type: Boolean,
+			default: false,
+		},
+		height: {
+			type: Number,
+			required: true,
+		},
+		width: {
+			type: Number,
+			required: true,
+		},
 	},
 	data() {
 		return {
@@ -70,7 +93,7 @@ export default {
 
 	computed: {
 		livePhotoPath() {
-			const peerFile = findLivePhotoPeerFromName(this, this.fileList)
+			const peerFile = findLivePhotoPeerFromName(this, this.nodes)
 
 			if (peerFile === undefined) {
 				return undefined
@@ -83,7 +106,7 @@ export default {
 		},
 		options() {
 			return {
-				autoplay: this.active === true,
+				autoplay: true,
 				// Used to reset the video streams https://github.com/sampotts/plyr#javascript-1
 				blankVideo,
 				controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
