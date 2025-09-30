@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { AsyncComponent, Component } from 'vue'
+import { File } from '@nextcloud/files'
 
 export interface IHandler {
 	/**
@@ -12,29 +12,38 @@ export interface IHandler {
 	id: string
 
 	/**
-	 * Indicate support for comparing two files
+	 * The handler translated name
 	 */
-	canCompare?: boolean
+	displayName: string
 
 	/**
-	 * Vue 2 component to render the file.
+	 * The custom element tag name to use for this handler.
 	 */
-	component: Component | AsyncComponent
+	tagname: string
 
 	/**
-	 * Group identifier to combine for navigating to the next/previous files
+	 * Identifier to group handlers by.
+	 * When opening a folder we'll check
+	 * against all handlers that are enabled
+	 * for the given group AND matches the
+	 * group property.
 	 */
 	group?: string
 
 	/**
-	 * List of mime types that are supported for opening
+	 * Is this enabled for the given mimes ?
 	 */
-	mimes?: string[]
+	enabled: (nodes: File[]) => boolean
 
 	/**
-	 * Aliases for mime types, used to map different mime types to the same handler.
+	 * Optional function to preload data for the given node.
+	 * This will be called for the previous and next nodes on
+	 * opening a file to allow the handler to be faster when navigating.
+	 *
+	 * @param node - The node to preload data for
+	 * @returns A promise that resolves when the data is preloaded
 	 */
-	mimesAliases?: Record<string, string>
+	preload?: (node: File) => Promise<void>
 
 	/**
 	 * Viewer modal theme (one of 'dark', 'light', 'default')
@@ -53,13 +62,13 @@ export interface IHandler {
 export function registerHandler(handler: IHandler): void {
 	validateHandler(handler)
 
-	window._oca_viewer_handlers ??= new Map<string, IHandler>()
-	if (window._oca_viewer_handlers.has(handler.id)) {
+	window._nc_viewer_handlers ??= new Map<string, IHandler>()
+	if (window._nc_viewer_handlers.has(handler.id)) {
 		console.warn(`Handler with id ${handler.id} is already registered.`)
 		return
 	}
 
-	window._oca_viewer_handlers.set(handler.id, handler)
+	window._nc_viewer_handlers.set(handler.id, handler)
 }
 
 /**
@@ -67,21 +76,33 @@ export function registerHandler(handler: IHandler): void {
  *
  * @param handler - The handler to validate
  */
-function validateHandler(handler: IHandler) {
-	const { id, mimes, mimesAliases, component } = handler
-
-	// checking valid handler id
-	if (!id || id.trim() === '' || typeof id !== 'string') {
-		throw new Error('The handler does not have a valid id')
+function validateHandler(handler: IHandler): void {
+	const { id, displayName, group, enabled } = handler
+	if (typeof id !== 'string' || id.trim() === '') {
+		throw new Error('Handler id must be a non-empty string')
 	}
 
-	// Nothing available to process! Failure
-	if ((!mimes || !Array.isArray(mimes)) && !mimesAliases) {
-		throw new Error('Handler needs a valid mime array or mimesAliases')
+	if (typeof displayName !== 'string' || displayName.trim() === '') {
+		throw new Error('Handler displayName must be a non-empty string')
 	}
 
-	// checking valid handler component data
-	if ((!component || (typeof component !== 'object' && typeof component !== 'function'))) {
-		throw new Error('The handler does not have a valid component')
+	if (typeof handler.tagname !== 'string' || handler.tagname.trim() === '') {
+		throw new Error('Handler tagname must be a non-empty string')
+	}
+
+	if (group && (typeof group !== 'string' || group.trim() === '')) {
+		throw new Error('Handler group must be a non-empty string if provided')
+	}
+
+	if (typeof enabled !== 'function') {
+		throw new Error('Handler enabled must be a function')
+	}
+
+	if (handler.preload && typeof handler.preload !== 'function') {
+		throw new Error('Handler preload must be a function if provided')
+	}
+
+	if (handler.theme && !['dark', 'light', 'default'].includes(handler.theme)) {
+		throw new Error("Handler theme must be one of 'dark', 'light', 'default' if provided")
 	}
 }
