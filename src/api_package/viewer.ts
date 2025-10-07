@@ -7,7 +7,7 @@ import type { File, Folder } from '@nextcloud/files'
 import ViewerVue from '../views/Viewer.vue'
 
 export type ViewerOptions = {
-	loadMore: Promise<File[]>
+	loadMore: () => Promise<File[]>
 	onPrev: () => void
 	onNext: () => void
 	onClose: () => void
@@ -23,7 +23,11 @@ export interface ViewerAPI {
 export class Viewer extends EventTarget implements ViewerAPI {
 	private viewer: InstanceType<typeof ViewerVue> | null = null
 
-  private setViewer(viewer: InstanceType<typeof ViewerVue>) {
+	/**
+	 * Set the viewer instance (called from init.ts)
+	 * Private, do not use directly.
+	 */
+  	_setViewer(viewer: InstanceType<typeof ViewerVue>) {
 		this.viewer = viewer
 	}
 
