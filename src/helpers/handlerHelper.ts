@@ -4,27 +4,21 @@
  */
 
 import type { File } from "@nextcloud/files"
-import type { IHandler } from "../api_package"
+import { getHandlers, type IHandler } from "../api_package"
 
-/**
- * Get the registered handlers
- */
-export function getHandlers(): Map<string, IHandler> {
-	return window._nc_viewer_handlers
-}
 
 /**
  * Get a handler by its ID
  */
 export function getHandler(id: string): IHandler | undefined {
-	return window._nc_viewer_handlers.get(id)
+	return getHandlers().get(id)
 }
 
 /**
  * Find the first handler available for the given file
  */
 export function getHandlerForFile(file: File, group?: string): IHandler | undefined {
-	const handlers = Array.from(window._nc_viewer_handlers.values())
+	const handlers = Array.from(getHandlers().values())
 	return handlers.find(handler => {
 		if (group && handler.group !== group) {
 			return false

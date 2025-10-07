@@ -71,6 +71,10 @@ export function registerHandler(handler: IHandler): void {
 	window._nc_viewer_handlers.set(handler.id, handler)
 }
 
+export function getHandlers() : Map<string, IHandler> {
+	return window._nc_viewer_handlers ??= new Map<string, IHandler>()
+}
+
 /**
  * Validate the handler object.
  *
@@ -104,5 +108,25 @@ function validateHandler(handler: IHandler): void {
 
 	if (handler.theme && !['dark', 'light', 'default'].includes(handler.theme)) {
 		throw new Error("Handler theme must be one of 'dark', 'light', 'default' if provided")
+	}
+
+	validateCustomElementName(handler.tagname)
+}
+
+function validateCustomElementName(tagname: string): void {
+	if (!tagname.includes('-')) {
+		throw new Error('Handler tagname must contain a hyphen (-)')
+	}
+	if (/^[A-Z]/.test(tagname)) {
+		throw new Error('Handler tagname must not start with an uppercase letter')
+	}
+	if (/--/.test(tagname)) {
+		throw new Error('Handler tagname must not contain consecutive hyphens (--)')
+	}
+	if (tagname.startsWith('-') || tagname.endsWith('-')) {
+		throw new Error('Handler tagname must not start or end with a hyphen (-)')
+	}
+	if (!/^[a-z][a-z0-9-]*$/.test(tagname)) {
+		throw new Error('Handler tagname must only contain lowercase letters, numbers, and hyphens (-)')
 	}
 }
