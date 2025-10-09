@@ -1130,7 +1130,7 @@ export default defineComponent({
 				// Fake node to emit the event until Viewer is migrated to the new Node API.
 				const node = new NcFile({
 					source: url,
-					fileid,
+					id: fileid,
 					mime: this.currentFile.mime,
 					owner: this.currentFile.ownerId,
 					root: url.includes('remote.php/dav') ? davGetRootPath() : undefined,
