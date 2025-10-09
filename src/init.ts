@@ -8,9 +8,10 @@ import { getViewer } from './api_package/viewer.ts'
 import { logger } from './services/logger.ts'
 import Viewer from './views/Viewer.vue'
 
+import { registerVideoCustomElement, registerVideoHandler } from './models/videos.ts'
+
 const ViewerService = getViewer()
 const ViewerApp = createApp(Viewer)
-ViewerApp.config.devtools = { appId: 'Viewer' }
 
 // Create top wrapper element
 const ViewerRoot = document.createElement('div')
@@ -21,3 +22,7 @@ document.body.appendChild(ViewerRoot)
 const ViewerInstance = ViewerApp.mount(ViewerRoot)
 ViewerService._setViewer(ViewerInstance as InstanceType<typeof Viewer>)
 logger.debug('Viewer initialized', { ViewerInstance })
+
+// register the custom elements for all handlers
+registerVideoCustomElement()
+registerVideoHandler()

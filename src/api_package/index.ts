@@ -2,9 +2,17 @@
  * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import type { File, Node } from '@nextcloud/files'
 
-import { File } from '@nextcloud/files'
+import { DefaultType, FileAction, FileType, getFileActions, registerFileAction } from '@nextcloud/files'
+import FileSvg from '@mdi/svg/svg/file.svg?raw'
+import OpenInAppSvg from '@mdi/svg/svg/open-in-app.svg?raw'
 
+import { getViewer } from './viewer.ts'
+import { t } from '@nextcloud/l10n'
+import { logger } from '../services/logger.ts'
+
+const ACTION_VIEWER = 'viewer-open'
 export interface IHandler {
 	/**
 	 * Unique identifier for the handler
@@ -15,6 +23,11 @@ export interface IHandler {
 	 * The handler translated name
 	 */
 	displayName: string
+
+	/**
+	 * Optional icon for the handler
+	 */
+	iconSvgInline?: string
 
 	/**
 	 * The custom element tag name to use for this handler.
@@ -51,6 +64,43 @@ export interface IHandler {
 	theme?: 'dark' | 'light' | 'default'
 }
 
+const topLevelViewerAction = new FileAction({
+	id: ACTION_VIEWER,
+	displayName: () => t('viewer', 'Open with …'),
+	iconSvgInline: () => OpenInAppSvg,
+	order: -1000,
+
+	enabled: (files: Node[]) => {
+		if (files.length === 0) {
+			return false
+		}
+
+		// We do not support folders
+		if (files.some(file => file.type !== FileType.File)) {
+			return false
+		}
+
+		// Check if we have more than one handler that can handle this mime
+		// If yes, we return true to show the "Open with ..." menu
+		let supportedHandlerCount = 0
+		for (const handler of getHandlers().values()) {
+			if (handler.enabled(files)) {
+				supportedHandlerCount++
+			}
+			// TODO: Change to 1
+			if (supportedHandlerCount > 0) {
+				return true
+			}
+		}
+
+		logger.debug('No hander found for the given nodes', { files })
+		return false
+	},
+	exec() {
+		return Promise.resolve(null)
+	}
+})
+
 /**
  * Register a new handler for the viewer.
  * This needs to be called before the viewer is initialized to ensure the handler is available.
@@ -69,6 +119,47 @@ export function registerHandler(handler: IHandler): void {
 	}
 
 	window._nc_viewer_handlers.set(handler.id, handler)
+
+	registerFileAction(new FileAction({
+		id: `${ACTION_VIEWER}-${handler.id}`,
+		// TRANSLATORS: handler is the translated name of the handler.
+		displayName: () => t('viewer', 'Open with {handler}', { handler: handler.displayName }),
+
+		iconSvgInline: () => handler.iconSvgInline ?? FileSvg,
+		parent: ACTION_VIEWER,
+		order: -999,
+		default: DefaultType.HIDDEN,
+
+		enabled: (files: Node[]) => {
+			if (files.length === 0) {
+				return false
+			}
+
+			// We do not support folders
+			if (files.some(file => file.type !== FileType.File)) {
+				return false
+			}
+
+			return handler.enabled(files)
+		},
+		async exec(node: Node) {
+			if (node.type !== FileType.File) {
+				return null
+			}
+
+			getViewer().open([node as File], node as File)
+			return null
+		}
+	}))
+
+	// Only register the main "Open with ..." action if not already registered
+	// This action will be shown if more than one handler is available for the given mime
+	const actions = getFileActions()
+	if (!actions.find(action => action.id === ACTION_VIEWER)) {
+		registerFileAction(topLevelViewerAction)
+
+		logger.info('Registered top level viewer file action', { id: ACTION_VIEWER })
+	}
 }
 
 export function getHandlers() : Map<string, IHandler> {

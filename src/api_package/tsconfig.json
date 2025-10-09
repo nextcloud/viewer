@@ -1,5 +1,5 @@
 {
-	"include": ["index.ts", "global.d.ts"],
+	"include": ["*.ts"],
 	"compilerOptions": {
 		"lib": [
 			"DOM",
