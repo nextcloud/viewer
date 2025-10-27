@@ -178,6 +178,9 @@
 import '@nextcloud/dialogs/style.css'
 import Vue, { defineComponent } from 'vue'
 
+import { join } from 'path'
+
+
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { File as NcFile, Node, davRemoteURL, davRootPath, davGetRootPath, sortNodes } from '@nextcloud/files'
@@ -796,7 +799,7 @@ export default defineComponent({
 				})
 
 				this.fileList = sortedNodes.map(node => {
-					return filteredFiles.find(file => file.filename === String(dirPath + node.path))
+					return filteredFiles.find(file => file.filename === join(dirPath, node.basename))
 				})
 				// store current position
 				this.currentIndex = this.fileList.findIndex(file => file.filename === fileInfo.filename)
