@@ -770,7 +770,6 @@ export default defineComponent({
 				// sort like the files list
 				// TODO: implement global sorting API
 				// https://github.com/nextcloud/server/blob/a83b79c5f8ab20ed9b4d751167417a65fa3c42b8/apps/files/lib/Controller/ApiController.php#L247
-				const url = this.currentFile.source ?? this.currentFile.davPath
 				const nodes = filteredFiles.map(
 					file => new NcFile({
 						source: davRemoteURL + davGetRootPath() + file.filename,
@@ -779,7 +778,7 @@ export default defineComponent({
 						mime: file.mime,
 						mtime: new Date(file.lastmod),
 						owner: this.currentFile.ownerId,
-						root: url.includes('remote.php/dav') ? davGetRootPath() : undefined,
+						root: davGetRootPath(),
 					}),
 				)
 				const sortedNodes = sortNodes(nodes, {
@@ -788,7 +787,7 @@ export default defineComponent({
 				})
 
 				this.fileList = sortedNodes.map(node => {
-					return filteredFiles.find(file => file.filename === String(dirPath + node.path))
+					return filteredFiles.find(file => file.filename === node.path)
 				})
 				// store current position
 				this.currentIndex = this.fileList.findIndex(file => file.filename === fileInfo.filename)
