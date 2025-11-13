@@ -13,6 +13,7 @@ SPDX-FileCopyrightText: Eric Norris (https://github.com/ericnorris)
 SPDX-FileCopyrightText: Feross Aboukhadijeh
 SPDX-FileCopyrightText: Jacob Clevenger<https://github.com/wheatjs>
 SPDX-FileCopyrightText: Jeff Sagal <sagalbot@gmail.com>
+SPDX-FileCopyrightText: John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
 SPDX-FileCopyrightText: John Molakvoæ <skjnldsv@protonmail.com>
 SPDX-FileCopyrightText: Jordan Humphreys <jordan@zurb.com>
 SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
@@ -32,13 +33,13 @@ SPDX-FileCopyrightText: xiemengxiong
 
 This file is generated from multiple sources. Included packages:
 - @floating-ui/core
-	- version: 1.7.3
+	- version: 1.7.0
 	- license: MIT
 - @floating-ui/dom
-	- version: 1.7.4
+	- version: 1.7.0
 	- license: MIT
 - @floating-ui/utils
-	- version: 0.2.10
+	- version: 0.2.9
 	- license: MIT
 - @linusborg/vue-simple-portal
 	- version: 0.1.5
@@ -53,10 +54,10 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.2.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.31.0
+	- version: 8.28.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue-select
-	- version: 3.26.0
+	- version: 3.25.1
 	- license: MIT
 - @vueuse/components
 	- version: 11.3.0
@@ -74,7 +75,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.2.7
 	- license: MIT
 - emoji-mart-vue-fast
-	- version: 15.0.5
+	- version: 15.0.4
 	- license: BSD-3-Clause
 - eventemitter3
 	- version: 5.0.1
@@ -86,7 +87,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.1.6
 	- license: MIT
 - linkify-string
-	- version: 4.3.2
+	- version: 4.3.1
 	- license: MIT
 - linkifyjs
 	- version: 4.3.2
@@ -98,7 +99,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 3.3.11
 	- license: MIT
 - p-queue
-	- version: 8.1.1
+	- version: 8.1.0
 	- license: MIT
 - p-timeout
 	- version: 6.1.4
