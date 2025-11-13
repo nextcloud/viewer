@@ -11,6 +11,7 @@ SPDX-FileCopyrightText: Arnout Kazemier
 SPDX-FileCopyrightText: Benjamin Fox <foxbenjaminfox@gmail.com>
 SPDX-FileCopyrightText: Borys Serebrov
 SPDX-FileCopyrightText: Eric Norris (https://github.com/ericnorris)
+SPDX-FileCopyrightText: Evan You
 SPDX-FileCopyrightText: Feross Aboukhadijeh
 SPDX-FileCopyrightText: Jacob Clevenger<https://github.com/wheatjs>
 SPDX-FileCopyrightText: Jeff Sagal <sagalbot@gmail.com>
@@ -23,6 +24,7 @@ SPDX-FileCopyrightText: Paul Vorbach <paul@vorb.de> (http://vorb.de)
 SPDX-FileCopyrightText: Paul Vorbach <paul@vorba.ch> (http://paul.vorba.ch)
 SPDX-FileCopyrightText: Philipp Kewisch
 SPDX-FileCopyrightText: Richard Steinmetz
+SPDX-FileCopyrightText: Richie Bendall
 SPDX-FileCopyrightText: Rob Cresswell <robcresswell@pm.me>
 SPDX-FileCopyrightText: Roeland Jago Douma
 SPDX-FileCopyrightText: Sindre Sorhus
@@ -34,10 +36,10 @@ SPDX-FileCopyrightText: xiemengxiong
 
 This file is generated from multiple sources. Included packages:
 - @floating-ui/core
-	- version: 1.7.0
+	- version: 1.6.9
 	- license: MIT
 - @floating-ui/dom
-	- version: 1.7.0
+	- version: 1.6.13
 	- license: MIT
 - @floating-ui/utils
 	- version: 0.2.9
@@ -66,6 +68,9 @@ This file is generated from multiple sources. Included packages:
 - ansi-regex
 	- version: 6.1.0
 	- license: MIT
+- char-regex
+	- version: 2.0.2
+	- license: MIT
 - charenc
 	- version: 0.0.2
 	- license: BSD-3-Clause
@@ -88,7 +93,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.1.6
 	- license: MIT
 - linkify-string
-	- version: 4.3.1
+	- version: 4.2.0
 	- license: MIT
 - linkifyjs
 	- version: 4.3.2
@@ -97,13 +102,16 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.3.0
 	- license: BSD-3-Clause
 - nanoid
-	- version: 3.3.11
+	- version: 3.3.8
 	- license: MIT
 - p-queue
 	- version: 8.1.0
 	- license: MIT
 - p-timeout
 	- version: 6.1.4
+	- license: MIT
+- string-length
+	- version: 5.0.1
 	- license: MIT
 - strip-ansi
 	- version: 7.1.0
@@ -121,13 +129,16 @@ This file is generated from multiple sources. Included packages:
 	- version: 3.9.0
 	- license: MIT
 - vue-color
-	- version: 2.8.2
+	- version: 2.8.1
 	- license: MIT
 - vue-demi
 	- version: 0.14.10
 	- license: MIT
 - vue-material-design-icons
 	- version: 5.3.1
+	- license: MIT
+- vue-router
+	- version: 3.6.5
 	- license: MIT
 - vue2-datepicker
 	- version: 3.11.1
