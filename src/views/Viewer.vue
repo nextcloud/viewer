@@ -1124,13 +1124,13 @@ export default defineComponent({
 
 		async onDelete() {
 			try {
-				const fileid = this.currentFile.fileid
+				const fileid = Number.parseInt(this.currentFile.fileid)
 				const url = this.currentFile.source ?? this.currentFile.davPath
 
 				// Fake node to emit the event until Viewer is migrated to the new Node API.
 				const node = new NcFile({
 					source: url,
-					fileid,
+					id: fileid,
 					mime: this.currentFile.mime,
 					owner: this.currentFile.ownerId,
 					root: url.includes('remote.php/dav') ? davGetRootPath() : undefined,
