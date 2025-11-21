@@ -112,13 +112,13 @@ const topLevelViewerAction = new FileAction({
 export function registerHandler(handler: IHandler): void {
 	validateHandler(handler)
 
-	window._nc_viewer_handlers ??= new Map<string, IHandler>()
-	if (window._nc_viewer_handlers.has(handler.id)) {
+	window._oca_viewer_handlers ??= new Map<string, IHandler>()
+	if (window._oca_viewer_handlers.has(handler.id)) {
 		console.warn(`Handler with id ${handler.id} is already registered.`)
 		return
 	}
 
-	window._nc_viewer_handlers.set(handler.id, handler)
+	window._oca_viewer_handlers.set(handler.id, handler)
 
 	registerFileAction(new FileAction({
 		id: `${ACTION_VIEWER}-${handler.id}`,
@@ -163,7 +163,7 @@ export function registerHandler(handler: IHandler): void {
 }
 
 export function getHandlers() : Map<string, IHandler> {
-	return window._nc_viewer_handlers ??= new Map<string, IHandler>()
+	return window._oca_viewer_handlers ??= new Map<string, IHandler>()
 }
 
 /**

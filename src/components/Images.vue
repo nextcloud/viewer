@@ -252,10 +252,6 @@ export default {
 		// Try to make sure that image position at stableX, stableY
 		// in client coordinates stays in the same place on the screen.
 		updateZoomAndShift(stableX, stableY, newZoomRatio) {
-			if (!this.canZoom) {
-				return
-			}
-
 			// scrolling position relative to the image
 			const element = this.$refs.image ?? this.$refs.video
 			const scrollX = stableX - element.getBoundingClientRect().x - (this.width * this.zoomRatio / 2)
@@ -290,10 +286,6 @@ export default {
 		 * @return {void}
 		 */
 		updateZoom(event) {
-			if (!this.canZoom) {
-				return
-			}
-
 			const isZoomIn = event.deltaY < 0
 			const newZoomRatio = isZoomIn
 				? Math.min(this.zoomRatio * 1.1, 5) // prevent too big zoom
@@ -359,10 +351,6 @@ export default {
 		 * @param {DragEvent} event the event
 		 */
 		 pointerMove(event) {
-			if (!this.canZoom) {
-				return
-			}
-
 			if (this.pointerCache.length > 0) {
 				// Update pointer position in the pointer cache
 				const index = this.pointerCache.findIndex(
@@ -405,10 +393,6 @@ export default {
 
 		},
 		onDblclick() {
-			if (!this.canZoom) {
-				return
-			}
-
 			if (this.zoomRatio > 1) {
 				this.resetZoom()
 			} else {

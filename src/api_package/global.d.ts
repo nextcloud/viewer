@@ -11,11 +11,11 @@ declare global {
 		/**
 		 * Registered viewer handlers.
 		 */
-		_nc_viewer_handlers: Map<string, IHandler>
+		_oca_viewer_handlers: Map<string, IHandler>
 
 		/**
 		 * The viewer global instance.
 		 */
-		_nc_viewer_service: Viewer
+		_oca_viewer_service: Viewer
 	}
 }

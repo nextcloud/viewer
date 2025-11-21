@@ -55,12 +55,12 @@ export class Viewer extends EventTarget implements ViewerAPI {
 
 // Init and get the viewer in Modal
 export function getViewer(): Viewer {
-	return window._nc_viewer_service ??= new Viewer()
+	return window._oca_viewer_service ??= new Viewer()
 }
 
 // Create a new Viewer instance in the given element
 export function createViewer(el: HTMLElement, file: File): Viewer {
 	const instance = new Viewer()
-	el.appendChild(instance)
+	// el.appendChild(instance)
 	return instance
 }

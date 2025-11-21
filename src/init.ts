@@ -21,7 +21,7 @@ document.body.appendChild(ViewerRoot)
 // Mount and set the viewer instance
 const ViewerInstance = ViewerApp.mount(ViewerRoot)
 ViewerService._setViewer(ViewerInstance as InstanceType<typeof Viewer>)
-logger.debug('Viewer initialized', { ViewerInstance })
+logger.info('Viewer initialized', { ViewerInstance })
 
 // register the custom elements for all handlers
 registerVideoCustomElement()

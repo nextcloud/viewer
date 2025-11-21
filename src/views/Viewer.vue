@@ -3,54 +3,90 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<NcModal v-if="currentFile"
+	<NcModal v-show="!!currentFile"
 		:additional-trap-elements="trapElements"
 		:clear-view-delay="-1 /* disable fade-out because of accessibility reasons */"
-		:close-button-contained="false"
+		:close-button-outside="true"
 		:dark="true"
-		:light-backdrop="lightBackdrop"
 		:data-handler="currentHandler?.id"
+		:disable-swipe="!canSwipe && editing"
 		:enable-slideshow="hasPrevious || hasNext"
-		:slideshow-paused="editing"
-		:enable-swipe="canSwipe && !editing"
 		:has-next="hasNext"
 		:has-previous="hasPrevious"
 		:inline-actions="canEdit ? 1 : 0"
+		:light-backdrop="lightBackdrop"
+		:name="currentFile?.basename || ''"
+		:slideshow-paused="editing"
 		:spread-navigation="true"
 		:style="{ width: isSidebarShown ? `${sidebarPosition}px` : null }"
-		:name="currentFile.basename"
 		class="viewer__modal"
 		size="full"
+		ref="modal"
 		@close="close"
 		@previous="previous"
 		@next="next">
-		<span>Lorem ipsum</span>
-	</NcModal>
+		<!-- Loading status -->
+		<span v-if="loading && !errorString" class="viewer__loading">
+				<NcLoadingIcon :appearance="lightBackdrop ? 'dark' : 'light'" :size="32" />
+		</span>
 
+		<!-- Error message -->
+		<NcEmptyContent v-else-if="errorString"
+			:name="errorString"
+			:description="t('viewer', 'We were unable to display the requested file.')">
+			<template #icon>
+				<FileAlertOutlineIcon />
+			</template>
+		</NcEmptyContent>
+
+		<component v-show="!loading && !!currentFile"
+			:is="currentHandler?.tagname"
+			:file="currentFile"
+			:files="currentFileList"
+			:editing="editing"
+			:isSidebarShown="isSidebarShown"
+			:height="height"
+			:width="width"
+			v-model:canSwipe="canSwipe"
+			@load="onLoad"
+			@error="onError" />
+	</NcModal>
 </template>
 
 <script setup lang="ts">
 import type { File } from '@nextcloud/files'
-import { getHandlers, type IHandler } from '../api_package/index.ts'
+import type { IHandler } from '../api_package/index.ts'
 import type { ViewerAPI, ViewerOptions } from '../api_package/viewer.ts'
 
-import { computed, defineComponent, ref } from 'vue'
-import { t } from '@nextcloud/l10n'
+import { computed, onMounted, ref, useTemplateRef, watch} from 'vue'
 import { FileType } from '@nextcloud/files'
+import { t } from '@nextcloud/l10n'
+import debounce from 'debounce'
+
 import NcModal from '@nextcloud/vue/components/NcModal'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import FileAlertOutlineIcon from 'vue-material-design-icons/FileAlertOutline.vue'
 
 import { fetchFolderContent } from '../services/dav.ts'
 import { getHandlerForFile } from '../helpers/handlerHelper.ts'
+import { getHandlers } from '../api_package/index.ts'
 import { logger } from '../services/logger.ts'
 
-const errorString = ref()
+let resizeObserver = null as ResizeObserver | null
+const modal = useTemplateRef('modal')
+const height = ref(0)
+const width = ref(0)
 
-const lightBackdrop = ref(false)
+// State
+const loading = ref(true)
+const errorString = ref<string | null>(null)
 
 // Abilities
-const canSwipe = ref(true)
 const canEdit = ref(true)
+const canSwipe = ref(true)
 const editing = ref(false)
+const lightBackdrop = ref(false)
 
 // Sidebar handling
 const sidebarPosition = ref(0)
@@ -113,15 +149,16 @@ const hasPrevious = computed(() => {
 	return false
 })
 
-const open: ViewerAPI['open'] = async (nodes, file, options, handlerId) => {
-	logger.debug('Open nodes', { nodes, file, options, handlerId})
+const open: ViewerAPI['open'] = async (files, file, options, handlerId) => {
+	logger.debug('Opening files', { files, file, options, handlerId})
+	loading.value = true
 	
-	// Filter out any non-file nodes
-	nodes = nodes.filter(n => n.type === FileType.File)
+	// Filter out any non-file files
+	files = files.filter(n => n.type === FileType.File)
 
-	// Ensure we have at least one node to open
-	if (nodes.length === 0 && !file) {
-		logger.error('No nodes provided to open')
+	// Ensure we have at least one file to open
+	if (files.length === 0 && !file) {
+		logger.error('No files provided to open')
 		errorString.value = t('viewer', 'No files were provided to open.')
 		return
 	}
@@ -133,11 +170,11 @@ const open: ViewerAPI['open'] = async (nodes, file, options, handlerId) => {
 	}
 
 	// Slight adjustment: if there is a mismatch between
-	// the provided file and the list of nodes
+	// the provided file and the list of files
 	if (!file) {
-		file = nodes[0]
-	} else if (!nodes.includes(file)) {
-		nodes = [file, ...nodes]
+		file = files[0]
+	} else if (!files.includes(file)) {
+		files = [file, ...files]
 	}
 
 	// Last check, we need to have something to open
@@ -149,7 +186,7 @@ const open: ViewerAPI['open'] = async (nodes, file, options, handlerId) => {
 
 	const handler = handlerId ? getHandlers().get(handlerId) : getHandlerForFile(file)
 	if (!handler) {
-		logger.error('No handler found for the given file', { file, nodes })
+		logger.error('No handler found for the given file', { file, files })
 		errorString.value = t('viewer', 'There was no plugin available to open this file.')
 		return
 	}
@@ -157,13 +194,14 @@ const open: ViewerAPI['open'] = async (nodes, file, options, handlerId) => {
 	currentHandler.value = handler
 	currentFile.value = file
 	currentOptions.value = options ?? {} as ViewerOptions
-	currentFileList.value = nodes
+	currentFileList.value = files
 
 	onOpen()
 }
 
 const openFolder: ViewerAPI['openFolder'] = async (folder, file, options, handlerId) => {
 	logger.debug('Opening folder', { folder, file, options, handlerId })
+	loading.value = true
 
 	if (handlerId && !getHandlers().has(handlerId)) {
 		logger.error('There is no handler matching the given handler ID')
@@ -178,8 +216,8 @@ const openFolder: ViewerAPI['openFolder'] = async (folder, file, options, handle
 	}
 
 	try {
-		const nodes = await fetchFolderContent(folder)
-		return open(nodes, file, options, handlerId)
+		const files = await fetchFolderContent(folder)
+		return open(files, file, options, handlerId)
 	} catch (error) {
 		logger.error('Failed to fetch folder contents', { folder, error })
 		errorString.value = t('viewer', 'We were not able to open the file.')
@@ -187,8 +225,9 @@ const openFolder: ViewerAPI['openFolder'] = async (folder, file, options, handle
 	}
 }
 
-const compare: ViewerAPI['compare'] = async (node1, node2, handlerId) => {
-	logger.debug('Comparing nodes', { node1, node2, handlerId })
+const compare: ViewerAPI['compare'] = async (file1, file2, handlerId) => {
+	logger.debug('Comparing files', { file1, file2, handlerId })
+	loading.value = true
 
 	if (handlerId && !getHandlers().has(handlerId)) {
 		logger.error('There is no handler matching the given handler ID')
@@ -201,9 +240,21 @@ const compare: ViewerAPI['compare'] = async (node1, node2, handlerId) => {
 
 function onOpen() {
 	// Determine if we should use a light backdrop
-	const defaultThemeIsLight = window.getComputedStyle(document.body).getPropertyValue('--background-invert-if-dark') !== 'invert(100%)'
+	const backgroundInvertIfDark = getComputedStyle(document.documentElement).getPropertyValue('--background-invert-if-dark')
+	const defaultThemeIsLight =  backgroundInvertIfDark.trim() !== 'invert(100%)'
 	const theme = currentHandler.value?.theme ?? 'default'
 	lightBackdrop.value = theme === 'light' || (theme === 'default' && defaultThemeIsLight)
+}
+
+function onLoad() {
+	loading.value = false
+	errorString.value = null
+}
+
+function onError(error: Error) {
+	logger.error('Error while loading file in viewer', { error })
+	loading.value = false
+	errorString.value = error.message || t('viewer', 'An unknown error occurred while loading the file.')
 }
 
 function close() {
@@ -211,7 +262,7 @@ function close() {
 	currentFileList.value = []
 	currentHandler.value = undefined
 	currentOptions.value = {} as ViewerOptions
-	errorString.value = undefined
+	errorString.value = null
 }
 
 async function next() {
@@ -301,13 +352,42 @@ function handleAppSidebarClose() {
 	trapElements.value = []
 }
 
+function onViewerResize() {
+	const modalContainer = modal.value?.$el?.querySelector('.modal-container')
+	height.value = modalContainer?.clientHeight || 0
+	width.value = modalContainer?.clientWidth || 0
+	logger.debug('Screen resized, updating viewer dimensions', { height: height.value, width: width.value })
+}
+
+// Listen to Viewer opening to update dimensions
+watch(currentFile, (newFile, oldFile) => {
+	if (newFile && !oldFile) {
+		onViewerResize()
+	}
+})
+
+onMounted(() => {
+	resizeObserver = new ResizeObserver(debounce(() => {
+		onViewerResize()
+	}, 100))
+
+	// Observe viewer size changes
+	resizeObserver.observe(modal.value.$el as HTMLElement)
+	logger.debug('Resize observer initialized for viewer')
+})
+
 defineExpose<ViewerAPI>({
 	open,
 	openFolder,
 	compare,
-})	
-
+})
 </script>
-<style scoped>
-
+<style scoped lang="scss">
+.viewer__modal {
+	:deep(.modal-container__content) {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+}
 </style>

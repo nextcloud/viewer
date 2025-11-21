@@ -1,5 +1,6 @@
 {
 	"include": ["*.ts"],
+	"exclude": ["node_modules", "dist"],
 	"compilerOptions": {
 		"lib": [
 			"DOM",
@@ -13,6 +14,7 @@
 		"target": "ES2020",
 		"allowImportingTsExtensions": true,
 		"erasableSyntaxOnly": true,
-		"rewriteRelativeImportExtensions": true
+		"rewriteRelativeImportExtensions": true,
+		"skipLibCheck": true,
 	},
 }

@@ -3,9 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { FileType, type File, type Folder, type Node } from '@nextcloud/files'
+import type { File, Folder, Node } from '@nextcloud/files'
 import type { FileStat, ResponseDataDetailed } from 'webdav'
+
 import { getClient, getDefaultPropfind, resultToNode } from '@nextcloud/files/dav'
+import { FileType } from '@nextcloud/files'
+
 
 export const client = getClient()
 

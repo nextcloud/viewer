@@ -9,7 +9,7 @@ import { t } from '@nextcloud/l10n'
 import MovieOutlineSvg from '@mdi/svg/svg/movie-outline.svg?raw'
 
 import { logger } from '../services/logger'
-import { registerHandler } from '../api_package'
+import { registerHandler } from '../api_package/index.ts'
 import Videos from '../components/Videos.vue'
 
 
