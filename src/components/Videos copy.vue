@@ -6,7 +6,7 @@
 <template>
 	<!-- Plyr currently replaces the parent. Wrapping to prevent this
 	https://github.com/redxtech/vue-plyr/issues/259 -->
-	<div v-if="url">
+	<div>
 		<VuePlyr ref="plyr"
 			:options="options"
 			:style="{
@@ -14,10 +14,14 @@
 				width: width + 'px'
 			}">
 			<video ref="video"
-				:autoplay="active ? true : null"
+				:autoplay="true"
 				:playsinline="true"
 				:poster="livePhotoPath"
-				:src="url"
+				:src="src"
+				:style="{
+					height: height + 'px',
+					width: width + 'px'
+				}"
 				preload="metadata"
 				@error.capture.prevent.stop.once="onFail"
 				@ended="donePlaying"
@@ -36,180 +40,178 @@
 	</div>
 </template>
 
-<script lang='ts'>
-import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
+<script setup lang="ts">
 import type { File } from '@nextcloud/files'
-
 import { imagePath } from '@nextcloud/router'
+import { ref, computed, onUpdated, onBeforeUnmount, useTemplateRef, watch } from 'vue'
+import { translate as t } from '@nextcloud/l10n'
+import VuePlyr from '@skjnldsv/vue-plyr'
 
-import { logger } from '../services/logger.ts'
 import { findLivePhotoPeerFromName } from '../utils/livePhotoUtils'
 import { getPreviewIfAny } from '../utils/previewUtils'
+import { logger } from '../services/logger.ts'
 import { preloadMedia } from '../services/mediaPreloader.js'
-
-const VuePlyr = () => import(/* webpackChunkName: 'plyr' */'@skjnldsv/vue-plyr')
 
 const blankVideo = imagePath('viewer', 'blank.mp4')
 
-export default {
-	name: 'Videos',
+const props = defineProps<{
+	file: File,
+	files: File[],
+	maxHeight: number,
+	maxWidth: number,
+}>()
 
-	components: {
-		VuePlyr,
-	},
+const emit = defineEmits<{
+	load: [],
+	error: [Error],
+	'update:canSwipe': [boolean],
+}>()
 
-	props: {
-		node: {
-			type: Node,
-			required: true,
+const video = useTemplateRef<HTMLVideoElement>('video')
+const plyr = useTemplateRef<InstanceType<typeof VuePlyr>>('plyr')
+const player = ref(plyr.value?.player)!
+
+const filename = computed(() => props.file.basename)
+const src = ref(props.file.source)
+
+const isFullscreenButtonVisible = ref(false)
+const fallback = ref(false)
+
+const height = ref(0)
+const width = ref(0)
+
+// Update video size when max height or width props change
+watch(() => props.maxHeight, updateVideoSize)
+watch(() => props.maxWidth, updateVideoSize)
+
+const livePhotoPath = computed(() => {
+	const peerFile = findLivePhotoPeerFromName(props.file, props.files)
+	if (peerFile === undefined) {
+		return undefined
+	}
+	return getPreviewIfAny(peerFile)
+})
+
+const options = computed(() => {
+	return {
+		autoplay: true,
+		// Used to reset the video streams https://github.com/sampotts/plyr#javascript-1
+		blankVideo,
+		controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
+		loadSprite: false,
+		fullscreen: {
+			iosNative: true,
 		},
-		nodes: {
-			type: Array as () => File[],
-			required: true,
-		},
-		isFullScreen: {
-			type: Boolean,
-			default: false,
-		},
-		isSidebarShown: {
-			type: Boolean,
-			default: false,
-		},
-		height: {
-			type: Number,
-			required: true,
-		},
-		width: {
-			type: Number,
-			required: true,
-		},
-	},
-	data() {
-		return {
-			isFullscreenButtonVisible: false,
-			fallback: false,
+	}
+})
+
+// Work around to get the state of the fullscreen button,
+// aria-selected attribute is not reliable.
+function hideHeaderAndFooter() {
+	isFullscreenButtonVisible.value = !isFullscreenButtonVisible.value
+	const main = document.body.querySelector('main')!
+	const footer = document.body.querySelector('footer')!
+	if (isFullscreenButtonVisible.value) {
+		main.classList.add('viewer__hidden-fullscreen')
+		footer.classList.add('viewer__hidden-fullscreen')
+	} else {
+		main.classList.remove('viewer__hidden-fullscreen')
+		footer.classList.remove('viewer__hidden-fullscreen')
+	}
+}
+
+// Update the video size based on the max height and width props
+// We need to keep the aspect ratio of the video
+// and fit it within the max height and width.
+function updateVideoSize() {
+	const videoHeight = video?.value?.videoHeight
+	const videoWidth = video?.value?.videoWidth
+	if (!videoHeight || !videoWidth) {
+		return
+	}
+
+	const heightRatio = props.maxHeight / videoHeight
+	const widthRatio = props.maxWidth / videoWidth
+
+	const ratio = Math.min(heightRatio, widthRatio)
+	height.value = Math.floor(videoHeight * ratio)
+	width.value = Math.floor(videoWidth * ratio)
+}
+
+// Tell Viewer that the video is ready to be shown
+function doneLoading() {
+	emit('load')
+}
+
+function donePlaying() {
+	// Should not happen™
+	if (!video.value) {
+		logger.error('Video element not found in donePlaying')
+		return
+	}
+
+	// reset and show poster after play
+	video.value.autoplay = false
+	video.value.load()
+}
+
+// Update video size when metadata is loaded
+function onLoadedMetadata() {
+	updateVideoSize()
+}
+
+// Fallback to the original image if not already done
+async function onFail() {
+	if (fallback.value) {
+		logger.error(`Loading of file ${filename.value} failed even after fallback`)
+		emit('error', new Error(t('viewer', 'Failed to load video.')) )
+		return
+	}
+
+	// Try to load E2EE file as a fallback
+	logger.error(`Loading of file ${filename.value} failed, falling back to fetching it by hand`)
+	fallback.value = true
+	src.value = await preloadMedia(props.file)
+}
+
+// For some reason the video controls don't get mounted to
+// the dom until after the component (Videos) is mounted,
+// using the mounted() hook will leave us with an empty array
+onUpdated(() => {
+	if (!plyr.value || !plyr.value.player) {
+		logger.warn('Plyr player not initialized yet')
+		return
+	}
+
+	// Prevent swiping to the next/previous item when scrubbing the timeline or changing volume
+	const plyrControls = plyr.value.$el.querySelectorAll('.plyr__controls__item')
+	if (!plyrControls || !plyrControls.length) {
+		return
+	}
+	[...plyrControls].forEach(control => {
+		if (control.getAttribute('data-plyr') === 'fullscreen') {
+			control.addEventListener('click', hideHeaderAndFooter)
 		}
-	},
-
-	computed: {
-		livePhotoPath() {
-			const peerFile = findLivePhotoPeerFromName(this, this.nodes)
-
-			if (peerFile === undefined) {
-				return undefined
-			}
-
-			return getPreviewIfAny(peerFile)
-		},
-		player() {
-			return this.$refs.plyr.player
-		},
-		options() {
-			return {
-				autoplay: true,
-				// Used to reset the video streams https://github.com/sampotts/plyr#javascript-1
-				blankVideo,
-				controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
-				loadSprite: false,
-				fullscreen: {
-					iosNative: true,
-				},
-			}
-		},
-	},
-
-	asyncComputed: {
-		async url(): Promise<string> {
-			if (this.fallback) {
-				return preloadMedia(this.filename)
-			} else {
-				return this.src
-			}
-		},
-	},
-
-	watch: {
-		active(val, old) {
-			// the item was hidden before and is now the current view
-			if (val === true && old === false) {
-				this.player.play()
-
-			// the item was playing before and is now hidden
-			} else if (val === false && old === true) {
-				this.player.pause()
-			}
-		},
-	},
-
-	// for some reason the video controls don't get mounted to the dom until after the component (Videos) is mounted,
-	// using the mounted() hook will leave us with an empty array
-	updated() {
-		// Prevent swiping to the next/previous item when scrubbing the timeline or changing volume
-		const plyrControls = this.$el.querySelectorAll('.plyr__controls__item')
-		if (!plyrControls || !plyrControls.length) {
+		if (!control?.addEventListener) {
 			return
 		}
-		[...plyrControls].forEach(control => {
-			if (control.getAttribute('data-plyr') === 'fullscreen') {
-				control.addEventListener('click', this.hideHeaderAndFooter)
-			}
-			if (!control?.addEventListener) {
-				return
-			}
-			control.addEventListener('mouseenter', this.disableSwipe)
-			control.addEventListener('mouseleave', this.enableSwipe)
-		})
-	},
+		control.addEventListener('mouseenter', emit('update:canSwipe', false))
+		control.addEventListener('mouseleave', emit('update:canSwipe', true))
+	})
+})
 
-	beforeDestroy() {
-		// Force stop any ongoing request
-		logger.debug('Closing video stream', { filename: this.filename })
-		this.$refs.video?.pause?.()
-		this.player.stop()
-		this.player.destroy()
-	},
+onBeforeUnmount(() => {
+	// Force stop any ongoing request
+	logger.debug('Closing video stream', { filename: props.file.basename })
+	video?.value?.pause?.()
+	player.stop()
+	player.destroy()
+})
+</script>
 
-	methods: {
-		hideHeaderAndFooter() {
-			// work around to get the state of the fullscreen button, aria-selected attribute is not reliable
-			this.isFullscreenButtonVisible = !this.isFullscreenButtonVisible
-			if (this.isFullscreenButtonVisible) {
-				document.body.querySelector('main').classList.add('viewer__hidden-fullscreen')
-				document.body.querySelector('footer').classList.add('viewer__hidden-fullscreen')
-			} else {
-				document.body.querySelector('main').classList.remove('viewer__hidden-fullscreen')
-				document.body.querySelector('footer').classList.remove('viewer__hidden-fullscreen')
-			}
-		},
-		// Updates the dimensions of the modal
-		updateVideoSize() {
-			this.naturalHeight = this.$refs.video?.videoHeight
-			this.naturalWidth = this.$refs.video?.videoWidth
-			this.updateHeightWidth()
-		},
-
-		donePlaying() {
-			// reset and show poster after play
-			this.$refs.video.autoplay = false
-			this.$refs.video.load()
-		},
-
-		onLoadedMetadata() {
-			this.updateVideoSize()
-			// Force any further loading once we have the metadata
-			if (!this.active) {
-				this.player.stop()
-			}
-		},
-
-		// Fallback to the original image if not already done
-		onFail() {
-			if (!this.fallback) {
-				console.error(`Loading of file ${this.filename} failed, falling back to fetching it by hand`)
-				this.fallback = true
-			}
-		},
-	},
+<script lang='ts'>
+export default {
+	name: 'Videos',
 }
 </script>
 
@@ -256,6 +258,10 @@ video {
 </style>
 
 <style lang="scss">
+@import '@skjnldsv/vue-plyr/dist/vue-plyr.css';
+
+// Fullscreen styles to hide header and footer
+// when in fullscreen mode
 main.viewer__hidden-fullscreen {
 	height: 100vh !important;
 	width: 100vw !important;

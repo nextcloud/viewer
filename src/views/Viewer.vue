@@ -45,8 +45,8 @@
 			:files="currentFileList"
 			:editing="editing"
 			:isSidebarShown="isSidebarShown"
-			:height="height"
-			:width="width"
+			:max-height="height"
+			:max-width="width"
 			v-model:canSwipe="canSwipe"
 			@load="onLoad"
 			@error="onError" />
@@ -388,6 +388,14 @@ defineExpose<ViewerAPI>({
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+
+	:deep(.modal-container) {
+		top: var(--header-height) !important;
+		bottom: var(--header-height) !important;
+		height: auto !important;
+		background-color: transparent !important;
+		box-shadow: none !important;
 	}
 }
 </style>

@@ -18,6 +18,13 @@ const ViewerRoot = document.createElement('div')
 ViewerRoot.id = 'viewer'
 document.body.appendChild(ViewerRoot)
 
+// Put controls for video viewer
+// Needed as Firefox CSP blocks the loading of the svg through the normal plyr system
+const VideoControls = document.createElement('div')
+VideoControls.innerHTML = PLYR_ICONS
+VideoControls.style.display = 'none'
+document.body.appendChild(VideoControls)
+
 // Mount and set the viewer instance
 const ViewerInstance = ViewerApp.mount(ViewerRoot)
 ViewerService._setViewer(ViewerInstance as InstanceType<typeof Viewer>)

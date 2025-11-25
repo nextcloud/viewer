@@ -10,7 +10,7 @@ import MovieOutlineSvg from '@mdi/svg/svg/movie-outline.svg?raw'
 
 import { logger } from '../services/logger'
 import { registerHandler } from '../api_package/index.ts'
-import Videos from '../components/Videos.vue'
+import Videos from '../components/Videos copy.vue'
 
 
 const browserSupportedMimes = [
