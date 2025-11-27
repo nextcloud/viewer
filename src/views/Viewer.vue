@@ -16,6 +16,7 @@
 		:inline-actions="canEdit ? 1 : 0"
 		:light-backdrop="lightBackdrop"
 		:name="currentFile?.basename || ''"
+		:show="true"
 		:slideshow-paused="editing"
 		:spread-navigation="true"
 		:style="{ width: isSidebarShown ? `${sidebarPosition}px` : null }"

@@ -21,6 +21,7 @@ document.body.appendChild(ViewerRoot)
 // Put controls for video viewer
 // Needed as Firefox CSP blocks the loading of the svg through the normal plyr system
 const VideoControls = document.createElement('div')
+// @ts-expect-error PLYR_ICONS is a global injected by vite
 VideoControls.innerHTML = PLYR_ICONS
 VideoControls.style.display = 'none'
 document.body.appendChild(VideoControls)

@@ -130,7 +130,7 @@ export function registerHandler(handler: IHandler): void {
 		order: -999,
 		default: DefaultType.HIDDEN,
 
-		enabled: (files: Node[]) => {
+		enabled: ({ files }) => {
 			if (files.length === 0) {
 				return false
 			}
@@ -142,7 +142,7 @@ export function registerHandler(handler: IHandler): void {
 
 			return handler.enabled(files)
 		},
-		async exec(node: Node) {
+		async exec({ node }) {
 			if (node.type !== FileType.File) {
 				return null
 			}
