@@ -38,3 +38,4 @@ cypress/snapshots/diff
 # RelativeCI webpack bundle stats
 webpack-stats.json
 *.orig
+.php-cs-fixer.cache

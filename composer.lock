@@ -4,9 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8f04fc59aa4b40fc99e674ff1ecdc53d",
-    "packages": [],
-    "packages-dev": [
+    "content-hash": "9f411692c840f298500470ecb63feea9",
+    "packages": [
         {
             "name": "bamarni/composer-bin-plugin",
             "version": "1.8.2",
@@ -65,12 +64,417 @@
             "time": "2022-10-31T08:38:03+00:00"
         }
     ],
+    "packages-dev": [
+        {
+            "name": "kubawerlos/php-cs-fixer-custom-fixers",
+            "version": "v3.35.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kubawerlos/php-cs-fixer-custom-fixers.git",
+                "reference": "2a35f80ae24ca77443a7af1599c3a3db1b6bd395"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kubawerlos/php-cs-fixer-custom-fixers/zipball/2a35f80ae24ca77443a7af1599c3a3db1b6bd395",
+                "reference": "2a35f80ae24ca77443a7af1599c3a3db1b6bd395",
+                "shasum": ""
+            },
+            "require": {
+                "ext-filter": "*",
+                "ext-tokenizer": "*",
+                "friendsofphp/php-cs-fixer": "^3.87",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.6.24 || ^10.5.51 || ^11.5.32"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpCsFixerCustomFixers\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kuba Werłos",
+                    "email": "werlos@gmail.com"
+                }
+            ],
+            "description": "A set of custom fixers for PHP CS Fixer",
+            "support": {
+                "issues": "https://github.com/kubawerlos/php-cs-fixer-custom-fixers/issues",
+                "source": "https://github.com/kubawerlos/php-cs-fixer-custom-fixers/tree/v3.35.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kubawerlos",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-09-28T18:43:35+00:00"
+        },
+        {
+            "name": "nextcloud/coding-standard",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nextcloud/coding-standard.git",
+                "reference": "8e06808c1423e9208d63d1bd205b9a38bd400011"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nextcloud/coding-standard/zipball/8e06808c1423e9208d63d1bd205b9a38bd400011",
+                "reference": "8e06808c1423e9208d63d1bd205b9a38bd400011",
+                "shasum": ""
+            },
+            "require": {
+                "kubawerlos/php-cs-fixer-custom-fixers": "^3.22",
+                "php": "^8.0",
+                "php-cs-fixer/shim": "^3.17"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nextcloud\\CodingStandard\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christoph Wurst",
+                    "email": "christoph@winzerhof-wurst.at"
+                }
+            ],
+            "description": "Nextcloud coding standards for the php cs fixer",
+            "keywords": [
+                "dev"
+            ],
+            "support": {
+                "issues": "https://github.com/nextcloud/coding-standard/issues",
+                "source": "https://github.com/nextcloud/coding-standard/tree/v1.4.0"
+            },
+            "time": "2025-06-19T12:27:27+00:00"
+        },
+        {
+            "name": "nextcloud/ocp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nextcloud-deps/ocp.git",
+                "reference": "be29d44275c043c2ad861f5058bd33148a846f0e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nextcloud-deps/ocp/zipball/be29d44275c043c2ad861f5058bd33148a846f0e",
+                "reference": "be29d44275c043c2ad861f5058bd33148a846f0e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.1 || ~8.2 || ~8.3 || ~8.4",
+                "psr/clock": "^1.0",
+                "psr/container": "^2.0.2",
+                "psr/event-dispatcher": "^1.0",
+                "psr/log": "^3.0.2"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "33.0.0-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Christoph Wurst",
+                    "email": "christoph@winzerhof-wurst.at"
+                },
+                {
+                    "name": "Joas Schilling",
+                    "email": "coding@schilljs.com"
+                }
+            ],
+            "description": "Composer package containing Nextcloud's public OCP API and the unstable NCU API",
+            "support": {
+                "issues": "https://github.com/nextcloud-deps/ocp/issues",
+                "source": "https://github.com/nextcloud-deps/ocp/tree/master"
+            },
+            "time": "2025-11-19T00:52:11+00:00"
+        },
+        {
+            "name": "php-cs-fixer/shim",
+            "version": "v3.89.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHP-CS-Fixer/shim.git",
+                "reference": "8f1bf4fd7d8270020cd3c58756fcf3615ed14b68"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/shim/zipball/8f1bf4fd7d8270020cd3c58756fcf3615ed14b68",
+                "reference": "8f1bf4fd7d8270020cd3c58756fcf3615ed14b68",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-tokenizer": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "replace": {
+                "friendsofphp/php-cs-fixer": "self.version"
+            },
+            "suggest": {
+                "ext-dom": "For handling output formats in XML",
+                "ext-mbstring": "For handling non-UTF8 characters."
+            },
+            "bin": [
+                "php-cs-fixer",
+                "php-cs-fixer.phar"
+            ],
+            "type": "application",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Dariusz Rumiński",
+                    "email": "dariusz.ruminski@gmail.com"
+                }
+            ],
+            "description": "A tool to automatically fix PHP code style",
+            "support": {
+                "issues": "https://github.com/PHP-CS-Fixer/shim/issues",
+                "source": "https://github.com/PHP-CS-Fixer/shim/tree/v3.89.2"
+            },
+            "time": "2025-11-06T21:13:10+00:00"
+        },
+        {
+            "name": "psr/clock",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/clock.git",
+                "reference": "e41a24703d4560fd0acb709162f73b8adfc3aa0d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/clock/zipball/e41a24703d4560fd0acb709162f73b8adfc3aa0d",
+                "reference": "e41a24703d4560fd0acb709162f73b8adfc3aa0d",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0 || ^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Clock\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for reading the clock.",
+            "homepage": "https://github.com/php-fig/clock",
+            "keywords": [
+                "clock",
+                "now",
+                "psr",
+                "psr-20",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/php-fig/clock/issues",
+                "source": "https://github.com/php-fig/clock/tree/1.0.0"
+            },
+            "time": "2022-11-25T14:36:26+00:00"
+        },
+        {
+            "name": "psr/container",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/container.git",
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/c71ecc56dfe541dbd90c5360474fbc405f8d5963",
+                "reference": "c71ecc56dfe541dbd90c5360474fbc405f8d5963",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Container\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https://github.com/php-fig/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "support": {
+                "issues": "https://github.com/php-fig/container/issues",
+                "source": "https://github.com/php-fig/container/tree/2.0.2"
+            },
+            "time": "2021-11-05T16:47:00+00:00"
+        },
+        {
+            "name": "psr/event-dispatcher",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/event-dispatcher.git",
+                "reference": "dbefd12671e8a14ec7f180cab83036ed26714bb0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/event-dispatcher/zipball/dbefd12671e8a14ec7f180cab83036ed26714bb0",
+                "reference": "dbefd12671e8a14ec7f180cab83036ed26714bb0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\EventDispatcher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Standard interfaces for event handling.",
+            "keywords": [
+                "events",
+                "psr",
+                "psr-14"
+            ],
+            "support": {
+                "issues": "https://github.com/php-fig/event-dispatcher/issues",
+                "source": "https://github.com/php-fig/event-dispatcher/tree/1.0.0"
+            },
+            "time": "2019-01-08T18:20:26+00:00"
+        },
+        {
+            "name": "psr/log",
+            "version": "3.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "reference": "f16e1d5863e37f8d8c2a01719f5b34baa2b714d3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "https://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "support": {
+                "source": "https://github.com/php-fig/log/tree/3.0.2"
+            },
+            "time": "2024-09-11T13:17:53+00:00"
+        }
+    ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "nextcloud/ocp": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
+    "platform": {
+        "php": "^8.1"
+    },
     "platform-dev": {},
     "platform-overrides": {
         "php": "8.2"
