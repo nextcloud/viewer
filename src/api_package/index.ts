@@ -4,13 +4,12 @@
  */
 import type { File, Node } from '@nextcloud/files'
 
-import { DefaultType, FileAction, FileType, getFileActions, registerFileAction } from '@nextcloud/files'
 import FileSvg from '@mdi/svg/svg/file.svg?raw'
 import OpenInAppSvg from '@mdi/svg/svg/open-in-app.svg?raw'
-
-import { getViewer } from './viewer.ts'
+import { DefaultType, FileAction, FileType, getFileActions, registerFileAction } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 import { logger } from '../services/logger.ts'
+import { getViewer } from './viewer.ts'
 
 const ACTION_VIEWER = 'viewer-open'
 export interface IHandler {
@@ -54,7 +53,7 @@ export interface IHandler {
 	 * opening a file to allow the handler to be faster when navigating.
 	 *
 	 * @param node - The node to preload data for
-	 * @returns A promise that resolves when the data is preloaded
+	 * @return A promise that resolves when the data is preloaded
 	 */
 	preload?: (node: File) => Promise<void>
 
@@ -66,17 +65,17 @@ export interface IHandler {
 
 const topLevelViewerAction = new FileAction({
 	id: ACTION_VIEWER,
-	displayName: () => t('viewer', 'Open with …'),
+	displayName: () => t('viewer', 'Open with …'),
 	iconSvgInline: () => OpenInAppSvg,
 	order: -1000,
 
-	enabled: (files: Node[]) => {
-		if (files.length === 0) {
+	enabled: ({ nodes }) => {
+		if (nodes.length === 0) {
 			return false
 		}
 
 		// We do not support folders
-		if (files.some(file => file.type !== FileType.File)) {
+		if (nodes.some((node) => node.type !== FileType.File)) {
 			return false
 		}
 
@@ -84,7 +83,7 @@ const topLevelViewerAction = new FileAction({
 		// If yes, we return true to show the "Open with ..." menu
 		let supportedHandlerCount = 0
 		for (const handler of getHandlers().values()) {
-			if (handler.enabled(files)) {
+			if (handler.enabled(nodes)) {
 				supportedHandlerCount++
 			}
 			// TODO: Change to 1
@@ -93,12 +92,12 @@ const topLevelViewerAction = new FileAction({
 			}
 		}
 
-		logger.debug('No hander found for the given nodes', { files })
+		logger.debug('No hander found for the given nodes', { nodes })
 		return false
 	},
 	exec() {
 		return Promise.resolve(null)
-	}
+	},
 })
 
 /**
@@ -130,46 +129,47 @@ export function registerHandler(handler: IHandler): void {
 		order: -999,
 		default: DefaultType.HIDDEN,
 
-		enabled: ({ files }) => {
-			if (files.length === 0) {
+		enabled: ({ nodes }) => {
+			if (nodes.length === 0) {
 				return false
 			}
 
 			// We do not support folders
-			if (files.some(file => file.type !== FileType.File)) {
+			if (nodes.some((node) => node.type !== FileType.File)) {
 				return false
 			}
 
-			return handler.enabled(files)
+			return handler.enabled(nodes)
 		},
-		async exec({ node }) {
-			if (node.type !== FileType.File) {
+		async exec({ nodes }) {
+			if (nodes[0].type !== FileType.File) {
 				return null
 			}
 
-			getViewer().open([node as File], node as File)
+			getViewer().open(nodes, nodes[0] as File)
 			return null
-		}
+		},
 	}))
 
 	// Only register the main "Open with ..." action if not already registered
 	// This action will be shown if more than one handler is available for the given mime
 	const actions = getFileActions()
-	if (!actions.find(action => action.id === ACTION_VIEWER)) {
+	if (!actions.find((action) => action.id === ACTION_VIEWER)) {
 		registerFileAction(topLevelViewerAction)
 
 		logger.info('Registered top level viewer file action', { id: ACTION_VIEWER })
 	}
 }
 
-export function getHandlers() : Map<string, IHandler> {
+/**
+ * Get all registered handlers.
+ */
+export function getHandlers(): Map<string, IHandler> {
 	return window._oca_viewer_handlers ??= new Map<string, IHandler>()
 }
 
 /**
  * Validate the handler object.
- *
- * @param handler - The handler to validate
  */
 function validateHandler(handler: IHandler): void {
 	const { id, displayName, group, enabled } = handler
@@ -204,6 +204,9 @@ function validateHandler(handler: IHandler): void {
 	validateCustomElementName(handler.tagname)
 }
 
+/**
+ * Validate that the given tag name is a valid custom element name.
+ */
 function validateCustomElementName(tagname: string): void {
 	if (!tagname.includes('-')) {
 		throw new Error('Handler tagname must contain a hyphen (-)')

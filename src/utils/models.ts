@@ -12,6 +12,6 @@ export interface BasicFileInfo {
 	previewUrl?: string // Optional URL of the file preview
 	hasPreview: boolean // Does the file has an existing preview ?
 	davPath: string // The absolute dav path
-	etag: string|null // The etag of the file
+	etag: string | null // The etag of the file
 	metadataFilesLivePhoto?: number // The id of the peer live photo
 }

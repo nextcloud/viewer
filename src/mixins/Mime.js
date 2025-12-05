@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import debounce from 'debounce'
-import PreviewUrl from '../mixins/PreviewUrl.js'
 import parsePath from 'path-parse'
+import PreviewUrl from '../mixins/PreviewUrl.js'
 
 export default {
 	inheritAttrs: false,
@@ -128,7 +128,7 @@ export default {
 
 	mounted() {
 		// detect error and let the viewer know
-		this.$el.addEventListener('error', e => {
+		this.$el.addEventListener('error', (e) => {
 			console.error('Error loading', this.filename, e)
 			this.$emit('error', e)
 		})

@@ -7,17 +7,17 @@
 		<div ref="editor" class="viewer__image-editor" v-bind="themeDataAttr" />
 	</div>
 </template>
-<script>
-import { basename, dirname, extname, join } from 'path'
-import { emit } from '@nextcloud/event-bus'
-import { linkTo } from '@nextcloud/router'
-import { Node } from '@nextcloud/files'
-import { showError, showSuccess, DialogBuilder } from '@nextcloud/dialogs'
-import axios from '@nextcloud/axios'
 
-import { logger } from '../services/logger.ts'
-import { rawStat } from '../services/FileInfo.ts'
+<script>
+import axios from '@nextcloud/axios'
+import { DialogBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { emit } from '@nextcloud/event-bus'
+import { Node } from '@nextcloud/files'
+import { linkTo } from '@nextcloud/router'
+import { basename, dirname, extname, join } from 'path'
 import translations from '../models/editorTranslations.js'
+import { rawStat } from '../services/FileInfo.ts'
+import { logger } from '../services/logger.ts'
 
 let TABS, TOOLS
 
@@ -29,10 +29,12 @@ export default {
 			type: [String, Number],
 			required: true,
 		},
+
 		mime: {
 			type: String,
 			required: true,
 		},
+
 		src: {
 			type: String,
 			required: true,
@@ -65,7 +67,7 @@ export default {
 
 				// Displayed tabs, disabling watermark
 				tabsIds: Object.values(TABS)
-					.filter(tab => tab !== TABS.WATERMARK)
+					.filter((tab) => tab !== TABS.WATERMARK)
 					.sort((a, b) => a.localeCompare(b)),
 
 				// onBeforeSave: this.onBeforeSave,
@@ -94,6 +96,7 @@ export default {
 
 						warning: 'var(--color-error)',
 					},
+
 					typography: {
 						fontFamily: 'var(--font-face)',
 					},
@@ -114,13 +117,14 @@ export default {
 		defaultSavedImageName() {
 			return basename(this.src, extname(this.src))
 		},
+
 		defaultSavedImageType() {
 			return extname(this.src).slice(1) || 'jpeg'
 		},
 
 		hasHighContrastEnabled() {
 			const themes = OCA?.Theming?.enabledThemes || []
-			return themes.find(theme => theme.indexOf('highcontrast') !== -1)
+			return themes.find((theme) => theme.indexOf('highcontrast') !== -1)
 		},
 
 		themeDataAttr() {
@@ -199,10 +203,9 @@ export default {
 			childList: true,
 			subtree: true,
 		})
-
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		if (this.imageEditor) {
 			this.imageEditor.terminate()
 		}
@@ -215,14 +218,16 @@ export default {
 			window.removeEventListener('keydown', this.handleKeydown, true)
 			this.$emit('close')
 		},
+
 		/**
 		 * Check if a file exists at the given URL
+		 *
 		 * @param {string} url The URL to check
 		 * @return {Promise<boolean>} True if the file exists, false otherwise
 		 */
-		 async fileExists(url) {
+		async fileExists(url) {
 			try {
-				await axios.head(url, { validateStatus: status => status === 200 || status === 404 })
+				await axios.head(url, { validateStatus: (status) => status === 200 || status === 404 })
 				const response = await axios.head(url)
 				return response.status === 200
 			} catch (error) {
@@ -232,6 +237,7 @@ export default {
 				throw error
 			}
 		},
+
 		/**
 		 * User saved the image
 		 *
@@ -299,7 +305,7 @@ export default {
 			quality = Math.max(Math.min(quality, 1), 0) || 1
 
 			try {
-				const blob = await new Promise(resolve => imageCanvas.toBlob(resolve, mimeType, quality))
+				const blob = await new Promise((resolve) => imageCanvas.toBlob(resolve, mimeType, quality))
 				const response = await axios.put(putUrl, new File([blob], fullName))
 				logger.info('Edited image saved!', { response })
 				showSuccess(t('viewer', 'Image saved'))

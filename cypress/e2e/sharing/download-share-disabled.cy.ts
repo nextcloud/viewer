@@ -8,7 +8,7 @@ const fileName = 'image1.jpg'
 describe(`Download ${fileName} in viewer`, function() {
 	before(function() {
 		// Init user
-		cy.createRandomUser().then(user => {
+		cy.createRandomUser().then((user) => {
 			// Upload test files
 			cy.createFolder(user, '/Photos')
 			cy.uploadFile(user, 'image1.jpg', 'image/jpeg', '/Photos/image1.jpg')
@@ -37,7 +37,7 @@ describe(`Download ${fileName} in viewer`, function() {
 		cy.on('uncaught:exception', (err) => {
 			// This can happen because of blink engine handling animation, its not a bug just engine related.
 			if (err.message.includes('ResizeObserver loop limit exceeded')) {
-			  return false
+				return false
 			}
 		})
 
@@ -108,5 +108,4 @@ describe(`Download ${fileName} in viewer`, function() {
 		cy.get('body > .viewer .modal-header button.action-item__menutoggle').should('not.exist')
 		cy.get('body > .viewer .modal-header button.header-close').should('be.visible')
 	})
-
 })

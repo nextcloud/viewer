@@ -4,6 +4,7 @@
  */
 
 import type { User } from '@nextcloud/cypress'
+
 import { ShareType } from '@nextcloud/sharing'
 
 describe('Disable download button if forbidden', { testIsolation: true }, () => {
@@ -17,7 +18,8 @@ describe('Disable download button if forbidden', { testIsolation: true }, () => 
 			cy.uploadFile(user, 'image1.jpg', 'image/jpeg', '/Photos/image1.jpg')
 
 			cy.login(user)
-			cy.createShare('/Photos',
+			cy.createShare(
+				'/Photos',
 				{ shareWith: sharee.userId, shareType: ShareType.User, attributes: [{ scope: 'permissions', key: 'download', value: false }] },
 			)
 			cy.logout()

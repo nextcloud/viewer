@@ -9,7 +9,7 @@
  * @param {Function} request the axios promise request
  * @return {object}
  */
-const CancelableRequest = function(request) {
+function CancelableRequest(request) {
 	const controller = new AbortController()
 
 	/**

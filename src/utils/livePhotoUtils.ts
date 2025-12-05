@@ -11,6 +11,9 @@ const livePictureExtRegex = new RegExp(`\\.(${livePictureExt.join('|')})$`, 'i')
 
 /**
  * Return the peer live photo from a list of files based on its fileId
+ *
+ * @param peerFileId
+ * @param fileList
  */
 export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
 	return fileList.find((file) => file.fileid === peerFileId)
@@ -18,6 +21,9 @@ export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: BasicF
 
 /**
  * Return the peer live photo from a list of files based on the original file name.
+ *
+ * @param referenceFile
+ * @param fileList
  */
 export function findLivePhotoPeerFromName(referenceFile: File, fileList: File[]): File | undefined {
 	const extension = referenceFile.extension || ''

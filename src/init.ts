@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { createApp } from 'vue'
-
-import { getViewer } from './api_package/viewer.ts'
-import { logger } from './services/logger.ts'
 import Viewer from './views/Viewer.vue'
-
+import { getViewer } from './api_package/viewer.ts'
 import { registerVideoCustomElement, registerVideoHandler } from './models/videos.ts'
+import { logger } from './services/logger.ts'
 
 const ViewerService = getViewer()
 const ViewerApp = createApp(Viewer)

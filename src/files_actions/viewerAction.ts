@@ -4,11 +4,10 @@
  */
 import type { Node, View } from '@nextcloud/files'
 
-import { DefaultType, FileAction, Permission, registerFileAction } from '@nextcloud/files'
-import { emit } from '@nextcloud/event-bus'
-import { t } from '@nextcloud/l10n'
 import svgEye from '@mdi/svg/svg/eye.svg?raw'
-
+import { emit } from '@nextcloud/event-bus'
+import { DefaultType, FileAction, Permission, registerFileAction } from '@nextcloud/files'
+import { t } from '@nextcloud/l10n'
 import logger from '../services/logger.js'
 
 /**
@@ -46,7 +45,10 @@ export function toggleEditor(editing = false) {
 	window.OCP.Files.Router.goToRoute(null, window.OCP.Files.Router.params, newQuery)
 }
 
-const onPopState = () => {
+/**
+ *
+ */
+function onPopState() {
 	emit('editor:toggle', window.OCP?.Files?.Router?.query?.editing === 'true')
 	if (window.OCP?.Files?.Router?.query?.openfile !== 'true') {
 		window.OCA.Viewer.close()
@@ -56,11 +58,12 @@ const onPopState = () => {
 
 /**
  * Execute the viewer files action
+ *
  * @param node The active node
  * @param view The current view
  * @param dir The current path
  */
-async function execAction(node: Node, view: View, dir: string): Promise<boolean|null> {
+async function execAction(node: Node, view: View, dir: string): Promise<boolean | null> {
 	const onClose = () => {
 		// If there is no router, we're in standalone mode
 		if (!window.OCP?.Files?.Router) {
@@ -104,14 +107,12 @@ export function registerViewerAction() {
 		default: DefaultType.DEFAULT,
 		enabled: (nodes) => {
 			// Disable if not located in user root
-			if (nodes.some(node => !(node.isDavRessource && node.root?.startsWith('/files')))) {
+			if (nodes.some((node) => !(node.isDavRessource && node.root?.startsWith('/files')))) {
 				return false
 			}
 
-			return nodes.every((node) =>
-				Boolean(node.permissions & Permission.READ)
-				&& window.OCA.Viewer.mimetypes.includes(node.mime),
-			)
+			return nodes.every((node) => Boolean(node.permissions & Permission.READ)
+				&& window.OCA.Viewer.mimetypes.includes(node.mime))
 		},
 		exec: execAction,
 	}))

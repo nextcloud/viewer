@@ -1,9 +1,9 @@
+import { getDavPath } from '../utils/fileUtils.ts'
 /**
  * SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 import { getPreviewIfAny } from '../utils/previewUtils.ts'
-import { getDavPath } from '../utils/fileUtils.ts'
 
 export default {
 	computed: {

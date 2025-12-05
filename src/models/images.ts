@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineCustomElement } from 'vue'
 import { loadState } from '@nextcloud/initial-state'
-import { logger}  from '../services/logger.ts'
+import { t } from '@nextcloud/l10n'
+import { defineCustomElement } from 'vue'
 import Images from '../components/Images.vue'
 import { registerHandler } from '../api_package/index.ts'
-import { t } from '@nextcloud/l10n'
+import { logger } from '../services/logger.ts'
 
 const enabledPreviewProviders = loadState<string[]>('viewer', 'enabled_preview_providers', [])
 
@@ -42,9 +42,12 @@ const browserSupportedMimes = [
 
 // Filter out supported mimes that are _not_
 // enabled in the preview API
-const filterEnabledMimes = () => {
-	return previewSupportedMimes.filter(filter => {
-		return enabledPreviewProviders.findIndex(mimeRegex => {
+/**
+ *
+ */
+function filterEnabledMimes() {
+	return previewSupportedMimes.filter((filter) => {
+		return enabledPreviewProviders.findIndex((mimeRegex) => {
 			// Remove leading and trailing slash from string regex
 			const regex = new RegExp(mimeRegex.replace(/^\/|\/$/g, ''), 'i')
 			return filter.match(regex)
@@ -53,12 +56,15 @@ const filterEnabledMimes = () => {
 }
 
 const enabledMimes = filterEnabledMimes()
-const ignoredMimes = previewSupportedMimes.filter(x => !enabledMimes.includes(x))
+const ignoredMimes = previewSupportedMimes.filter((x) => !enabledMimes.includes(x))
 if (ignoredMimes.length > 0) {
 	logger.warn('Some mimes were ignored because they are not enabled in the server previews config', { ignoredMimes })
 }
 
 export const tagname = 'oca-viewer-image'
+/**
+ *
+ */
 export function registerImageCustomElement() {
 	const ImageElement = defineCustomElement(Images, {
 		shadowRoot: false,
@@ -68,6 +74,9 @@ export function registerImageCustomElement() {
 	customElements.define(tagname, ImageElement)
 }
 
+/**
+ *
+ */
 export function registerImageHandler() {
 	registerHandler({
 		id: 'images',
@@ -79,7 +88,7 @@ export function registerImageHandler() {
 				return false
 			}
 
-			return nodes.every(node => {
+			return nodes.every((node) => {
 				// Always allow browser supported mimes
 				if (browserSupportedMimes.includes(node.mime)) {
 					return true

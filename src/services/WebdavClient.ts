@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { davGetClient, davRootPath, davGetRemoteURL } from '@nextcloud/files'
+import { davGetClient, davGetRemoteURL, davRootPath } from '@nextcloud/files'
 
 const davRemote = davGetRemoteURL()
 

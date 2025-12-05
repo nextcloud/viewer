@@ -31,7 +31,7 @@ Cypress.Commands.add('uploadFile', (user, fixture, mimeType, target = `/${fixtur
 	cy.clearCookies()
 
 	// get fixture
-	return cy.fixture(fixture, 'binary').then(file => {
+	return cy.fixture(fixture, 'binary').then((file) => {
 		// convert the binary to a blob
 		const blob = Cypress.Blob.binaryStringToBlob(file, mimeType)
 
@@ -50,7 +50,7 @@ Cypress.Commands.add('uploadFile', (user, fixture, mimeType, target = `/${fixtur
 				username: user.userId,
 				password: user.password,
 			},
-		}).then(response => {
+		}).then((response) => {
 			cy.log(`Uploaded file ${fileName}`, response)
 		})
 	})
@@ -63,41 +63,41 @@ Cypress.Commands.add('createFolder', (user, target) => {
 	const rootPath = `${Cypress.env('baseUrl')}/remote.php/dav/files/${encodeURIComponent(user.userId)}`
 	const dirPath = target.split('/').map(encodeURIComponent).join('/')
 
-	 cy.request({
+	cy.request({
 		url: `${rootPath}${dirPath}`,
 		method: 'MKCOL',
 		auth: {
 			username: user.userId,
 			password: user.password,
 		},
-	}).then(response => {
+	}).then((response) => {
 		cy.log(`Created folder ${dirName}`, response)
 	})
 })
 
-Cypress.Commands.add('getFile', fileName => {
+Cypress.Commands.add('getFile', (fileName) => {
 	return cy.get(`[data-cy-files-list] tr[data-cy-files-list-row-name="${CSS.escape(fileName)}"]`)
 })
 
-Cypress.Commands.add('openFile', fileName => {
+Cypress.Commands.add('openFile', (fileName) => {
 	cy.getFile(fileName).click()
-	// eslint-disable-next-line
+
 	cy.wait(250)
 })
 
 Cypress.Commands.add('openFileInSingleShare', () => {
 	cy.get('tr[data-cy-files-list-row-name]')
 		.should('have.length', 1)
-	// eslint-disable-next-line
+
 	cy.wait(250)
 })
 
-Cypress.Commands.add('getFileId', fileName => {
+Cypress.Commands.add('getFileId', (fileName) => {
 	return cy.getFile(fileName)
 		.should('have.attr', 'data-cy-files-list-row-fileid')
 })
 
-Cypress.Commands.add('deleteFile', fileName => {
+Cypress.Commands.add('deleteFile', (fileName) => {
 	cy.getFile(fileName).clickAction('delete')
 })
 
@@ -118,7 +118,7 @@ interface ShareOptions {
 	shareType: number
 	shareWith?: string
 	permissions: number
-	attributes?: { value: boolean, key: string, scope: string}[]
+	attributes?: { value: boolean, key: string, scope: string }[]
 }
 
 Cypress.Commands.add('createShare', (path: string, shareOptions?: ShareOptions) => {
@@ -154,13 +154,13 @@ Cypress.Commands.add('createShare', (path: string, shareOptions?: ShareOptions) 
  * @param {string} path the file/folder path
  * @return {string} the share link url
  */
-Cypress.Commands.add('createLinkShare', path => {
+Cypress.Commands.add('createLinkShare', (path) => {
 	return cy.createShare(path, { shareType: ShareType.Link })
 })
 
 Cypress.Commands.overwrite('compareSnapshot', (originalFn, subject, name, options) => {
 	// hide avatar because random colour break the visual regression tests
-	cy.window().then(window => {
+	cy.window().then((window) => {
 		const avatarDiv = window.document.querySelector('.avatardiv')
 		if (avatarDiv) {
 			avatarDiv.remove()

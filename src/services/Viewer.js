@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import Audios from '../models/audios.js'
 import Images from '../models/images.js'
 import Videos from '../models/videos.js'
-import Audios from '../models/audios.js'
 import logger from './logger.js'
 
 /**
@@ -35,7 +35,6 @@ import logger from './logger.js'
  */
 
 export default class Viewer {
-
 	_state
 	_mimetypes
 	_mimetypesCompare
@@ -113,7 +112,7 @@ export default class Viewer {
 		}
 
 		// checking if handler is not already registered
-		if (this._state.handlers.find(h => h.id === id)) {
+		if (this._state.handlers.find((h) => h.id === id)) {
 			return 'The handler is already registered'
 		}
 
@@ -381,5 +380,4 @@ export default class Viewer {
 		this._state.loadMore = () => ([])
 		this._state.overrideHandlerId = null
 	}
-
 }

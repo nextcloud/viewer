@@ -5,20 +5,22 @@
 
 <template>
 	<div class="image_container">
-		<ImageEditor v-if="editing"
+		<ImageEditor
+			v-if="editing"
 			:mime="mime"
 			:src="src"
 			:fileid="fileid"
 			@close="onClose" />
 
 		<template v-else-if="data !== null">
-			<img v-if="!livePhotoCanBePlayed"
+			<img
+				v-if="!livePhotoCanBePlayed"
 				ref="image"
 				:alt="alt"
 				:class="{
 					dragging,
 					loaded,
-					zoomed: zoomRatio > 1
+					zoomed: zoomRatio > 1,
 				}"
 				:src="data"
 				:style="imgStyle"
@@ -31,12 +33,13 @@
 				@pointermove.prevent="pointerMove">
 
 			<template v-if="livePhoto">
-				<video v-show="livePhotoCanBePlayed"
+				<video
+					v-show="livePhotoCanBePlayed"
 					ref="video"
 					:class="{
 						dragging,
 						loaded,
-						zoomed: zoomRatio > 1
+						zoomed: zoomRatio > 1,
 					}"
 					:style="imgStyle"
 					:playsinline="true"
@@ -52,9 +55,10 @@
 					@pointerup.prevent="pointerUp"
 					@pointermove.prevent="pointerMove"
 					@ended="stopLivePhoto" />
-				<button v-if="width !== 0"
+				<button
+					v-if="width !== 0"
 					class="live-photo_play_button"
-					:style="{left: `calc(50% - ${width/2}px)`}"
+					:style="{ left: `calc(50% - ${width / 2}px)` }"
 					:disabled="!livePhotoCanBePlayed"
 					:aria-description="t('viewer', 'Play the live photo')"
 					@click="playLivePhoto"
@@ -73,19 +77,17 @@
 </template>
 
 <script lang="ts">
-import { basename } from '@nextcloud/paths'
+import axios from '@nextcloud/axios'
 import { Node } from '@nextcloud/files'
 import { translate } from '@nextcloud/l10n'
-import axios from '@nextcloud/axios'
-import DOMPurify from 'dompurify'
-
+import { basename } from '@nextcloud/paths'
 import { NcLoadingIcon } from '@nextcloud/vue'
+import DOMPurify from 'dompurify'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import ImageEditor from './ImageEditor.vue'
-
-import { findLivePhotoPeerFromFileId } from '../utils/livePhotoUtils'
-import { getDavPath } from '../utils/fileUtils'
 import { preloadMedia } from '../services/mediaPreloader'
+import { getDavPath } from '../utils/fileUtils'
+import { findLivePhotoPeerFromFileId } from '../utils/livePhotoUtils'
 export default {
 	name: 'Images',
 
@@ -100,11 +102,13 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+
 		node: {
 			type: Node,
 			required: true,
-		}
+		},
 	},
+
 	data() {
 		return {
 			dragging: false,
@@ -124,15 +128,19 @@ export default {
 		src() {
 			return this.node.source ?? this.davPath
 		},
+
 		zoomHeight() {
 			return Math.round(this.height * this.zoomRatio)
 		},
+
 		zoomWidth() {
 			return Math.round(this.width * this.zoomRatio)
 		},
+
 		alt() {
 			return this.basename
 		},
+
 		imgStyle() {
 			if (this.zoomRatio === 1) {
 				return {
@@ -147,6 +155,7 @@ export default {
 				width: this.zoomWidth + 'px',
 			}
 		},
+
 		livePhoto() {
 			if (this.metadataFilesLivePhoto === undefined) {
 				return undefined
@@ -154,16 +163,18 @@ export default {
 
 			return findLivePhotoPeerFromFileId(this.metadataFilesLivePhoto, this.fileList)
 		},
+
 		livePhotoSrc() {
 			return this.livePhoto?.source ?? this.livePhotoDavPath
 		},
+
 		/** @return {string|null} */
 		livePhotoDavPath() {
 			return this.livePhoto
 				? getDavPath({
-					filename: this.livePhoto.filename,
-					basename: this.livePhoto.basename,
-				})
+						filename: this.livePhoto.filename,
+						basename: this.livePhoto.basename,
+					})
 				: null
 		},
 	},
@@ -199,6 +210,7 @@ export default {
 			return this.previewPath
 		},
 	},
+
 	watch: {
 		active(val, old) {
 			// the item was hidden before and is now the current view
@@ -214,6 +226,7 @@ export default {
 			}
 		},
 	},
+
 	methods: {
 		// Updates the dimensions of the modal
 		updateImgSize() {
@@ -335,27 +348,25 @@ export default {
 				this.disableSwipe()
 			}
 		},
+
 		/**
 		 * @param {DragEvent} event the event
 		 */
-		 pointerUp(event) {
+		pointerUp(event) {
 			// Remove pointer from the pointer cache
-			const index = this.pointerCache.findIndex(
-				(cachedEv) => cachedEv.pointerId === event.pointerId,
-			)
+			const index = this.pointerCache.findIndex((cachedEv) => cachedEv.pointerId === event.pointerId)
 			this.pointerCache.splice(index, 1)
 			this.dragging = false
 			this.zooming = false
 		},
+
 		/**
 		 * @param {DragEvent} event the event
 		 */
-		 pointerMove(event) {
+		pointerMove(event) {
 			if (this.pointerCache.length > 0) {
 				// Update pointer position in the pointer cache
-				const index = this.pointerCache.findIndex(
-					(cachedEv) => cachedEv.pointerId === event.pointerId,
-				)
+				const index = this.pointerCache.findIndex((cachedEv) => cachedEv.pointerId === event.pointerId)
 				if (index >= 0) {
 					this.pointerCache[index].x = event.clientX
 					this.pointerCache[index].y = event.clientY
@@ -390,8 +401,8 @@ export default {
 
 				this.updateZoomAndShift(stableX, stableY, newZoomRatio)
 			}
-
 		},
+
 		onDblclick() {
 			if (this.zoomRatio > 1) {
 				this.resetZoom()
@@ -411,10 +422,12 @@ export default {
 				this.fallback = true
 			}
 		},
+
 		doneLoadingLivePhoto() {
 			this.livePhotoCanBePlayed = true
 			this.doneLoading()
 		},
+
 		playLivePhoto() {
 			if (!this.livePhotoCanBePlayed) {
 				return
@@ -424,6 +437,7 @@ export default {
 			const video = this.$refs.video
 			video.play()
 		},
+
 		stopLivePhoto() {
 			/** @type {HTMLVideoElement} */
 			const video = this.$refs.video

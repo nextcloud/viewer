@@ -7,6 +7,7 @@ import type { FileInfo } from './fileUtils'
 
 /**
  * Check if download permissions are granted for a file
+ *
  * @param fileInfo The file info to check
  */
 export function canDownload(fileInfo: FileInfo) {

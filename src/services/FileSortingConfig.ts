@@ -8,7 +8,7 @@ import { generateUrl } from '@nextcloud/router'
 import { isPublicShare } from '@nextcloud/sharing/public'
 
 /**
- * @return {object}
+ * @return
  */
 export default async function getSortingConfig() {
 	const viewConfigs = await getViewConfigs()
@@ -25,7 +25,7 @@ export default async function getSortingConfig() {
 }
 
 /**
- * @return {object}
+ * @return
  */
 async function getViewConfigs() {
 	if (isPublicShare()) {

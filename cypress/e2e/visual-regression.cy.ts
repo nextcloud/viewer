@@ -8,7 +8,7 @@ describe('Visual regression tests', function() {
 
 	before(function() {
 		// Init user
-		cy.createRandomUser().then(user => {
+		cy.createRandomUser().then((user) => {
 			randUser = user
 
 			// Upload test files
@@ -70,12 +70,12 @@ describe('Visual regression tests', function() {
 	})
 
 	it('Take test-card.mp4 screenshot', { retries: 0 }, function() {
-		cy.get('body > .viewer .modal-container .viewer__file.viewer__file--active video').then(video => {
+		cy.get('body > .viewer .modal-container .viewer__file.viewer__file--active video').then((video) => {
 			video.get(0).pause()
 			video.get(0).currentTime = 1
 		})
 		// wait a bit for things to be settled
-		// eslint-disable-next-line
+
 		cy.wait(250)
 		cy.compareSnapshot('video', 0.02)
 	})

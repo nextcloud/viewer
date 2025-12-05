@@ -4,7 +4,7 @@
  */
 
 import type { File, Folder } from '@nextcloud/files'
-import ViewerVue from '../views/Viewer.vue'
+import type ViewerVue from '../views/Viewer.vue'
 
 export type ViewerOptions = {
 	loadMore: () => Promise<File[]>
@@ -26,8 +26,10 @@ export class Viewer extends EventTarget implements ViewerAPI {
 	/**
 	 * Set the viewer instance (called from init.ts)
 	 * Private, do not use directly.
+	 *
+	 * @param viewer
 	 */
-  	_setViewer(viewer: InstanceType<typeof ViewerVue>) {
+	_setViewer(viewer: InstanceType<typeof ViewerVue>) {
 		this.viewer = viewer
 	}
 
@@ -54,11 +56,19 @@ export class Viewer extends EventTarget implements ViewerAPI {
 }
 
 // Init and get the viewer in Modal
+/**
+ *
+ */
 export function getViewer(): Viewer {
 	return window._oca_viewer_service ??= new Viewer()
 }
 
 // Create a new Viewer instance in the given element
+/**
+ *
+ * @param el
+ * @param file
+ */
 export function createViewer(el: HTMLElement, file: File): Viewer {
 	const instance = new Viewer()
 	// el.appendChild(instance)

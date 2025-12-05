@@ -7,9 +7,11 @@
 	<!-- Plyr currently replaces the parent. Wrapping to prevent this
 	https://github.com/redxtech/vue-plyr/issues/259 -->
 	<div v-if="url">
-		<VuePlyr ref="plyr"
+		<VuePlyr
+			ref="plyr"
 			:options="options">
-			<audio ref="audio"
+			<audio
+				ref="audio"
 				:autoplay="active"
 				:src="url"
 				preload="metadata"
@@ -32,11 +34,11 @@
 <script lang='ts'>
 import Vue from 'vue'
 import AsyncComputed from 'vue-async-computed'
-// eslint-disable-next-line n/no-missing-import
-import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
-
 import logger from '../services/logger.js'
 import { preloadMedia } from '../services/mediaPreloader'
+
+// eslint-disable-next-line n/no-missing-import
+import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
 
 const VuePlyr = () => import(/* webpackChunkName: 'plyr' */'@skjnldsv/vue-plyr')
 
@@ -59,6 +61,7 @@ export default {
 		player() {
 			return this.$refs.plyr.player
 		},
+
 		options() {
 			return {
 				autoplay: this.active === true,
@@ -102,7 +105,7 @@ export default {
 			return
 		}
 
-		[...plyrControls].forEach(control => {
+		[...plyrControls].forEach((control) => {
 			if (!control?.addEventListener) {
 				return
 			}
@@ -111,7 +114,7 @@ export default {
 		})
 	},
 
-	beforeDestroy() {
+	beforeUnmount() {
 		// Force stop any ongoing request
 		logger.debug('Closing audio stream', { filename: this.filename })
 		this.$refs.audio.pause()

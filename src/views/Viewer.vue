@@ -3,7 +3,9 @@
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <template>
-	<NcModal v-show="!!currentFile"
+	<NcModal
+		v-show="!!currentFile"
+		ref="modal"
 		:additional-trap-elements="trapElements"
 		:clear-view-delay="-1 /* disable fade-out because of accessibility reasons */"
 		:close-button-outside="true"
@@ -22,17 +24,17 @@
 		:style="{ width: isSidebarShown ? `${sidebarPosition}px` : null }"
 		class="viewer__modal"
 		size="full"
-		ref="modal"
 		@close="close"
 		@previous="previous"
 		@next="next">
 		<!-- Loading status -->
 		<span v-if="loading && !errorString" class="viewer__loading">
-				<NcLoadingIcon :appearance="lightBackdrop ? 'dark' : 'light'" :size="32" />
+			<NcLoadingIcon :appearance="lightBackdrop ? 'dark' : 'light'" :size="32" />
 		</span>
 
 		<!-- Error message -->
-		<NcEmptyContent v-else-if="errorString"
+		<NcEmptyContent
+			v-else-if="errorString"
 			:name="errorString"
 			:description="t('viewer', 'We were unable to display the requested file.')">
 			<template #icon>
@@ -40,15 +42,16 @@
 			</template>
 		</NcEmptyContent>
 
-		<component v-show="!loading && !!currentFile"
+		<component
 			:is="currentHandler?.tagname"
+			v-show="!loading && !!currentFile"
+			v-model:can-swipe="canSwipe"
 			:file="currentFile"
 			:files="currentFileList"
 			:editing="editing"
-			:isSidebarShown="isSidebarShown"
+			:is-sidebar-shown="isSidebarShown"
 			:max-height="height"
 			:max-width="width"
-			v-model:canSwipe="canSwipe"
 			@load="onLoad"
 			@error="onError" />
 	</NcModal>
@@ -59,19 +62,17 @@ import type { File } from '@nextcloud/files'
 import type { IHandler } from '../api_package/index.ts'
 import type { ViewerAPI, ViewerOptions } from '../api_package/viewer.ts'
 
-import { computed, onMounted, ref, useTemplateRef, watch} from 'vue'
 import { FileType } from '@nextcloud/files'
 import { t } from '@nextcloud/l10n'
 import debounce from 'debounce'
-
-import NcModal from '@nextcloud/vue/components/NcModal'
-import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcModal from '@nextcloud/vue/components/NcModal'
 import FileAlertOutlineIcon from 'vue-material-design-icons/FileAlertOutline.vue'
-
-import { fetchFolderContent } from '../services/dav.ts'
-import { getHandlerForFile } from '../helpers/handlerHelper.ts'
 import { getHandlers } from '../api_package/index.ts'
+import { getHandlerForFile } from '../helpers/handlerHelper.ts'
+import { fetchFolderContent } from '../services/dav.ts'
 import { logger } from '../services/logger.ts'
 
 let resizeObserver = null as ResizeObserver | null
@@ -108,7 +109,7 @@ const currentOptions = ref<ViewerOptions>({
 
 const hasNext = computed(() => {
 	const canLoop = currentOptions.value.canLoop
-	const currentIndex = currentFileList.value.findIndex(f => f === currentFile.value)
+	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
 	if (currentIndex === -1) {
 		return false
 	}
@@ -126,11 +127,10 @@ const hasNext = computed(() => {
 	}
 
 	return false
-
 })
 const hasPrevious = computed(() => {
 	const canLoop = currentOptions.value.canLoop
-	const currentIndex = currentFileList.value.findIndex(f => f === currentFile.value)
+	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
 	if (currentIndex === -1) {
 		return false
 	}
@@ -151,11 +151,11 @@ const hasPrevious = computed(() => {
 })
 
 const open: ViewerAPI['open'] = async (files, file, options, handlerId) => {
-	logger.debug('Opening files', { files, file, options, handlerId})
+	logger.debug('Opening files', { files, file, options, handlerId })
 	loading.value = true
-	
+
 	// Filter out any non-file files
-	files = files.filter(n => n.type === FileType.File)
+	files = files.filter((n) => n.type === FileType.File)
 
 	// Ensure we have at least one file to open
 	if (files.length === 0 && !file) {
@@ -239,25 +239,38 @@ const compare: ViewerAPI['compare'] = async (file1, file2, handlerId) => {
 	onOpen()
 }
 
+/**
+ *
+ */
 function onOpen() {
 	// Determine if we should use a light backdrop
 	const backgroundInvertIfDark = getComputedStyle(document.documentElement).getPropertyValue('--background-invert-if-dark')
-	const defaultThemeIsLight =  backgroundInvertIfDark.trim() !== 'invert(100%)'
+	const defaultThemeIsLight = backgroundInvertIfDark.trim() !== 'invert(100%)'
 	const theme = currentHandler.value?.theme ?? 'default'
 	lightBackdrop.value = theme === 'light' || (theme === 'default' && defaultThemeIsLight)
 }
 
+/**
+ *
+ */
 function onLoad() {
 	loading.value = false
 	errorString.value = null
 }
 
+/**
+ *
+ * @param error
+ */
 function onError(error: Error) {
 	logger.error('Error while loading file in viewer', { error })
 	loading.value = false
 	errorString.value = error.message || t('viewer', 'An unknown error occurred while loading the file.')
 }
 
+/**
+ *
+ */
 function close() {
 	currentFile.value = undefined
 	currentFileList.value = []
@@ -266,9 +279,12 @@ function close() {
 	errorString.value = null
 }
 
+/**
+ *
+ */
 async function next() {
 	const canLoop = currentOptions.value.canLoop
-	const currentIndex = currentFileList.value.findIndex(f => f === currentFile.value)
+	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
 
 	if (currentIndex === -1) {
 		logger.error('Current file not found in the file list', { currentFile: currentFile.value, fileList: currentFileList.value })
@@ -309,9 +325,12 @@ async function next() {
 	}
 }
 
+/**
+ *
+ */
 function previous() {
 	const canLoop = currentOptions.value.canLoop
-	const currentIndex = currentFileList.value.findIndex(f => f === currentFile.value)
+	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
 
 	if (currentIndex === -1) {
 		logger.error('Current file not found in the file list', { currentFile: currentFile.value, fileList: currentFileList.value })
@@ -340,6 +359,9 @@ function previous() {
 	currentFile.value = newFile as File
 }
 
+/**
+ *
+ */
 function handleAppSidebarOpen() {
 	const sidebar = document.querySelector('aside.app-sidebar')
 	if (sidebar) {
@@ -348,11 +370,17 @@ function handleAppSidebarOpen() {
 	}
 }
 
+/**
+ *
+ */
 function handleAppSidebarClose() {
 	sidebarPosition.value = 0
 	trapElements.value = []
 }
 
+/**
+ *
+ */
 function onViewerResize() {
 	const modalContainer = modal.value?.$el?.querySelector('.modal-container')
 	height.value = modalContainer?.clientHeight || 0
@@ -383,6 +411,7 @@ defineExpose<ViewerAPI>({
 	compare,
 })
 </script>
+
 <style scoped lang="scss">
 .viewer__modal {
 	:deep(.modal-container__content) {

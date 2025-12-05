@@ -4,13 +4,12 @@
  */
 import type { FileStat } from 'webdav'
 
+import { getCurrentUser } from '@nextcloud/auth'
 import { davRemoteURL, davRootPath } from '@nextcloud/files'
 import { getLanguage } from '@nextcloud/l10n'
 import { encodePath } from '@nextcloud/paths'
-import { getCurrentUser } from '@nextcloud/auth'
 import camelcase from 'camelcase'
-
-import { isNumber } from './numberUtil'
+import { isNumber } from './numberUtil.ts'
 
 export interface FileInfo {
 	/** ID of the file (not unique if shared, use source instead) */
@@ -32,9 +31,9 @@ export interface FileInfo {
 	/** File is marked as favorite */
 	isFavorite?: boolean
 	/** File type */
-	type: 'directory'|'file'
+	type: 'directory' | 'file'
 	/** Attributes for file shares */
-	shareAttributes?: string|Array<{value:boolean|string|number|null|object|Array<unknown>, key: string, scope: string}>
+	shareAttributes?: string | Array<{ value: boolean | string | number | null | object | Array<unknown>, key: string, scope: string }>
 	/** Share hidden state since Nextcloud 31 */
 	hideDownload?: boolean
 
@@ -62,6 +61,10 @@ export function extractFilePaths(path: string): [string, string] {
 	const pathSections = path.split('/')
 	const fileName = pathSections[pathSections.length - 1]
 	const dirPath = pathSections.slice(0, pathSections.length - 1).join('/')
+	if (!fileName) {
+		throw new Error(`Invalid path: ${path}. Unable to extract file name.`)
+	}
+
 	return [dirPath, fileName]
 }
 
@@ -92,7 +95,6 @@ export function extractFilePathFromSource(source: string): string {
  * @param asc sort ascending (default true)
  */
 export function sortCompare(fileInfo1: FileInfo, fileInfo2: FileInfo, key: string, asc = true): number {
-
 	if (fileInfo1.isFavorite && !fileInfo2.isFavorite) {
 		return -1
 	} else if (!fileInfo1.isFavorite && fileInfo2.isFavorite) {
@@ -125,12 +127,13 @@ export function sortCompare(fileInfo1: FileInfo, fileInfo2: FileInfo, key: strin
 /**
  * Generate a FileInfo object based on the full dav properties
  * It will flatten everything and put all keys to camelCase
+ *
  * @param obj The stat response to convert
  */
 export function genFileInfo(obj: FileStat): FileInfo {
 	const fileInfo = {}
 
-	Object.keys(obj).forEach(key => {
+	Object.keys(obj).forEach((key) => {
 		const data = obj[key]
 
 		// flatten object if any
@@ -166,7 +169,7 @@ export function genFileInfo(obj: FileStat): FileInfo {
  * @param fileInfo.filename the file full path
  * @param fileInfo.source the file source if any
  */
-export function getDavPath({ filename, source = '' }: { filename: string, source?: string }): string|null {
+export function getDavPath({ filename, source = '' }: { filename: string, source?: string }): string | null {
 	if (!filename || typeof filename !== 'string') {
 		return null
 	}

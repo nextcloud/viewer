@@ -4,11 +4,13 @@
  */
 
 import type { File } from '@nextcloud/files'
+
 import { encodePath } from '@nextcloud/paths'
 import { generateUrl } from '@nextcloud/router'
 import { getSharingToken, isPublicShare } from '@nextcloud/sharing/public'
 
 /**
+ * @param file
  * @return the preview url if the file have an existing preview or the absolute dav remote path if none.
  */
 export function getPreviewIfAny(file: File): string {

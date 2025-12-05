@@ -3,15 +3,12 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { defineCustomElement } from 'vue'
-import { t } from '@nextcloud/l10n'
-
 import MovieOutlineSvg from '@mdi/svg/svg/movie-outline.svg?raw'
-
-import { logger } from '../services/logger'
-import { registerHandler } from '../api_package/index.ts'
+import { t } from '@nextcloud/l10n'
+import { defineCustomElement } from 'vue'
 import Videos from '../components/Videos.vue'
-
+import { registerHandler } from '../api_package/index.ts'
+import { logger } from '../services/logger.ts'
 
 const browserSupportedMimes = [
 	'video/mpeg',
@@ -28,6 +25,10 @@ export const aliasedMimes = {
 }
 
 export const tagname = 'oca-viewer-video'
+
+/**
+ * Register the video custom element.
+ */
 export function registerVideoCustomElement() {
 	const VideoElement = defineCustomElement(Videos, {
 		shadowRoot: false,
@@ -37,6 +38,9 @@ export function registerVideoCustomElement() {
 	window.customElements.define(tagname, VideoElement)
 }
 
+/**
+ * Register the video handler.
+ */
 export function registerVideoHandler() {
 	registerHandler({
 		id: 'videos',
@@ -52,7 +56,7 @@ export function registerVideoHandler() {
 				return false
 			}
 
-			return nodes.every(node => {
+			return nodes.every((node) => {
 				// Always allow browser supported mimes
 				if (browserSupportedMimes.includes(node.mime)) {
 					return true

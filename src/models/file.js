@@ -19,5 +19,5 @@ export default function(fileInfo, mime, component) {
 		source: fileInfo.source ?? getDavPath(fileInfo),
 	}
 
-	return Object.assign({}, fileInfo, data)
+	return { ...fileInfo, ...data }
 }

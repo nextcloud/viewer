@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { getClient, getDefaultPropfind, getRootPath, resultToNode } from '@nextcloud/files/dav'
-import type { FileStat, ResponseDataDetailed } from 'webdav'
 import type { Node } from '@nextcloud/files'
+import type { FileStat, ResponseDataDetailed } from 'webdav'
+
+import { getClient, getDefaultPropfind, getRootPath, resultToNode } from '@nextcloud/files/dav'
 
 export default async (path: string): Promise<Node> => {
 	if (!path.startsWith('/')) {
