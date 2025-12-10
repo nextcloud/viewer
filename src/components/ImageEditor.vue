@@ -8,15 +8,16 @@
 	</div>
 </template>
 <script>
-import { showError, showSuccess, DialogBuilder } from '@nextcloud/dialogs'
-import { emit } from '@nextcloud/event-bus'
-import { Node } from '@nextcloud/files'
-import { linkTo } from '@nextcloud/router'
-import axios from '@nextcloud/axios'
 import { basename, dirname, extname, join } from 'path'
-import translations from '../models/editorTranslations.js'
+import { emit } from '@nextcloud/event-bus'
+import { linkTo } from '@nextcloud/router'
+import { Node } from '@nextcloud/files'
+import { showError, showSuccess, DialogBuilder } from '@nextcloud/dialogs'
+import axios from '@nextcloud/axios'
+
+import { logger } from '../services/logger.ts'
 import { rawStat } from '../services/FileInfo.ts'
-import logger from '../services/logger.js'
+import translations from '../models/editorTranslations.js'
 
 let TABS, TOOLS
 

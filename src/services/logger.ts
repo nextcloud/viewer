@@ -5,9 +5,7 @@
 import { getLoggerBuilder } from '@nextcloud/logger'
 
 // Set up logger
-const logger = getLoggerBuilder()
-	.setApp(appName)
+export const logger = getLoggerBuilder()
+	.setApp('viewer')
 	.detectUser()
 	.build()
-
-export default logger

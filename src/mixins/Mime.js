@@ -56,14 +56,14 @@ export default {
 			required: true,
 		},
 		// can the user swipe
-		canSwipe: {
-			type: Boolean,
-			default: true,
-		},
-		canZoom: {
-			type: Boolean,
-			default: false,
-		},
+		// canSwipe: {
+		// 	type: Boolean,
+		// 	default: true,
+		// },
+		// canZoom: {
+		// 	type: Boolean,
+		// 	default: false,
+		// },
 		// is the content loaded?
 		// synced with parent
 		loaded: {
@@ -190,19 +190,19 @@ export default {
 			}
 		},
 
-		/**
-		 * Enable the viewer swiping previous/next capability
-		 */
-		enableSwipe() {
-			this.$emit('update:canSwipe', true)
-		},
+		// /**
+		//  * Enable the viewer swiping previous/next capability
+		//  */
+		// enableSwipe() {
+		// 	this.$emit('update:canSwipe', true)
+		// },
 
-		/**
-		 * Disable the viewer swiping previous/next capability
-		 */
-		disableSwipe() {
-			this.$emit('update:canSwipe', false)
-		},
+		// /**
+		//  * Disable the viewer swiping previous/next capability
+		//  */
+		// disableSwipe() {
+		// 	this.$emit('update:canSwipe', false)
+		// },
 
 		/**
 		 * Toggle the fullscreen on the current visible element
