@@ -43,15 +43,14 @@
 </template>
 
 <script setup lang="ts">
-import type { File } from '@nextcloud/files'
-import type Plyr from 'plyr'
+import type { ViewerEmits, ViewerProps } from '../api_package/viewer.ts'
 
 import { translate as t } from '@nextcloud/l10n'
-import { imagePath } from '@nextcloud/router'
 import VuePlyr from '@skjnldsv/vue-plyr'
-import { computed, onBeforeUnmount, onUpdated, ref, useTemplateRef, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { usePlyrPlayer } from '../composables/usePlyrPlayer.ts'
+import { useViewerProps } from '../composables/useViewerProps.ts'
 import { logger } from '../services/logger.ts'
-import { preloadMedia } from '../services/mediaPreloader.js'
 import { findLivePhotoPeerFromName } from '../utils/livePhotoUtils.ts'
 import { getPreviewIfAny } from '../utils/previewUtils.ts'
 
@@ -59,30 +58,20 @@ defineOptions({
 	name: 'ViewerVideos',
 })
 
-const props = defineProps<{
-	file: File
-	files: File[]
-	maxHeight: number
-	maxWidth: number
-}>()
+const props = defineProps<ViewerProps>()
+const emit = defineEmits<ViewerEmits>()
 
-const emit = defineEmits<{
-	load: []
-	error: [Error]
-	'update:canSwipe': [boolean]
-}>()
+const {
+	video,
+	onFail,
+	donePlaying,
+	doneLoading,
+	options,
+} = usePlyrPlayer(false, props, emit)
 
-const blankVideo = imagePath('viewer', 'blank.mp4')
-
-const video = useTemplateRef('video')
-const plyr = useTemplateRef('plyr')
-const player = computed<Plyr>(() => plyr.value?.player)
-
-const filename = computed(() => props.file.basename)
-const src = ref(props.file.source)
-
-const isFullscreenButtonVisible = ref(false)
-const fallback = ref(false)
+const {
+	src,
+} = useViewerProps(props)
 
 const height = ref(0)
 const width = ref(0)
@@ -98,36 +87,6 @@ const livePhotoPath = computed(() => {
 	}
 	return getPreviewIfAny(peerFile)
 })
-
-const options = computed(() => {
-	return {
-		autoplay: true,
-		// Used to reset the video streams https://github.com/sampotts/plyr#javascript-1
-		blankVideo,
-		controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
-		loadSprite: false,
-		fullscreen: {
-			iosNative: true,
-		},
-	}
-})
-
-/**
- * Work around to get the state of the fullscreen button,
- * aria-selected attribute is not reliable.
- */
-function hideHeaderAndFooter() {
-	isFullscreenButtonVisible.value = !isFullscreenButtonVisible.value
-	const main = document.body.querySelector('main')!
-	const footer = document.body.querySelector('footer')!
-	if (isFullscreenButtonVisible.value) {
-		main.classList.add('viewer__hidden-fullscreen')
-		footer.classList.add('viewer__hidden-fullscreen')
-	} else {
-		main.classList.remove('viewer__hidden-fullscreen')
-		footer.classList.remove('viewer__hidden-fullscreen')
-	}
-}
 
 /**
  * Update the video size based on the max height and width props
@@ -150,84 +109,12 @@ function updateVideoSize() {
 }
 
 /**
- * Tell Viewer that the video is ready to be shown
- */
-function doneLoading() {
-	emit('load')
-}
-
-/**
- * Reset video after playing to show poster again
- */
-function donePlaying() {
-	// Should not happen™
-	if (!video.value) {
-		logger.error('Video element not found in donePlaying')
-		return
-	}
-
-	// reset and show poster after play
-	video.value.autoplay = false
-	video.value.load()
-}
-
-/**
  * Update video size when metadata is loaded
  */
 function onLoadedMetadata() {
 	logger.debug('Video metadata loaded, updating size', { filename: props.file.basename })
 	updateVideoSize()
 }
-
-/**
- * Fallback to the original image if not already done
- */
-async function onFail() {
-	if (fallback.value) {
-		logger.error(`Loading of file ${filename.value} failed even after fallback`)
-		emit('error', new Error(t('viewer', 'Failed to load video.')))
-		return
-	}
-
-	// Try to load E2EE file as a fallback
-	logger.error(`Loading of file ${filename.value} failed, falling back to fetching it by hand`)
-	fallback.value = true
-	src.value = await preloadMedia(props.file)
-}
-
-// For some reason the video controls don't get mounted to
-// the dom until after the component (Videos) is mounted,
-// using the mounted() hook will leave us with an empty array
-onUpdated(() => {
-	if (!plyr.value || !plyr.value.player) {
-		logger.warn('Plyr player not initialized yet')
-		return
-	}
-
-	// Prevent swiping to the next/previous item when scrubbing the timeline or changing volume
-	const plyrControls = plyr.value.$el.querySelectorAll('.plyr__controls__item')
-	if (!plyrControls || !plyrControls.length) {
-		return
-	}
-	[...plyrControls].forEach((control) => {
-		if (control.getAttribute('data-plyr') === 'fullscreen') {
-			control.addEventListener('click', hideHeaderAndFooter)
-		}
-		if (!control?.addEventListener) {
-			return
-		}
-		control.addEventListener('mouseenter', emit('update:canSwipe', false))
-		control.addEventListener('mouseleave', emit('update:canSwipe', true))
-	})
-})
-
-onBeforeUnmount(() => {
-	// Force stop any ongoing request
-	logger.debug('Closing video stream', { filename: props.file.basename })
-	video?.value?.pause?.()
-	player.value.stop()
-	player.value.destroy()
-})
 </script>
 
 <style scoped lang="scss">

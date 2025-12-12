@@ -328,14 +328,15 @@ async function next() {
 		newIndex = 0
 	}
 
-	const newFile = currentFileList.value[newIndex]
+	const newFile = currentFileList.value[newIndex] as File
 	// Should not happen™, but just in case
 	if (!newFile) {
 		logger.error('Next file not found in the file list', { newIndex, fileList: currentFileList.value })
 		return
 	}
 
-	currentFile.value = newFile as File
+	currentHandler.value = getHandlerForFile(newFile)
+	currentFile.value = newFile
 
 	// If we are at the end of the list, try to load more files if possible
 	if (newIndex === currentFileList.value.length - 1) {
@@ -374,14 +375,15 @@ function previous() {
 		newIndex = currentFileList.value.length - 1
 	}
 
-	const newFile = currentFileList.value[newIndex]
+	const newFile = currentFileList.value[newIndex] as File
 	// Should not happen™, but just in case
 	if (!newFile) {
 		logger.error('Previous file not found in the file list', { newIndex, fileList: currentFileList.value })
 		return
 	}
 
-	currentFile.value = newFile as File
+	currentHandler.value = getHandlerForFile(newFile)
+	currentFile.value = newFile
 }
 
 /**

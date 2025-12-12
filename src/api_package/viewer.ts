@@ -6,12 +6,104 @@
 import type { File, Folder } from '@nextcloud/files'
 import type ViewerVue from '../views/Viewer.vue'
 
+/**
+ * List of props provided to your custom component.
+ * Use it like this:
+ * ```ts
+ * <script setup lang="ts">
+ * import type { ViewerProps } from '@nextcloud/viewer'
+ *
+ * const props = defineProps<ViewerProps>()
+ * ```
+ */
+export interface ViewerProps {
+	/**
+	 * The file to be displayed
+	 */
+	file: File
+
+	/**
+	 * The list of files currently opened in the viewer
+	 */
+	files: File[]
+
+	/**
+	 * The max height of the viewer container
+	 */
+	maxHeight: number
+
+	/**
+	 * The max width of the viewer container
+	 */
+	maxWidth: number
+}
+
+/**
+ * List of emits that can be emitted by your custom component.
+ * Use it like this:
+ * ```ts
+ * <script setup lang="ts">
+ * import type { ViewerEmits } from '@nextcloud/viewer'
+ *
+ * const emit = defineEmits<ViewerEmits>()
+ * ```
+ */
+export interface ViewerEmits {
+	/**
+	 * Emit this event to notify the viewer that your component is done loading.
+	 */
+	load: []
+
+	/**
+	 * Emit this event to notify the viewer that an  error occurred while loading the file.
+	 * If provided, a custom error message will be shown.
+	 * @param error The error that occurred
+	 */
+	error: [Error]
+
+	/**
+	 * Emit this event to disable or enable the swiping gesture.
+	 * This is usually used when your component provides its own swiping mechanism (e.g. the video player controls).
+	 */
+	'update:canSwipe': [boolean]
+}
+
+/**
+ * Options for opening the viewer
+ */
 export type ViewerOptions = {
+	/**
+	 * Will be called to append more files when reaching the end of the current list
+	 */
 	loadMore: () => Promise<File[]>
+
+	/**
+	 * Called when navigating to the previous item
+	 */
 	onPrev: () => void
+
+	/**
+	 * Called when navigating to the next item
+	 */
 	onNext: () => void
+
+	/**
+	 * Called when the viewer is closed
+	 */
 	onClose: () => void
+
+	/**
+	 * Whether the viewer can loop from last to first item and vice versa
+	 */
 	canLoop: boolean
+}
+
+const defaultViewerOptions: ViewerOptions = {
+	loadMore: async () => [],
+	onPrev: () => {},
+	onNext: () => {},
+	onClose: () => {},
+	canLoop: true,
 }
 
 export interface ViewerAPI {
@@ -33,14 +125,14 @@ export class Viewer extends EventTarget implements ViewerAPI {
 		this.viewer = viewer
 	}
 
-	async open(nodes: File[], file?: File, options?: ViewerOptions, handlerId?: string): Promise<any> {
+	async open(nodes: File[], file?: File, options: ViewerOptions = defaultViewerOptions, handlerId?: string): Promise<any> {
 		if (!this.viewer) {
 			throw new Error('Viewer is not initialized')
 		}
 		this.viewer.open(nodes, file, options, handlerId)
 	}
 
-	async openFolder(folder: Folder, file?: File, options?: ViewerOptions, handlerId?: string): Promise<any> {
+	async openFolder(folder: Folder, file?: File, options: ViewerOptions = defaultViewerOptions, handlerId?: string): Promise<any> {
 		if (!this.viewer) {
 			throw new Error('Viewer is not initialized')
 		}

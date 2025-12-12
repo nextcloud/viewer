@@ -5,6 +5,7 @@
 import { createApp } from 'vue'
 import Viewer from './views/Viewer.vue'
 import { getViewer } from './api_package/viewer.ts'
+import { registerAudioCustomElement, registerAudioHandler } from './models/audios.ts'
 import { registerVideoCustomElement, registerVideoHandler } from './models/videos.ts'
 import { logger } from './services/logger.ts'
 
@@ -29,6 +30,8 @@ const ViewerInstance = ViewerApp.mount(ViewerRoot)
 ViewerService._setViewer(ViewerInstance as InstanceType<typeof Viewer>)
 logger.info('Viewer initialized', { ViewerInstance })
 
-// register the custom elements for all handlers
+// Register the custom elements for all handlers
+registerAudioCustomElement()
+registerAudioHandler()
 registerVideoCustomElement()
 registerVideoHandler()

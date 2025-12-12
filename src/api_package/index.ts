@@ -141,12 +141,12 @@ export function registerHandler(handler: IHandler): void {
 
 			return handler.enabled(nodes)
 		},
-		async exec({ nodes }) {
+		async exec({ nodes, contents }) {
 			if (nodes[0].type !== FileType.File) {
 				return null
 			}
 
-			getViewer().open(nodes, nodes[0] as File)
+			getViewer().open(contents, nodes[0] as File)
 			return null
 		},
 	}))
