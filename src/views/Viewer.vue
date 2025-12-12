@@ -4,7 +4,6 @@
 -->
 <template>
 	<NcModal
-		v-show="!!currentFile"
 		ref="modal"
 		:additional-trap-elements="trapElements"
 		:clear-view-delay="-1 /* disable fade-out because of accessibility reasons */"
@@ -18,7 +17,7 @@
 		:inline-actions="canEdit ? 1 : 0"
 		:light-backdrop="lightBackdrop"
 		:name="currentFile?.basename || ''"
-		:show="true"
+		:show="!!currentFile"
 		:slideshow-paused="editing"
 		:spread-navigation="true"
 		:style="{ width: isSidebarShown ? `${sidebarPosition}px` : null }"
@@ -59,6 +58,7 @@
 
 <script setup lang="ts">
 import type { File } from '@nextcloud/files'
+import type { ComponentPublicInstance } from 'vue'
 import type { IHandler } from '../api_package/index.ts'
 import type { ViewerAPI, ViewerOptions } from '../api_package/viewer.ts'
 
@@ -76,7 +76,7 @@ import { fetchFolderContent } from '../services/dav.ts'
 import { logger } from '../services/logger.ts'
 
 let resizeObserver = null as ResizeObserver | null
-const modal = useTemplateRef('modal')
+const modal = useTemplateRef<{ $el: HTMLElement }>('modal')
 const height = ref(0)
 const width = ref(0)
 
@@ -192,10 +192,32 @@ const open: ViewerAPI['open'] = async (files, file, options, handlerId) => {
 		return
 	}
 
+	/**
+	 * Let's compute the current file list based on the current handler
+	 * and its group. We only want to show files that can be handled
+	 * by the same handler or handlers from the same group.
+	 */
+	currentFileList.value = files.filter((f) => {
+		const h = getHandlerForFile(f)
+		const group = h?.group
+		return group === handler.group || h?.id === handler.id
+	})
+
+	if (currentFileList.value.length === 0) {
+		// Fallback to just the provided file
+		currentFileList.value = [file]
+	}
+
+	if (currentFileList.value.length !== files.length) {
+		logger.debug(`Found ${currentFileList.value.length} files for the current handler/group out of ${files.length} provided files`, {
+			filtered: currentFileList.value,
+			provided: files,
+		})
+	}
+
 	currentHandler.value = handler
 	currentFile.value = file
 	currentOptions.value = options ?? {} as ViewerOptions
-	currentFileList.value = files
 
 	onOpen()
 }
@@ -240,7 +262,7 @@ const compare: ViewerAPI['compare'] = async (file1, file2, handlerId) => {
 }
 
 /**
- *
+ * Handle Viewer opening to determine backdrop style
  */
 function onOpen() {
 	// Determine if we should use a light backdrop
@@ -251,7 +273,8 @@ function onOpen() {
 }
 
 /**
- *
+ * Handle successful loading of the current file
+ * This is emitted by the handler web component
  */
 function onLoad() {
 	loading.value = false
@@ -259,8 +282,10 @@ function onLoad() {
 }
 
 /**
+ * Handle error while loading the current file
+ * This is emitted by the handler web component
  *
- * @param error
+ * @param error The error that occurred
  */
 function onError(error: Error) {
 	logger.error('Error while loading file in viewer', { error })
@@ -269,7 +294,7 @@ function onError(error: Error) {
 }
 
 /**
- *
+ * Close the viewer and reset state
  */
 function close() {
 	currentFile.value = undefined
@@ -280,11 +305,12 @@ function close() {
 }
 
 /**
- *
+ * Go to the next file in the list if possible
  */
 async function next() {
 	const canLoop = currentOptions.value.canLoop
 	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
+	let newIndex = currentIndex + 1
 
 	if (currentIndex === -1) {
 		logger.error('Current file not found in the file list', { currentFile: currentFile.value, fileList: currentFileList.value })
@@ -292,12 +318,11 @@ async function next() {
 	}
 
 	// If we are not allowed to loop and we are at the end, do nothing
-	if (currentIndex >= currentFileList.value.length - 1) {
+	if (!canLoop && currentIndex >= currentFileList.value.length - 1) {
 		// We are at the end and cannot loop, do nothing
 		return
 	}
 
-	let newIndex = currentIndex + 1
 	// If we are allowed to loop and we are at the end, go to the start
 	if (canLoop && newIndex >= currentFileList.value.length) {
 		newIndex = 0
@@ -326,11 +351,12 @@ async function next() {
 }
 
 /**
- *
+ * Go to the previous file in the list if possible
  */
 function previous() {
 	const canLoop = currentOptions.value.canLoop
 	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
+	let newIndex = currentIndex - 1
 
 	if (currentIndex === -1) {
 		logger.error('Current file not found in the file list', { currentFile: currentFile.value, fileList: currentFileList.value })
@@ -338,12 +364,11 @@ function previous() {
 	}
 
 	// If we are not allowed to loop and we are at the start, do nothing
-	if (currentIndex <= 0) {
+	if (!canLoop && currentIndex <= 0) {
 		// We are at the start and cannot loop, do nothing
 		return
 	}
 
-	let newIndex = currentIndex - 1
 	// If we are allowed to loop and we are at the start, go to the end
 	if (canLoop && newIndex < 0) {
 		newIndex = currentFileList.value.length - 1
@@ -360,9 +385,9 @@ function previous() {
 }
 
 /**
- *
+ * Handle app sidebar opening to adjust viewer size
  */
-function handleAppSidebarOpen() {
+function onAppSidebarOpen() {
 	const sidebar = document.querySelector('aside.app-sidebar')
 	if (sidebar) {
 		sidebarPosition.value = sidebar.getBoundingClientRect().left
@@ -371,15 +396,29 @@ function handleAppSidebarOpen() {
 }
 
 /**
- *
+ * Reset viewer size to default when app sidebar is closed
  */
-function handleAppSidebarClose() {
+function onAppSidebarClose() {
 	sidebarPosition.value = 0
 	trapElements.value = []
 }
 
 /**
+ * Close viewer when clicking outside of the modal content
  *
+ * @param event The mouse event
+ */
+function onClickOutside(event: Event) {
+	// check if we clicked on the modal container directly and not on its children
+	const modalContent = modal.value?.$el?.querySelector('.modal-container__content')
+	if (event.target === modalContent) {
+		logger.debug('Clicked outside the viewer, closing viewer')
+		close()
+	}
+}
+
+/**
+ * Update viewer dimensions on window resize
  */
 function onViewerResize() {
 	const modalContainer = modal.value?.$el?.querySelector('.modal-container')
@@ -388,7 +427,7 @@ function onViewerResize() {
 	logger.debug('Screen resized, updating viewer dimensions', { height: height.value, width: width.value })
 }
 
-// Listen to Viewer opening to update dimensions
+// Listen to Viewer file changes to trigger resize
 watch(currentFile, (newFile, oldFile) => {
 	if (newFile && !oldFile) {
 		onViewerResize()
@@ -400,9 +439,19 @@ onMounted(() => {
 		onViewerResize()
 	}, 100))
 
+	if (!modal?.value?.$el) {
+		logger.error('Modal element not found in Viewer onMounted')
+		return
+	}
+
 	// Observe viewer size changes
-	resizeObserver.observe(modal.value.$el as HTMLElement)
+	resizeObserver.observe(modal.value.$el)
 	logger.debug('Resize observer initialized for viewer')
+
+	const modalContent = modal.value?.$el?.querySelector('.modal-container__content')
+	if (modalContent) {
+		modalContent.addEventListener('click', onClickOutside)
+	}
 })
 
 defineExpose<ViewerAPI>({
