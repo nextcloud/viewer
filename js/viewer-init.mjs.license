@@ -22,7 +22,6 @@ SPDX-FileCopyrightText: Paul Vorbach <paul@vorba.ch> (http://paul.vorba.ch)
 SPDX-FileCopyrightText: Philipp Kewisch
 SPDX-FileCopyrightText: Richard Steinmetz
 SPDX-FileCopyrightText: Rob Cresswell <robcresswell@pm.me>
-SPDX-FileCopyrightText: Roeland Jago Douma
 SPDX-FileCopyrightText: Sindre Sorhus
 SPDX-FileCopyrightText: Thorsten Lünborg
 SPDX-FileCopyrightText: atomiks
@@ -44,16 +43,19 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.1.5
 	- license: Apache-2.0
 - @nextcloud/capabilities
-	- version: 1.2.0
+	- version: 1.2.1
+	- license: GPL-3.0-or-later
+- @nextcloud/initial-state
+	- version: 3.0.0
 	- license: GPL-3.0-or-later
 - @nextcloud/l10n
-	- version: 3.4.0
+	- version: 3.4.1
 	- license: GPL-3.0-or-later
 - @nextcloud/timezones
 	- version: 0.2.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.31.0
+	- version: 8.35.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue-select
 	- version: 3.26.0
