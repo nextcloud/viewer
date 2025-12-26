@@ -2,13 +2,34 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { registerViewerAction } from './files_actions/viewerAction'
-import ViewerService from './services/Viewer.js'
+import { createApp } from 'vue'
 
-// Register the files action
-registerViewerAction()
+import { getViewer } from './api_package/viewer.ts'
+import { logger } from './services/logger.ts'
+import Viewer from './views/Viewer.vue'
 
-// Init Viewer Service
-window.OCA = window.OCA ?? {}
-window.OCA.Viewer = new ViewerService()
-window.OCA.Viewer.version = appVersion
+import { registerVideoCustomElement, registerVideoHandler } from './models/videos.ts'
+
+const ViewerService = getViewer()
+const ViewerApp = createApp(Viewer)
+
+// Create top wrapper element
+const ViewerRoot = document.createElement('div')
+ViewerRoot.id = 'viewer'
+document.body.appendChild(ViewerRoot)
+
+// Put controls for video viewer
+// Needed as Firefox CSP blocks the loading of the svg through the normal plyr system
+const VideoControls = document.createElement('div')
+VideoControls.innerHTML = PLYR_ICONS
+VideoControls.style.display = 'none'
+document.body.appendChild(VideoControls)
+
+// Mount and set the viewer instance
+const ViewerInstance = ViewerApp.mount(ViewerRoot)
+ViewerService._setViewer(ViewerInstance as InstanceType<typeof Viewer>)
+logger.info('Viewer initialized', { ViewerInstance })
+
+// register the custom elements for all handlers
+registerVideoCustomElement()
+registerVideoHandler()

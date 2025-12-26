@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
+import type { File } from '@nextcloud/files'
 import type { BasicFileInfo } from './models'
 
 const livePictureExt = ['jpg', 'jpeg', 'png']
@@ -19,13 +20,13 @@ export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: BasicF
 
 /**
  * Return the peer live photo from a list of files based on the original file name.
- * @param referenceFile
- * @param fileList
  */
-export function findLivePhotoPeerFromName(referenceFile: BasicFileInfo, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
+export function findLivePhotoPeerFromName(referenceFile: File, fileList: File[]): File | undefined {
+	const extension = referenceFile.extension || ''
+	const nameWithoutExt = referenceFile.basename.slice(0, -(extension.length + 1))
 	return fileList.find(comparedFile => {
 		// if same filename and extension is allowed
-		return comparedFile.filename !== referenceFile.filename
-				&& (comparedFile.basename.startsWith(referenceFile.name) && livePictureExtRegex.test(comparedFile.basename))
+		return comparedFile.source !== referenceFile.source
+				&& (comparedFile.basename.startsWith(nameWithoutExt) && livePictureExtRegex.test(comparedFile.basename))
 	})
 }
