@@ -6,6 +6,7 @@ import { createApp } from 'vue'
 import Viewer from './views/Viewer.vue'
 import { getViewer } from './api_package/viewer.ts'
 import { registerAudioCustomElement, registerAudioHandler } from './models/audios.ts'
+import { registerImageCustomElement, registerImageHandler } from './models/images.ts'
 import { registerVideoCustomElement, registerVideoHandler } from './models/videos.ts'
 import { logger } from './services/logger.ts'
 
@@ -35,3 +36,5 @@ registerAudioCustomElement()
 registerAudioHandler()
 registerVideoCustomElement()
 registerVideoHandler()
+registerImageCustomElement()
+registerImageHandler()

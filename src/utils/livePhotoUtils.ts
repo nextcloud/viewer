@@ -4,7 +4,6 @@
  */
 
 import type { File } from '@nextcloud/files'
-import type { BasicFileInfo } from './models'
 
 const livePictureExt = ['jpg', 'jpeg', 'png']
 const livePictureExtRegex = new RegExp(`\\.(${livePictureExt.join('|')})$`, 'i')
@@ -15,7 +14,7 @@ const livePictureExtRegex = new RegExp(`\\.(${livePictureExt.join('|')})$`, 'i')
  * @param peerFileId
  * @param fileList
  */
-export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
+export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: File[]): File | undefined {
 	return fileList.find((file) => file.fileid === peerFileId)
 }
 

@@ -36,6 +36,16 @@ export interface ViewerProps {
 	 * The max width of the viewer container
 	 */
 	maxWidth: number
+
+	/**
+	 * Whether the viewer is in editing mode
+	 */
+	editing: boolean,
+
+	/**
+	 * Whether the sidebar is shown
+	 */
+	isSidebarShown: boolean,
 }
 
 /**
@@ -52,20 +62,26 @@ export interface ViewerEmits {
 	/**
 	 * Emit this event to notify the viewer that your component is done loading.
 	 */
-	load: []
+	loaded: []
 
 	/**
 	 * Emit this event to notify the viewer that an  error occurred while loading the file.
 	 * If provided, a custom error message will be shown.
 	 * @param error The error that occurred
 	 */
-	error: [Error]
+	errored: [Error]
 
 	/**
 	 * Emit this event to disable or enable the swiping gesture.
 	 * This is usually used when your component provides its own swiping mechanism (e.g. the video player controls).
 	 */
 	'update:canSwipe': [boolean]
+
+	/**
+	 * Emit this event to notify the viewer that the editing mode changed.
+	 * @param editing Whether the viewer is now in editing mode
+	 */
+	'update:editing': [boolean]
 }
 
 /**

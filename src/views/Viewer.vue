@@ -45,20 +45,19 @@
 			:is="currentHandler?.tagname"
 			v-show="!loading && !!currentFile"
 			v-model:can-swipe="canSwipe"
+			v-model:editing="editing"
 			:file="currentFile"
 			:files="currentFileList"
-			:editing="editing"
 			:is-sidebar-shown="isSidebarShown"
 			:max-height="height"
 			:max-width="width"
-			@load="onLoad"
-			@error="onError" />
+			@loaded="onLoad"
+			@errored="onError" />
 	</NcModal>
 </template>
 
 <script setup lang="ts">
 import type { File } from '@nextcloud/files'
-import type { ComponentPublicInstance } from 'vue'
 import type { IHandler } from '../api_package/index.ts'
 import type { ViewerAPI, ViewerOptions } from '../api_package/viewer.ts'
 

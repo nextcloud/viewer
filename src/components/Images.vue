@@ -5,14 +5,14 @@
 
 <template>
 	<div class="image_container">
-		<ImageEditor
+		<!-- <ImageEditor
 			v-if="editing"
 			:mime="mime"
 			:src="src"
 			:fileid="fileid"
-			@close="onClose" />
+			@close="onClose" /> -->
 
-		<template v-else-if="data !== null">
+		<template v-if="data !== null">
 			<img
 				v-if="!livePhotoCanBePlayed"
 				ref="image"
@@ -25,7 +25,7 @@
 				:src="data"
 				:style="imgStyle"
 				@error.capture.prevent.stop.once="onFail"
-				@load="updateImgSize"
+				@load="onDoneLoading"
 				@wheel.stop.prevent="updateZoom"
 				@dblclick.prevent="onDblclick"
 				@pointerdown.prevent="pointerDown"
@@ -76,376 +76,401 @@
 	</div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import type { ViewerEmits, ViewerProps } from '../api_package/viewer.ts'
+
 import axios from '@nextcloud/axios'
-import { Node } from '@nextcloud/files'
-import { translate } from '@nextcloud/l10n'
-import { basename } from '@nextcloud/paths'
+import { translate as t } from '@nextcloud/l10n'
 import { NcLoadingIcon } from '@nextcloud/vue'
 import DOMPurify from 'dompurify'
+import { computed, ref, watch } from 'vue'
 import PlayCircleOutline from 'vue-material-design-icons/PlayCircleOutline.vue'
 import ImageEditor from './ImageEditor.vue'
-import { preloadMedia } from '../services/mediaPreloader'
-import { getDavPath } from '../utils/fileUtils'
-import { findLivePhotoPeerFromFileId } from '../utils/livePhotoUtils'
-export default {
-	name: 'Images',
+import { useViewerProps } from '../composables/useViewerProps.ts'
+import { logger } from '../services/logger.ts'
+import { preloadMedia } from '../services/mediaPreloader.ts'
+import { findLivePhotoPeerFromFileId } from '../utils/livePhotoUtils.ts'
+import { getPreviewIfAny } from '../utils/previewUtils.ts'
 
-	components: {
-		ImageEditor,
-		PlayCircleOutline,
-		NcLoadingIcon,
-	},
+defineOptions({
+	name: 'ViewerImages',
+})
 
-	props: {
-		editing: {
-			type: Boolean,
-			default: false,
-		},
+const props = withDefaults(defineProps<ViewerProps>(), {
+	editing: false,
+})
 
-		node: {
-			type: Node,
-			required: true,
-		},
-	},
+const emit = defineEmits<ViewerEmits>()
 
-	data() {
+// Use the viewer props composable
+const { filename, src } = useViewerProps(props)
+
+// Refs
+const image = ref<HTMLImageElement>()
+const video = ref<HTMLVideoElement>()
+
+// Reactive state
+const dragging = ref(false)
+const dragX = ref(0)
+const dragY = ref(0)
+const pinchDistance = ref(0)
+const pinchStartZoomRatio = ref(1)
+const pointerCache = ref<Array<{ pointerId: number, x: number, y: number }>>([])
+const shiftX = ref(0)
+const shiftY = ref(0)
+const zooming = ref(false)
+const zoomRatio = ref(1)
+
+const data = ref<string | null>(null)
+const fallback = ref(false)
+const livePhotoCanBePlayed = ref(false)
+const loaded = ref(false)
+
+const height = ref(0)
+const width = ref(0)
+
+// Computed properties
+const mime = computed(() => props.file.mime)
+
+const hasPreview = computed(() => props.file.attributes?.hasPreview ?? false)
+const previewUrl = computed(() => props.file.attributes?.previewUrl)
+const metadataFilesLivePhoto = computed(() => props.file.attributes?.['metadata-files-live-photo'])
+const previewPath = computed(() => getPreviewIfAny(props.file))
+
+const zoomHeight = computed(() => Math.round(height.value * zoomRatio.value))
+const zoomWidth = computed(() => Math.round(width.value * zoomRatio.value))
+const alt = computed(() => props.file.basename)
+
+const imgStyle = computed(() => {
+	if (zoomRatio.value === 1) {
 		return {
-			dragging: false,
-			shiftX: 0,
-			shiftY: 0,
-			zoomRatio: 1,
-			fallback: false,
-			livePhotoCanBePlayed: false,
-			zooming: false,
-			pinchDistance: 0,
-			pinchStartZoomRatio: 1,
-			pointerCache: [],
+			height: zoomHeight.value + 'px',
+			width: zoomWidth.value + 'px',
 		}
-	},
+	}
+	return {
+		marginTop: Math.round(shiftY.value * 2) + 'px',
+		marginLeft: Math.round(shiftX.value * 2) + 'px',
+		height: zoomHeight.value + 'px',
+		width: zoomWidth.value + 'px',
+	}
+})
 
-	computed: {
-		src() {
-			return this.node.source ?? this.davPath
-		},
+const livePhoto = computed(() => {
+	if (metadataFilesLivePhoto.value === undefined) {
+		return undefined
+	}
+	return findLivePhotoPeerFromFileId(metadataFilesLivePhoto.value, props.files)
+})
 
-		zoomHeight() {
-			return Math.round(this.height * this.zoomRatio)
-		},
+const livePhotoSrc = computed(() => livePhoto.value?.source ?? null)
 
-		zoomWidth() {
-			return Math.round(this.width * this.zoomRatio)
-		},
+// Load data when component mounts or file changes
+watch(filename, async () => {
+	await loadData()
+})
+loadData()
 
-		alt() {
-			return this.basename
-		},
+/**
+ * Load the image data to be displayed
+ */
+async function loadData() {
+	// Avoid svg xss attack vector
+	if (mime.value === 'image/svg+xml') {
+		data.value = await getBase64FromImage()
+		return
+	}
 
-		imgStyle() {
-			if (this.zoomRatio === 1) {
-				return {
-					height: this.zoomHeight + 'px',
-					width: this.zoomWidth + 'px',
-				}
-			}
-			return {
-				marginTop: Math.round(this.shiftY * 2) + 'px',
-				marginLeft: Math.round(this.shiftX * 2) + 'px',
-				height: this.zoomHeight + 'px',
-				width: this.zoomWidth + 'px',
-			}
-		},
+	// Load the raw gif instead of the static preview
+	if (mime.value === 'image/gif') {
+		data.value = src.value
+		return
+	}
 
-		livePhoto() {
-			if (this.metadataFilesLivePhoto === undefined) {
-				return undefined
-			}
+	// If there is no preview and we have a direct source, load it instead
+	if (props.file.source && !hasPreview.value && !previewUrl.value) {
+		// If loading the source failed once, let's try fetching it by hand
+		if (fallback.value) {
+			data.value = await preloadMedia(props.file)
+		} else {
+			data.value = props.file.source
+		}
+		return
+	}
 
-			return findLivePhotoPeerFromFileId(this.metadataFilesLivePhoto, this.fileList)
-		},
+	// If loading the preview failed once, let's load the original file
+	if (fallback.value) {
+		data.value = src.value
+		return
+	}
 
-		livePhotoSrc() {
-			return this.livePhoto?.source ?? this.livePhotoDavPath
-		},
+	data.value = previewPath.value
+}
 
-		/** @return {string|null} */
-		livePhotoDavPath() {
-			return this.livePhoto
-				? getDavPath({
-						filename: this.livePhoto.filename,
-						basename: this.livePhoto.basename,
-					})
-				: null
-		},
-	},
+/**
+ * The image/video has finished loading
+ */
+function onDoneLoading() {
+	loaded.value = true
+	updateImageSize()
+	emit('loaded')
+}
 
-	asyncComputed: {
-		data() {
-			// Avoid svg xss attack vector
-			if (this.mime === 'image/svg+xml') {
-				return this.getBase64FromImage()
-			}
+/**
+ * Update the video size based on the max height and width props
+ * We need to keep the aspect ratio of the video
+ * and fit it within the max height and width.
+ */
+function updateImageSize() {
+	const imageHeight = image?.value?.naturalHeight
+	const imageWidth = image?.value?.naturalWidth
+	if (!imageHeight || !imageWidth) {
+		return
+	}
 
-			// Load the raw gif instead of the static preview
-			if (this.mime === 'image/gif') {
-				return this.src
-			}
+	const heightRatio = props.maxHeight / imageHeight
+	const widthRatio = props.maxWidth / imageWidth
 
-			// If there is no preview and we have a direct source
-			// load it instead
-			if (this.source && !this.hasPreview && !this.previewUrl) {
-				// If loading the source failed once, let's try fetching it by had
-				if (this.fallback) {
-					return preloadMedia(this.filename)
-				} else {
-					return this.source
-				}
-			}
+	const ratio = Math.min(heightRatio, widthRatio)
+	height.value = Math.floor(imageHeight * ratio)
+	width.value = Math.floor(imageWidth * ratio)
+}
 
-			// If loading the preview failed once, let's load the original file
-			if (this.fallback) {
-				return this.src
-			}
+/**
+ * @return base64 string of the image
+ */
+async function getBase64FromImage(): Promise<string> {
+	const file = await axios.get(src.value)
+	const sanitized = DOMPurify.sanitize(file.data)
+	return `data:${mime.value};base64,${btoa(unescape(encodeURIComponent(sanitized)))}`
+}
 
-			return this.previewPath
-		},
-	},
+/**
+ *
+ * @param newShiftX
+ * @param newShiftY
+ * @param newZoomRatio
+ */
+function updateShift(newShiftX: number, newShiftY: number, newZoomRatio: number) {
+	const maxShiftX = width.value * newZoomRatio - width.value
+	const maxShiftY = height.value * newZoomRatio - height.value
+	shiftX.value = Math.min(Math.max(newShiftX, -maxShiftX / 2), maxShiftX / 2)
+	shiftY.value = Math.min(Math.max(newShiftY, -maxShiftY / 2), maxShiftY / 2)
+}
 
-	watch: {
-		active(val, old) {
-			// the item was hidden before and is now the current view
-			if (val === true && old === false) {
-				this.resetZoom()
-				// end the dragging if your pointer (mouse or touch) go out of the content
-				// Not sure why ???
-				window.addEventListener('pointerout', this.pointerUp)
-			// the item is not displayed
-			} else if (val === false) {
-				// Not sure why ???
-				window.removeEventListener('pointerout', this.pointerUp)
-			}
-		},
-	},
+/**
+ *
+ * @param stableX
+ * @param stableY
+ * @param newZoomRatio
+ */
+function updateZoomAndShift(stableX: number, stableY: number, newZoomRatio: number) {
+	// scrolling position relative to the image
+	const element = image.value ?? video.value
+	if (!element) {
+		return
+	}
 
-	methods: {
-		// Updates the dimensions of the modal
-		updateImgSize() {
-			if (this.$refs.image) {
-				this.naturalHeight = this.$refs.image.naturalHeight
-				this.naturalWidth = this.$refs.image.naturalWidth
-			} else if (this.$refs.video) {
-				this.naturalHeight = this.$refs.video.videoHeight
-				this.naturalWidth = this.$refs.video.videoWidth
-			}
+	const scrollX = stableX - element.getBoundingClientRect().x - (width.value * zoomRatio.value / 2)
+	const scrollY = stableY - element.getBoundingClientRect().y - (height.value * zoomRatio.value / 2)
+	const scrollPercX = scrollX / (width.value * zoomRatio.value)
+	const scrollPercY = scrollY / (height.value * zoomRatio.value)
 
-			this.updateHeightWidth()
-			this.doneLoading()
-		},
+	// calc how much the img grow from its current size and adjust the margin accordingly
+	const growX = width.value * newZoomRatio - width.value * zoomRatio.value
+	const growY = height.value * newZoomRatio - height.value * zoomRatio.value
 
-		/**
-		 * Manually retrieve the path and return its base64
-		 *
-		 * @return {Promise<string>}
-		 */
-		async getBase64FromImage() {
-			const file = await axios.get(this.src)
-			const sanitized = DOMPurify.sanitize(file.data)
-			return `data:${this.mime};base64,${btoa(unescape(encodeURIComponent(sanitized)))}`
-		},
+	// compensate for existing margins
+	const newShiftX = shiftX.value - scrollPercX * growX
+	const newShiftY = shiftY.value - scrollPercY * growY
+	updateShift(newShiftX, newShiftY, newZoomRatio)
+	zoomRatio.value = newZoomRatio
+}
 
-		// Helper methods for zoom/pan operations
-		updateShift(newShiftX, newShiftY, newZoomRatio) {
-			const maxShiftX = this.width * newZoomRatio - this.width
-			const maxShiftY = this.height * newZoomRatio - this.height
-			this.shiftX = Math.min(Math.max(newShiftX, -maxShiftX / 2), maxShiftX / 2)
-			this.shiftY = Math.min(Math.max(newShiftY, -maxShiftY / 2), maxShiftY / 2)
-		},
+/**
+ *
+ */
+function distanceBetweenTouches(): number {
+	const t0 = pointerCache.value[0]
+	const t1 = pointerCache.value[1]
+	const diffX = t1.x - t0.x
+	const diffY = t1.y - t0.y
+	return Math.sqrt(diffX * diffX + diffY * diffY)
+}
 
-		// Change zoom ratio of the image to newZoomRatio.
-		// Try to make sure that image position at stableX, stableY
-		// in client coordinates stays in the same place on the screen.
-		updateZoomAndShift(stableX, stableY, newZoomRatio) {
-			// scrolling position relative to the image
-			const element = this.$refs.image ?? this.$refs.video
-			const scrollX = stableX - element.getBoundingClientRect().x - (this.width * this.zoomRatio / 2)
-			const scrollY = stableY - element.getBoundingClientRect().y - (this.height * this.zoomRatio / 2)
-			const scrollPercX = scrollX / (this.width * this.zoomRatio)
-			const scrollPercY = scrollY / (this.height * this.zoomRatio)
+/**
+ *
+ * @param event
+ */
+function updateZoom(event: WheelEvent) {
+	const isZoomIn = event.deltaY < 0
+	const newZoomRatio = isZoomIn
+		? Math.min(zoomRatio.value * 1.1, 5) // prevent too big zoom
+		: Math.max(zoomRatio.value / 1.1, 1) // prevent too small zoom
 
-			// calc how much the img grow from its current size
-			// and adjust the margin accordingly
-			const growX = this.width * newZoomRatio - this.width * this.zoomRatio
-			const growY = this.height * newZoomRatio - this.height * this.zoomRatio
+	// do not continue, img is back to its original state
+	if (newZoomRatio === 1) {
+		return resetZoom()
+	}
 
-			// compensate for existing margins
-			const newShiftX = this.shiftX - scrollPercX * growX
-			const newShiftY = this.shiftY - scrollPercY * growY
-			this.updateShift(newShiftX, newShiftY, newZoomRatio)
-			this.zoomRatio = newZoomRatio
-		},
+	emit('update:canSwipe', false)
+	updateZoomAndShift(event.clientX, event.clientY, newZoomRatio)
+}
 
-		distanceBetweenTouches() {
-			const t0 = this.pointerCache[0]
-			const t1 = this.pointerCache[1]
-			const diffX = (t1.x - t0.x)
-			const diffY = (t1.y - t0.y)
-			return Math.sqrt(diffX * diffX + diffY * diffY)
-		},
+/**
+ * Reset zoom to original state
+ */
+function resetZoom() {
+	emit('update:canSwipe', true)
+	zoomRatio.value = 1
+	shiftX.value = 0
+	shiftY.value = 0
+}
 
-		/**
-		 * Handle zooming
-		 *
-		 * @param {WheelEvent} event the scroll event
-		 * @return {void}
-		 */
-		updateZoom(event) {
-			const isZoomIn = event.deltaY < 0
-			const newZoomRatio = isZoomIn
-				? Math.min(this.zoomRatio * 1.1, 5) // prevent too big zoom
-				: Math.max(this.zoomRatio / 1.1, 1) // prevent too small zoom
+/**
+ * Used for pinch zoom and drag
+ *
+ * @param event The pointer down event
+ */
+function pointerDown(event: PointerEvent) {
+	// New pointer - mouse down or additional touch --> store client coordinates in the pointer cache
+	pointerCache.value.push({ pointerId: event.pointerId, x: event.clientX, y: event.clientY })
 
-			// do not continue, img is back to its original state
-			if (newZoomRatio === 1) {
-				return this.resetZoom()
-			}
+	// Single touch or mouse down --> start dragging
+	if (pointerCache.value.length === 1) {
+		dragX.value = event.clientX
+		dragY.value = event.clientY
+		dragging.value = true
+	}
 
-			this.disableSwipe()
-			this.updateZoomAndShift(event.clientX, event.clientY, newZoomRatio)
-		},
+	// Two touches --> start (pinch) zooming
+	if (pointerCache.value.length === 2) {
+		// Calculate base (reference) distance between touches
+		pinchDistance.value = distanceBetweenTouches()
+		pinchStartZoomRatio.value = zoomRatio.value
+		zooming.value = true
+		emit('update:canSwipe', false)
+	}
+}
 
-		resetZoom() {
-			this.enableSwipe()
-			this.zoomRatio = 1
-			this.shiftX = 0
-			this.shiftY = 0
-		},
+/**
+ * Used for pinch zoom and drag
+ *
+ * @param event The pointer up event
+ */
+function pointerUp(event: PointerEvent) {
+	// Remove pointer from the pointer cache
+	const index = pointerCache.value.findIndex((cachedEv) => cachedEv.pointerId === event.pointerId)
+	pointerCache.value.splice(index, 1)
+	dragging.value = false
+	zooming.value = false
+}
 
-		// Pinch-zoom implementation based on:
-		// https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events/Pinch_zoom_gestures
+/**
+ * Used for pinch zoom and drag
+ *
+ * @param event The pointer move event
+ */
+function pointerMove(event: PointerEvent) {
+	if (pointerCache.value.length > 0) {
+		// Update pointer position in the pointer cache
+		const index = pointerCache.value.findIndex((cachedEv) => cachedEv.pointerId === event.pointerId)
+		if (index >= 0) {
+			pointerCache.value[index].x = event.clientX
+			pointerCache.value[index].y = event.clientY
+		}
+	}
 
-		/**
-		 * Dragging and (pinch) zooming handlers
-		 *
-		 * @param {DragEvent} event the event
-		 */
-		pointerDown(event) {
-			// New pointer - mouse down or additional touch --> store client coordinates in the pointer cache
-			this.pointerCache.push({ pointerId: event.pointerId, x: event.clientX, y: event.clientY })
+	// Single touch or mouse down --> dragging
+	if (pointerCache.value.length === 1 && dragging.value && !zooming.value && zoomRatio.value > 1) {
+		const { clientX, clientY } = event
+		const newShiftX = shiftX.value + (clientX - dragX.value)
+		const newShiftY = shiftY.value + (clientY - dragY.value)
 
-			// Single touch or mouse down --> start dragging
-			if (this.pointerCache.length === 1) {
-				this.dragX = event.clientX
-				this.dragY = event.clientY
-				this.dragging = true
-			}
+		updateShift(newShiftX, newShiftY, zoomRatio.value)
 
-			// Two touches --> start (pinch) zooming
-			if (this.pointerCache.length === 2) {
-				// Calculate base (reference) distance between touches
-				this.pinchDistance = this.distanceBetweenTouches()
-				this.pinchStartZoomRatio = this.zoomRatio
-				this.zooming = true
-				this.disableSwipe()
-			}
-		},
+		dragX.value = clientX
+		dragY.value = clientY
+	}
 
-		/**
-		 * @param {DragEvent} event the event
-		 */
-		pointerUp(event) {
-			// Remove pointer from the pointer cache
-			const index = this.pointerCache.findIndex((cachedEv) => cachedEv.pointerId === event.pointerId)
-			this.pointerCache.splice(index, 1)
-			this.dragging = false
-			this.zooming = false
-		},
+	// Two touches --> (pinch) zooming
+	if (pointerCache.value.length === 2 && zooming.value) {
+		// Calculate current distance between touches
+		const newDistance = distanceBetweenTouches()
 
-		/**
-		 * @param {DragEvent} event the event
-		 */
-		pointerMove(event) {
-			if (this.pointerCache.length > 0) {
-				// Update pointer position in the pointer cache
-				const index = this.pointerCache.findIndex((cachedEv) => cachedEv.pointerId === event.pointerId)
-				if (index >= 0) {
-					this.pointerCache[index].x = event.clientX
-					this.pointerCache[index].y = event.clientY
-				}
-			}
+		// Calculate new zoom ratio - keep it between 1 and 5
+		const newZoomRatio = Math.min(Math.max(pinchStartZoomRatio.value * (newDistance / pinchDistance.value), 1), 5)
 
-			// Single touch or mouse down --> dragging
-			if (this.pointerCache.length === 1 && this.dragging && !this.zooming && this.zoomRatio > 1) {
-				const { clientX, clientY } = event
-				const newShiftX = this.shiftX + (clientX - this.dragX)
-				const newShiftY = this.shiftY + (clientY - this.dragY)
+		// Calculate "stable" point - in the middle between touches
+		const t0 = pointerCache.value[0]
+		const t1 = pointerCache.value[1]
+		const stableX = (t0.x + t1.x) / 2
+		const stableY = (t0.y + t1.y) / 2
 
-				this.updateShift(newShiftX, newShiftY, this.zoomRatio)
+		updateZoomAndShift(stableX, stableY, newZoomRatio)
+	}
+}
 
-				this.dragX = clientX
-				this.dragY = clientY
-			}
+/**
+ * Start zooming in or reset zoom on double click
+ */
+function onDblclick() {
+	if (zoomRatio.value > 1) {
+		resetZoom()
+	} else {
+		zoomRatio.value = 1.3
+	}
+}
 
-			// Two touches --> (pinch) zooming
-			if (this.pointerCache.length === 2 && this.zooming) {
-				// Calculate current distance between touches
-				const newDistance = this.distanceBetweenTouches()
+/**
+ *
+ */
+function onClose() {
+	emit('update:editing', false)
+}
 
-				// Calculate new zoom ratio - keep it between 1 and 5
-				const newZoomRatio = Math.min(Math.max(this.pinchStartZoomRatio * (newDistance / this.pinchDistance), 1), 5)
+/**
+ *
+ */
+async function onFail() {
+	if (fallback.value) {
+		logger.error(`Loading of file ${filename.value} failed even after fallback`)
+		emit('errored', new Error(t('viewer', 'Failed to load video.')))
+		return
+	}
 
-				// Calculate "stable" point - in the middle between touches
-				const t0 = this.pointerCache[0]
-				const t1 = this.pointerCache[1]
-				const stableX = (t0.x + t1.x) / 2
-				const stableY = (t0.y + t1.y) / 2
+	// Try to load E2EE file as a fallback
+	logger.error(`Loading of file ${filename.value} failed, falling back to fetching it by hand`)
+	fallback.value = true
+	src.value = await preloadMedia(props.file)
+}
 
-				this.updateZoomAndShift(stableX, stableY, newZoomRatio)
-			}
-		},
+/**
+ * The live photo has finished loading
+ */
+function doneLoadingLivePhoto() {
+	livePhotoCanBePlayed.value = true
+	onDoneLoading()
+}
 
-		onDblclick() {
-			if (this.zoomRatio > 1) {
-				this.resetZoom()
-			} else {
-				this.zoomRatio = 1.3
-			}
-		},
+/**
+ * If possible, play the live photo
+ */
+function playLivePhoto() {
+	if (!livePhotoCanBePlayed.value || !video.value) {
+		return
+	}
+	video.value.play()
+}
 
-		onClose() {
-			this.$emit('update:editing', false)
-		},
-
-		// Fallback to the original image if not already done
-		onFail() {
-			if (!this.fallback) {
-				console.error(`Loading of file preview ${basename(this.src)} failed, falling back to original file`)
-				this.fallback = true
-			}
-		},
-
-		doneLoadingLivePhoto() {
-			this.livePhotoCanBePlayed = true
-			this.doneLoading()
-		},
-
-		playLivePhoto() {
-			if (!this.livePhotoCanBePlayed) {
-				return
-			}
-
-			/** @type {HTMLVideoElement} */
-			const video = this.$refs.video
-			video.play()
-		},
-
-		stopLivePhoto() {
-			/** @type {HTMLVideoElement} */
-			const video = this.$refs.video
-			video.load()
-		},
-
-		t: translate,
-	},
+/**
+ * Stop the live photo playback if any
+ */
+function stopLivePhoto() {
+	if (!video.value) {
+		return
+	}
+	video.value.load()
 }
 </script>
 

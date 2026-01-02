@@ -59,7 +59,7 @@ export function usePlyrPlayer(forAudio: boolean, props: ViewerProps, emit: EmitF
 	 * Tell Viewer that the video is ready to be shown
 	 */
 	function doneLoading() {
-		emit('load')
+		emit('loaded')
 	}
 
 	/**
@@ -90,7 +90,7 @@ export function usePlyrPlayer(forAudio: boolean, props: ViewerProps, emit: EmitF
 
 		if (fallback.value) {
 			logger.error(`Loading of file ${filename.value} failed even after fallback`)
-			emit('error', new Error(t('viewer', 'Failed to load video.')))
+			emit('errored', new Error(t('viewer', 'Failed to load video.')))
 			return
 		}
 
