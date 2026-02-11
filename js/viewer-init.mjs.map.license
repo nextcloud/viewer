@@ -4,6 +4,7 @@ SPDX-License-Identifier: BSD-3-Clause
 SPDX-License-Identifier: GPL-3.0-or-later
 SPDX-License-Identifier: MIT
 SPDX-License-Identifier: MPL-2.0
+SPDX-FileCopyrightText: @nextcloud/dialogs developers
 SPDX-FileCopyrightText: Andrey Sitnik <andrey@sitnik.ru>
 SPDX-FileCopyrightText: Anthony Fu <anthonyfu117@hotmail.com>
 SPDX-FileCopyrightText: Arnout Kazemier
@@ -13,6 +14,7 @@ SPDX-FileCopyrightText: Christoph Wurst
 SPDX-FileCopyrightText: Eric Norris (https://github.com/ericnorris)
 SPDX-FileCopyrightText: Feross Aboukhadijeh
 SPDX-FileCopyrightText: Jacob Clevenger<https://github.com/wheatjs>
+SPDX-FileCopyrightText: James Halliday
 SPDX-FileCopyrightText: Jeff Sagal <sagalbot@gmail.com>
 SPDX-FileCopyrightText: John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
 SPDX-FileCopyrightText: John Molakvoæ <skjnldsv@protonmail.com>
@@ -50,6 +52,9 @@ This file is generated from multiple sources. Included packages:
 - @nextcloud/capabilities
 	- version: 1.2.1
 	- license: GPL-3.0-or-later
+- @nextcloud/dialogs
+	- version: 6.4.2
+	- license: AGPL-3.0-or-later
 - @nextcloud/initial-state
 	- version: 3.0.0
 	- license: GPL-3.0-or-later
@@ -109,6 +114,9 @@ This file is generated from multiple sources. Included packages:
 	- license: MIT
 - p-timeout
 	- version: 6.1.4
+	- license: MIT
+- path-browserify
+	- version: 1.0.1
 	- license: MIT
 - strip-ansi
 	- version: 7.1.0
