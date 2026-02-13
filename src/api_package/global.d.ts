@@ -12,5 +12,11 @@ declare global {
 		 */
 		// eslint-disable-next-line camelcase
 		_oca_viewer_handlers: Map<string, IHandler>
+
+		OCA?: {
+			Viewer?: {
+				registerHandler?: (handler: IHandler) => void
+			}
+		}
 	}
 }

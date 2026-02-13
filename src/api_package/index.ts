@@ -44,8 +44,9 @@ export interface IHandler {
 
 /**
  * Register a new handler for the viewer.
- * This needs to be called before the viewer is initialized to ensure the handler is available.
- * So this should be called from an initialization script (`OCP\Util::addInitScript`).
+ * Should be called from an initialization script (`OCP\Util::addInitScript`).
+ * If the ViewerService is already initialized the handler is registered
+ * immediately, otherwise it will be picked up on DOMContentLoaded.
  *
  * @param handler - The handler to register
  * @throws Error if the handler is invalid
@@ -60,6 +61,15 @@ export function registerHandler(handler: IHandler): void {
 	}
 
 	window._oca_viewer_handlers.set(handler.id, handler)
+
+	// If the ViewerService is already initialized, register the handler
+	// directly so its mimetypes are available immediately for file actions.
+	// Without this, mimetypes are only bridged on DOMContentLoaded which
+	// can race with the file list rendering — causing downloads instead of
+	// opening files in the viewer.
+	if (window.OCA?.Viewer?.registerHandler) {
+		window.OCA.Viewer.registerHandler(handler)
+	}
 }
 
 /**
