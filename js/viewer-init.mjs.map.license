@@ -3,7 +3,6 @@ SPDX-License-Identifier: Apache-2.0
 SPDX-License-Identifier: BSD-3-Clause
 SPDX-License-Identifier: GPL-3.0-or-later
 SPDX-License-Identifier: MIT
-SPDX-License-Identifier: MPL-2.0
 SPDX-FileCopyrightText: Andrey Sitnik <andrey@sitnik.ru>
 SPDX-FileCopyrightText: Anthony Fu <anthonyfu117@hotmail.com>
 SPDX-FileCopyrightText: Arnout Kazemier
@@ -19,10 +18,7 @@ SPDX-FileCopyrightText: Nextcloud GmbH and Nextcloud contributors
 SPDX-FileCopyrightText: Nick Frasser (https://nfrasser.com)
 SPDX-FileCopyrightText: Paul Vorbach <paul@vorb.de> (http://vorb.de)
 SPDX-FileCopyrightText: Paul Vorbach <paul@vorba.ch> (http://paul.vorba.ch)
-SPDX-FileCopyrightText: Philipp Kewisch
-SPDX-FileCopyrightText: Richard Steinmetz
 SPDX-FileCopyrightText: Rob Cresswell <robcresswell@pm.me>
-SPDX-FileCopyrightText: Roeland Jago Douma
 SPDX-FileCopyrightText: Sindre Sorhus
 SPDX-FileCopyrightText: Thorsten Lünborg
 SPDX-FileCopyrightText: atomiks
@@ -32,10 +28,10 @@ SPDX-FileCopyrightText: xiemengxiong
 
 This file is generated from multiple sources. Included packages:
 - @floating-ui/core
-	- version: 1.7.3
+	- version: 1.7.4
 	- license: MIT
 - @floating-ui/dom
-	- version: 1.7.4
+	- version: 1.7.5
 	- license: MIT
 - @floating-ui/utils
 	- version: 0.2.10
@@ -44,16 +40,16 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.1.5
 	- license: Apache-2.0
 - @nextcloud/capabilities
-	- version: 1.2.0
+	- version: 1.2.1
+	- license: GPL-3.0-or-later
+- @nextcloud/initial-state
+	- version: 3.0.0
 	- license: GPL-3.0-or-later
 - @nextcloud/l10n
-	- version: 3.4.0
+	- version: 3.4.1
 	- license: GPL-3.0-or-later
-- @nextcloud/timezones
-	- version: 0.2.0
-	- license: AGPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.31.0
+	- version: 8.36.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue-select
 	- version: 3.26.0
@@ -79,9 +75,6 @@ This file is generated from multiple sources. Included packages:
 - eventemitter3
 	- version: 5.0.1
 	- license: MIT
-- ical.js
-	- version: 2.1.0
-	- license: MPL-2.0
 - is-buffer
 	- version: 1.1.6
 	- license: MIT
