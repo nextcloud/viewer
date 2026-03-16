@@ -41,10 +41,10 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.11.8
 	- license: MIT
 - @scaleflex/icons
-	- version: 2.6.3
+	- version: 2.10.27
 	- license: MIT
 - @scaleflex/ui
-	- version: 2.7.0
+	- version: 2.10.27
 	- license: MIT
 - filerobot-image-editor
 	- version: 4.8.1
@@ -74,7 +74,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 18.3.1
 	- license: MIT
 - react-filerobot-image-editor
-	- version: 4.8.1
+	- version: 4.9.1
 	- license: MIT
 - react-is
 	- version: 16.13.1
