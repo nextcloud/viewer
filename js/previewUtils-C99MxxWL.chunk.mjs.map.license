@@ -5,17 +5,16 @@ SPDX-License-Identifier: GPL-3.0-or-later
 SPDX-License-Identifier: ISC
 SPDX-License-Identifier: MIT
 SPDX-FileCopyrightText: @nextcloud/dialogs developers
-SPDX-FileCopyrightText: Anthony Fu <anthonyfu117@hotmail.com>
 SPDX-FileCopyrightText: Anthony Fu <https://github.com/antfu>
 SPDX-FileCopyrightText: Austin Andrews
 SPDX-FileCopyrightText: Christoph Wurst
 SPDX-FileCopyrightText: David Clark
 SPDX-FileCopyrightText: David Myers <hello@davidmyers.dev>
 SPDX-FileCopyrightText: Dr.-Ing. Mario Heiderich, Cure53 <mario@cure53.de> (https://cure53.de/)
+SPDX-FileCopyrightText: Eduardo San Martin Morote
 SPDX-FileCopyrightText: Evan You
 SPDX-FileCopyrightText: GitHub Inc.
 SPDX-FileCopyrightText: Guillaume Chau <guillaume.b.chau@gmail.com>
-SPDX-FileCopyrightText: John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
 SPDX-FileCopyrightText: John Molakvoæ <skjnldsv@protonmail.com>
 SPDX-FileCopyrightText: Jonas Schade <derzade@gmail.com>
 SPDX-FileCopyrightText: Matt Zabriskie
@@ -29,10 +28,13 @@ SPDX-FileCopyrightText: escape-html developers
 
 This file is generated from multiple sources. Included packages:
 - @floating-ui/core
-	- version: 0.3.1
+	- version: 1.7.5
 	- license: MIT
 - @floating-ui/dom
-	- version: 0.1.10
+	- version: 1.1.1
+	- license: MIT
+- @floating-ui/utils
+	- version: 0.2.11
 	- license: MIT
 - @mdi/svg
 	- version: 7.4.47
@@ -47,7 +49,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.5.0
 	- license: GPL-3.0-or-later
 - @nextcloud/dialogs
-	- version: 6.4.2
+	- version: 7.3.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/event-bus
 	- version: 3.3.3
@@ -68,10 +70,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 3.0.3
 	- license: GPL-3.0-or-later
 - @nextcloud/paths
-	- version: 2.4.0
-	- license: GPL-3.0-or-later
-- @nextcloud/paths
-	- version: 3.0.0
+	- version: 3.1.0
 	- license: GPL-3.0-or-later
 - @nextcloud/router
 	- version: 3.1.0
@@ -83,16 +82,31 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.3.0
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.28.0
+	- version: 8.37.0
+	- license: AGPL-3.0-or-later
+- @nextcloud/vue
+	- version: 9.6.0
 	- license: AGPL-3.0-or-later
 - @vitejs/plugin-vue2
 	- version: 2.3.3
 	- license: MIT
+- @vue/reactivity
+	- version: 3.5.30
+	- license: MIT
+- @vue/runtime-core
+	- version: 3.5.30
+	- license: MIT
+- @vue/runtime-dom
+	- version: 3.5.30
+	- license: MIT
+- @vue/shared
+	- version: 3.5.30
+	- license: MIT
 - @vueuse/core
-	- version: 11.3.0
+	- version: 14.2.1
 	- license: MIT
 - @vueuse/shared
-	- version: 11.3.0
+	- version: 14.2.1
 	- license: MIT
 - axios
 	- version: 1.13.6
@@ -104,22 +118,22 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.2.0
 	- license: MIT
 - dompurify
-	- version: 3.3.2
+	- version: 3.3.3
 	- license: (MPL-2.0 OR Apache-2.0)
 - escape-html
 	- version: 1.0.3
 	- license: MIT
 - floating-vue
-	- version: 1.0.0-beta.19
+	- version: 5.2.2
 	- license: MIT
 - focus-trap
-	- version: 7.6.6
+	- version: 8.0.0
 	- license: MIT
 - semver
 	- version: 7.7.2
 	- license: ISC
 - tabbable
-	- version: 6.3.0
+	- version: 6.4.0
 	- license: MIT
 - toastify-js
 	- version: 1.12.0
@@ -139,8 +153,8 @@ This file is generated from multiple sources. Included packages:
 - vue
 	- version: 2.7.16
 	- license: MIT
-- vue-demi
-	- version: 0.14.10
+- vue-router
+	- version: 5.0.3
 	- license: MIT
 - webdav
 	- version: 5.9.0
