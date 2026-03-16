@@ -8,6 +8,7 @@ SPDX-FileCopyrightText: Anthony Fu <anthonyfu117@hotmail.com>
 SPDX-FileCopyrightText: Arnout Kazemier
 SPDX-FileCopyrightText: Benjamin Fox <foxbenjaminfox@gmail.com>
 SPDX-FileCopyrightText: Borys Serebrov
+SPDX-FileCopyrightText: Christoph Wurst
 SPDX-FileCopyrightText: Eric Norris (https://github.com/ericnorris)
 SPDX-FileCopyrightText: Feross Aboukhadijeh
 SPDX-FileCopyrightText: Jacob Clevenger<https://github.com/wheatjs>
@@ -43,7 +44,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.2.1
 	- license: GPL-3.0-or-later
 - @nextcloud/initial-state
-	- version: 3.0.0
+	- version: 2.2.0
 	- license: GPL-3.0-or-later
 - @nextcloud/l10n
 	- version: 3.4.1
