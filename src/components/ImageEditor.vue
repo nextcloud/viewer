@@ -458,10 +458,10 @@ export default {
 // Menu items
 .SfxMenuItem-root {
 	height: var(--default-clickable-area);
-	padding-left: 8px !important;
+	padding-inline-start: 8px !important;
 	// Center the menu entry icon and fix width
 	> div {
-		margin-right: 0;
+		margin-inline-end: 0;
 		padding: 14px;
 		// Minus the parent padding-left
 		padding: calc(14px - 8px);
@@ -513,7 +513,7 @@ export default {
 // Header buttons
 .FIE_topbar-center-options > button,
 .FIE_topbar-center-options > label {
-	margin-left: 6px !important;
+	margin-inline-start: 6px !important;
 }
 
 .FIE_tabs_toggle_btn{
@@ -581,7 +581,7 @@ export default {
 	// override default button width
 	min-width: 0 !important;
 	padding: 5px !important;
-	padding-left: 10px !important;
+	padding-inline-start: 10px !important;
 	border: none !important;
 	background-color: transparent !important;
 }
@@ -643,7 +643,7 @@ export default {
 
 // Resize lock
 .FIE_resize-ratio-locker {
-	margin-right: 8px !important;
+	margin-inline-end: 8px !important;
 	// Icon is very thin
 	svg {
 		width: 20px;
