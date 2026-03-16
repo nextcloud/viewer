@@ -77,16 +77,16 @@ This file is generated from multiple sources. Included packages:
 	- version: 3.1.0
 	- license: GPL-3.0-or-later
 - @nextcloud/sharing
-	- version: 0.2.5
+	- version: 0.3.0
 	- license: GPL-3.0-or-later
 - @nextcloud/sharing
-	- version: 0.3.0
+	- version: 0.4.0
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
 	- version: 8.28.0
 	- license: AGPL-3.0-or-later
 - @vitejs/plugin-vue2
-	- version: 2.3.3
+	- version: 2.3.4
 	- license: MIT
 - @vueuse/core
 	- version: 11.3.0
@@ -131,10 +131,10 @@ This file is generated from multiple sources. Included packages:
 	- version: 6.0.0-dev.0
 	- license: AGPL-3.0-or-later
 - vite
-	- version: 5.4.19
+	- version: 7.3.1
 	- license: MIT
 - vite-plugin-node-polyfills
-	- version: 0.23.0
+	- version: 0.24.0
 	- license: MIT
 - vue
 	- version: 2.7.16

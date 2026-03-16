@@ -215,18 +215,16 @@ video {
 		flex: 1 1;
 	}
 
-	.plyr {
-		@import '../mixins/Plyr';
+	@import '../mixins/Plyr.scss';
 
-		// Override server font style
-		button {
-			color: white;
+	// Override server font style
+	.plyr button {
+		color: white;
 
-			&:hover,
-			&:focus {
-				color: var(--color-primary-element-text);
-				background-color: var(--color-primary-element);
-			}
+		&:hover,
+		&:focus {
+			color: var(--color-primary-element-text);
+			background-color: var(--color-primary-element);
 		}
 	}
 }
