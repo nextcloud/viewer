@@ -14,6 +14,7 @@ use OCA\Viewer\Event\LoadViewer;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
+use OCP\IConfig;
 use OCP\IPreview;
 use OCP\Util;
 
@@ -22,13 +23,16 @@ use OCP\Util;
  * @psalm-api
  */
 class LoadViewerScript implements IEventListener {
+	private IConfig $config;
 	private IInitialState $initialStateService;
 	private IPreview $previewManager;
 
 	public function __construct(
+		IConfig $config,
 		IInitialState $initialStateService,
 		IPreview $previewManager,
 	) {
+		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 		$this->previewManager = $previewManager;
 	}
@@ -43,5 +47,10 @@ class LoadViewerScript implements IEventListener {
 		Util::addInitScript(Application::APP_ID, 'viewer-init');
 		Util::addScript(Application::APP_ID, 'viewer-main', 'files');
 		$this->initialStateService->provideInitialState('enabled_preview_providers', array_keys($this->previewManager->getProviders()));
+		$this->initialStateService->provideInitialState('disable_preview',$this->getSystemValue('disable_preview_in_viewer'));
 	}
+
+	public function getSystemValue(string $key) {
+        return $this->config->getSystemValue($key, false);
+    }
 }
