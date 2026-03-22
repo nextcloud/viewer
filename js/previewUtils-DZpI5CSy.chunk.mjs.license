@@ -15,7 +15,6 @@ SPDX-FileCopyrightText: Dr.-Ing. Mario Heiderich, Cure53 <mario@cure53.de> (http
 SPDX-FileCopyrightText: Evan You
 SPDX-FileCopyrightText: GitHub Inc.
 SPDX-FileCopyrightText: Guillaume Chau <guillaume.b.chau@gmail.com>
-SPDX-FileCopyrightText: John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
 SPDX-FileCopyrightText: John Molakvoæ <skjnldsv@protonmail.com>
 SPDX-FileCopyrightText: Jonas Schade <derzade@gmail.com>
 SPDX-FileCopyrightText: Matt Zabriskie
@@ -83,7 +82,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 0.4.0
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.28.0
+	- version: 8.37.0
 	- license: AGPL-3.0-or-later
 - @vitejs/plugin-vue2
 	- version: 2.3.4
@@ -95,7 +94,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 11.3.0
 	- license: MIT
 - axios
-	- version: 1.13.2
+	- version: 1.13.6
 	- license: MIT
 - camelcase
 	- version: 8.0.0
@@ -104,7 +103,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.2.0
 	- license: MIT
 - dompurify
-	- version: 3.3.2
+	- version: 3.3.3
 	- license: (MPL-2.0 OR Apache-2.0)
 - escape-html
 	- version: 1.0.3
@@ -113,13 +112,13 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.0.0-beta.19
 	- license: MIT
 - focus-trap
-	- version: 7.6.6
+	- version: 7.8.0
 	- license: MIT
 - semver
 	- version: 7.7.2
 	- license: ISC
 - tabbable
-	- version: 6.3.0
+	- version: 6.4.0
 	- license: MIT
 - toastify-js
 	- version: 1.12.0
