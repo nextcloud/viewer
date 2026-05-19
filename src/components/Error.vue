@@ -7,12 +7,14 @@
 	<div id="emptycontent">
 		<div class="icon-error" />
 		<h2>
-			<slot>{{ t('viewer', 'Error loading {name}', { name }) }}</slot>
+			<slot>{{ t('viewer', 'Error loading {name}', { name: escapeHtml(name) }) }}</slot>
 		</h2>
 	</div>
 </template>
 
 <script>
+import { escapeHtml } from '../utils/escapeHtml.js'
+
 export default {
 	name: 'Error',
 
@@ -21,6 +23,10 @@ export default {
 			type: String,
 			default: '',
 		},
+	},
+
+	methods: {
+		escapeHtml,
 	},
 }
 </script>
