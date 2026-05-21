@@ -189,7 +189,7 @@ export default {
 			mutations.forEach((mutation) => {
 				if (mutation.type === 'childList') {
 					mutation.addedNodes.forEach((node) => {
-						if (node.classList.contains('FIE_root') || node.classList.contains('SfxModal-Wrapper')) {
+						if (node.classList?.contains('FIE_root') || node.classList?.contains('SfxModal-Wrapper')) {
 							emit('viewer:trapElements:changed', node)
 						}
 					})
@@ -366,7 +366,7 @@ export default {
 <style lang="scss">
 // Make sure the editor and its modals are above everything
 .SfxModal-Wrapper {
-	z-index: 10101 !important;
+	z-index: 10102 !important;
 }
 
 #SfxPopper {
