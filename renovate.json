@@ -19,6 +19,7 @@
   "ignoreUnstable": false,
   "baseBranchPatterns": [
     "master",
+    "stable34",
     "stable33",
     "stable32"
   ],
@@ -66,6 +67,7 @@
         "major"
       ],
       "matchBaseBranches": [
+        "stable34",
         "stable33",
         "stable32"
       ],
