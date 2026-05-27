@@ -20,7 +20,7 @@ OC.L10N.register(
     "This file no longer exists" : "Šio failo daugiau nebėra",
     "There is no plugin available to display this file type" : "Nėra prieinamo įskiepio, skirto atvaizduoti šį failo tipą",
     "Failed to save file before download" : "Nepavyko išsaugoti failo prieš atsisiuntimą",
-    "Edit" : "Taisyti",
+    "Edit" : "Redaguoti",
     "Exit full screen" : "Išeiti iš viso ekrano",
     "Full screen" : "Visas ekranas",
     "Open sidebar" : "Atverti šoninę juostą",
