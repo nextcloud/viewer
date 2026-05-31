@@ -16,6 +16,7 @@ const enabledPreviewProviders = loadState(appName, 'enabled_preview_providers', 
 const previewSupportedMimes = [
 	'image/heic',
 	'image/heif',
+	'image/avif',
 	'image/tiff',
 	'image/x-xbitmap',
 	'image/emf',
