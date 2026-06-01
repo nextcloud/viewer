@@ -11,6 +11,7 @@ OC.L10N.register(
     "Back" : "Tilbake",
     "Apply" : "Anvend",
     "Warning" : "Åtvaring",
+    "Filters" : "Filter",
     "Value" : "Verdi",
     "Size" : "Storleik"
 },
