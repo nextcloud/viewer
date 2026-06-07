@@ -47,7 +47,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 3.4.1
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.37.0
+	- version: 8.39.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue-select
 	- version: 3.26.0
@@ -83,7 +83,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.3.0
 	- license: BSD-3-Clause
 - nanoid
-	- version: 3.3.11
+	- version: 3.3.12
 	- license: MIT
 - p-queue
 	- version: 8.1.1
