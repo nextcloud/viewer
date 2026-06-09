@@ -37,7 +37,7 @@ import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
 
 import logger from '../services/logger.js'
 import { preloadMedia } from '../services/mediaPreloader'
-import { getPlyrTranslations } from '../utils/plyrTranslations'
+import { getPlyrTranslations, localizeSpeedLabels } from '../utils/plyrTranslations'
 
 const VuePlyr = () => import(/* webpackChunkName: 'plyr' */'@skjnldsv/vue-plyr')
 
@@ -53,6 +53,7 @@ export default {
 	data() {
 		return {
 			fallback: false,
+			speedListenerBound: false,
 		}
 	},
 
@@ -111,6 +112,15 @@ export default {
 			control.addEventListener('mouseenter', this.disableSwipe)
 			control.addEventListener('mouseleave', this.enableSwipe)
 		})
+
+		// The Plyr menu is only in the DOM once the controls are mounted (see
+		// above), so wire up the speed-label localization here rather than in
+		// mounted(). Register the rate-change listener once.
+		if (!this.speedListenerBound && this.$refs.plyr?.player) {
+			this.$refs.plyr.player.on('ratechange', this.localizeSpeed)
+			this.speedListenerBound = true
+		}
+		this.localizeSpeed()
 	},
 
 	beforeDestroy() {
@@ -122,6 +132,11 @@ export default {
 	},
 
 	methods: {
+		localizeSpeed() {
+			// Defer so we run after Plyr's own label/badge update for this event.
+			this.$nextTick(() => localizeSpeedLabels(this.$el, this.t))
+		},
+
 		donePlaying() {
 			this.$refs.audio.autoplay = false
 			this.$refs.audio.load()

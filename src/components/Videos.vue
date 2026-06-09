@@ -48,7 +48,7 @@ import logger from '../services/logger.js'
 import { findLivePhotoPeerFromName } from '../utils/livePhotoUtils'
 import { getPreviewIfAny } from '../utils/previewUtils'
 import { preloadMedia } from '../services/mediaPreloader.js'
-import { getPlyrTranslations } from '../utils/plyrTranslations'
+import { getPlyrTranslations, localizeSpeedLabels } from '../utils/plyrTranslations'
 
 const VuePlyr = () => import(/* webpackChunkName: 'plyr' */'@skjnldsv/vue-plyr')
 
@@ -66,6 +66,7 @@ export default {
 		return {
 			isFullscreenButtonVisible: false,
 			fallback: false,
+			speedListenerBound: false,
 		}
 	},
 
@@ -138,6 +139,15 @@ export default {
 			control.addEventListener('mouseenter', this.disableSwipe)
 			control.addEventListener('mouseleave', this.enableSwipe)
 		})
+
+		// The Plyr menu is only in the DOM once the controls are mounted (see
+		// above), so wire up the speed-label localization here rather than in
+		// mounted(). Register the rate-change listener once.
+		if (!this.speedListenerBound && this.$refs.plyr?.player) {
+			this.$refs.plyr.player.on('ratechange', this.localizeSpeed)
+			this.speedListenerBound = true
+		}
+		this.localizeSpeed()
 	},
 
 	beforeDestroy() {
@@ -149,6 +159,11 @@ export default {
 	},
 
 	methods: {
+		localizeSpeed() {
+			// Defer so we run after Plyr's own label/badge update for this event.
+			this.$nextTick(() => localizeSpeedLabels(this.$el, this.t))
+		},
+
 		hideHeaderAndFooter() {
 			// work arround to get the state of the fullscreen button, aria-selected attribute is not reliable
 			this.isFullscreenButtonVisible = !this.isFullscreenButtonVisible
