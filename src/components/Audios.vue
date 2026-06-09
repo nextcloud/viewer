@@ -157,6 +157,20 @@ audio {
 		@import '../mixins/Plyr';
 	}
 
+	// The settings menu (e.g. speed selection) is absolutely positioned and
+	// opens upward from the controls. On short viewports its full height does
+	// not fit and options get clipped off-screen. Cap its height to the
+	// available viewport space and let it scroll internally so no option is
+	// ever clipped, regardless of where the centered player sits.
+	.plyr__menu__container {
+		// The player is vertically centered, so the controls bar sits at
+		// ~50vh and the menu opens upward into the top half of the viewport.
+		// Cap to that available space (half the viewport, minus half the
+		// controls bar and a top margin) so options never clip off-screen.
+		max-height: calc(40vh - var(--plyr-button-size, 44px) / 2 - 20px);
+		overflow-y: auto;
+	}
+
 	// make it a bit off-center in order to fix mobile controls
 	@media only screen and (max-width: 500px) {
 		.plyr--audio {
