@@ -37,6 +37,7 @@ import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
 
 import logger from '../services/logger.js'
 import { preloadMedia } from '../services/mediaPreloader'
+import { plyrTranslations } from '../utils/plyrTranslations'
 
 const VuePlyr = () => import(/* webpackChunkName: 'plyr' */'@skjnldsv/vue-plyr')
 
@@ -66,6 +67,7 @@ export default {
 				blankVideo: '/blank.aac',
 				controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings'],
 				loadSprite: false,
+				i18n: plyrTranslations,
 			}
 		},
 	},
