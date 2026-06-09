@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { translate as t } from '@nextcloud/l10n'
+import { getCanonicalLocale, translate as t } from '@nextcloud/l10n'
 
 /**
  * Plyr `i18n` option so the player controls and menus
@@ -48,4 +48,49 @@ export const plyrTranslations: Record<string, string> = {
 	disabled: t('viewer', 'Disabled'),
 	enabled: t('viewer', 'Enabled'),
 	advertisement: t('viewer', 'Ad'),
+}
+
+/**
+ * Plyr renders speed values via a plain template literal (`` `${speed}×` ``),
+ * which always uses a `.` decimal separator regardless of locale — so German
+ * shows `1.5×` instead of `1,5×`. Plyr exposes no hook for this, so we
+ * re-format the rendered labels using the user's locale.
+ *
+ * The speed panel's id always ends in `-speed`. Each entry is a
+ * `button[role="menuitemradio"]` carrying the numeric speed in its `value`
+ * attribute (the source of truth). The home-pane `.plyr__menu__value` badge
+ * shows the current speed as a bare `<number>×` string, which we match by
+ * pattern so we never touch the quality/captions badges.
+ *
+ * @param root the Plyr root element to localize labels within
+ */
+export function localizeSpeedLabels(root: ParentNode): void {
+	const formatter = new Intl.NumberFormat(getCanonicalLocale())
+	const speedLabel = (value: number): string =>
+		value === 1 ? t('viewer', 'Normal') : `${formatter.format(value)}×`
+
+	// Speed submenu radio items, scoped to the speed panel so we don't touch
+	// quality (e.g. "1080") or captions entries.
+	const items = root.querySelectorAll<HTMLButtonElement>(
+		'.plyr__menu__container [id$="-speed"] [role="menuitemradio"]',
+	)
+	items.forEach((item) => {
+		const value = Number.parseFloat(item.value)
+		if (Number.isNaN(value)) {
+			return
+		}
+		const label = item.querySelector('span')
+		if (label) {
+			label.textContent = speedLabel(value)
+		}
+	})
+
+	// Home-pane badge showing the current speed (e.g. "Speed: 1,5×"). Match the
+	// bare "<number>×" form so quality/captions badges are left untouched.
+	root.querySelectorAll<HTMLElement>('.plyr__menu__value').forEach((badge) => {
+		const match = /^(\d+(?:\.\d+)?)×$/.exec((badge.textContent ?? '').trim())
+		if (match) {
+			badge.textContent = `${formatter.format(Number.parseFloat(match[1]))}×`
+		}
+	})
 }
