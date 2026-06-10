@@ -1239,8 +1239,13 @@ export default defineComponent({
 
 		performDownload() {
 			logger.debug('Performing download', { file: this.currentFile })
+			const path = this.currentFile.source ?? this.currentFile.davPath
+			if(!path) {
+				logger.debug('File path undefined; aborting download', { file: this.currentFile })
+				return
+			}
 			const a = document.createElement('a')
-			a.href = this.currentFile.source ?? this.currentFile.davPath
+			a.href = path
 			a.download = this.currentFile.basename
 			document.body.appendChild(a)
 			a.click()
