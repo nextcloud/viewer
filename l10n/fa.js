@@ -130,6 +130,19 @@ OC.L10N.register(
     "Menu" : "منو",
     "Width" : "عرض",
     "Height" : "ارتفاع",
-    "No preview available for this crop item" : "پیش‌نمایشی برای این مورد برش وجود ندارد"
+    "No preview available for this crop item" : "پیش‌نمایشی برای این مورد برش وجود ندارد",
+    "Restart" : "راه‌اندازی مجدد",
+    "Play" : "پخش کردن",
+    "Pause" : "توقف کردن",
+    "Current time" : "زمان کنونی",
+    "Duration" : "مدت زمان",
+    "Volume" : "صدا",
+    "Mute" : "Mute",
+    "Settings" : "تنظیمات",
+    "Speed" : "سرعت",
+    "Normal" : "معمولی",
+    "Start" : "شروع",
+    "End" : "پایان ",
+    "Enabled" : "فعال شده"
 },
 "nplurals=2; plural=(n > 1);");

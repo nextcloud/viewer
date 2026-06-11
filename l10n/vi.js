@@ -31,6 +31,18 @@ OC.L10N.register(
     "Text" : "Văn bản",
     "Size" : "Kích cỡ",
     "Extension" : "Tiện ích",
-    "Name is required." : "Tên là bắt buộc."
+    "Name is required." : "Tên là bắt buộc.",
+    "Play" : "Phát",
+    "Pause" : "Tạm dừng",
+    "Duration" : "Khoảng thời gian",
+    "Volume" : "Âm lượng",
+    "Mute" : "Tắt tiếng",
+    "Settings" : "Thiết lập",
+    "Normal" : "Bình thường",
+    "Start" : "Bắt đầu",
+    "End" : "Kết thúc",
+    "All" : "Tất cả",
+    "Disabled" : "Đã vô hiệu",
+    "Enabled" : "Đá kích hoạt"
 },
 "nplurals=1; plural=0;");

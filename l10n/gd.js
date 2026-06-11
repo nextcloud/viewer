@@ -9,6 +9,8 @@ OC.L10N.register(
     "Name" : "Ainm",
     "Save" : "Sàbhail",
     "Back" : "Air ais",
-    "Undo" : "Neo-dhèan"
+    "Undo" : "Neo-dhèan",
+    "Settings" : "Roghainnean",
+    "Normal" : "Àbhaisteach"
 },
 "nplurals=4; plural=(n==1 || n==11) ? 0 : (n==2 || n==12) ? 1 : (n > 2 && n < 20) ? 2 : 3;");

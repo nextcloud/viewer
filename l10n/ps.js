@@ -7,6 +7,7 @@ OC.L10N.register(
     "Delete" : "ړنګول",
     "Name" : "نوم",
     "Save" : "ساتل",
-    "Size" : "کچه"
+    "Size" : "کچه",
+    "Settings" : "سمونې"
 },
 "nplurals=2; plural=(n != 1);");

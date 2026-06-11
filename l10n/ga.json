@@ -128,6 +128,19 @@
     "Menu" : "Roghchlár",
     "Width" : "Leithead",
     "Height" : "Airde",
-    "No preview available for this crop item" : "Níl réamhamharc ar fáil don mhír bharr seo"
+    "No preview available for this crop item" : "Níl réamhamharc ar fáil don mhír bharr seo",
+    "Restart" : "Atosaigh",
+    "Play" : "Imir",
+    "Pause" : "Sos",
+    "Current time" : "Am reatha",
+    "Duration" : "Fad",
+    "Volume" : "Toirt",
+    "Mute" : "Balbhaigh",
+    "Settings" : "Socruithe",
+    "Speed" : "Luas",
+    "Normal" : "Gnáth",
+    "Start" : "Tosaigh",
+    "End" : "Deireadh",
+    "Enabled" : "Cumasaithe"
 },"pluralForm" :"nplurals=5; plural=(n==1 ? 0 : n==2 ? 1 : n<7 ? 2 : n<11 ? 3 : 4);"
 }

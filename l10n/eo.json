@@ -23,6 +23,7 @@
     "Text" : "Teksto",
     "Size" : "Grando",
     "Position" : "Loko",
-    "Extension" : "Dosiersufikso"
+    "Extension" : "Dosiersufikso",
+    "Start" : "Komenco"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

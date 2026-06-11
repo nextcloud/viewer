@@ -103,6 +103,18 @@ OC.L10N.register(
     "Actual size (100%)" : "Actual size (100%)",
     "Fit size" : "Fit size",
     "Menu" : "Menu",
-    "Height" : "Altura"
+    "Height" : "Altura",
+    "Play" : "Reproduzir",
+    "Pause" : "Pausar",
+    "Duration" : "Duração",
+    "Exit fullscreen" : "Sair de ecrã completo",
+    "Settings" : "Definições",
+    "Speed" : "velocidade",
+    "Normal" : "Normal",
+    "Start" : "Início",
+    "End" : "Fim",
+    "All" : "Todos",
+    "Disabled" : "Desativado",
+    "Enabled" : "Ativado"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

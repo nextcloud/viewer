@@ -130,6 +130,20 @@ OC.L10N.register(
     "Menu" : "Meny",
     "Width" : "Bredd",
     "Height" : "Höjd",
-    "No preview available for this crop item" : "Ingen förhandsgranskning tillgänglig för detta beskärningsobjekt"
+    "No preview available for this crop item" : "Ingen förhandsgranskning tillgänglig för detta beskärningsobjekt",
+    "Restart" : "Omstart",
+    "Play" : "Spela",
+    "Pause" : "Pausa",
+    "Duration" : "Varaktighet",
+    "Mute" : "Tyst",
+    "Exit fullscreen" : "Avsluta helskärm",
+    "Settings" : "Inställningar",
+    "Speed" : "Hastighet",
+    "Normal" : "Normal",
+    "Start" : "Start",
+    "End" : "Sluta",
+    "All" : "Alla",
+    "Disabled" : "Inaktiverad",
+    "Enabled" : "Aktiverad"
 },
 "nplurals=2; plural=(n != 1);");

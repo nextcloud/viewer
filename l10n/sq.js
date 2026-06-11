@@ -23,6 +23,16 @@ OC.L10N.register(
     "Size" : "Madhësi",
     "Position" : "Pozicion",
     "Name is required." : "Emri është i domosdoshëm",
-    "Menu" : "Menu"
+    "Menu" : "Menu",
+    "Play" : "Luaje",
+    "Pause" : "Pauzë",
+    "Duration" : "Kohëzgjatja",
+    "Settings" : "Rregullimet",
+    "Normal" : "Normal",
+    "Start" : "Fillo",
+    "End" : "Mbarim",
+    "All" : "Të gjithë",
+    "Disabled" : "I/E çaktivizuar",
+    "Enabled" : "E aktivizuar"
 },
 "nplurals=2; plural=(n != 1);");

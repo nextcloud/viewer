@@ -8,6 +8,7 @@ OC.L10N.register(
     "Name" : "اسم",
     "Save" : "حفظ",
     "Reset" : "ری سیٹ",
-    "Warning" : "انتباہ"
+    "Warning" : "انتباہ",
+    "Settings" : "سیٹینگز"
 },
 "nplurals=2; plural=(n != 1);");

@@ -130,6 +130,18 @@ OC.L10N.register(
     "Menu" : "Menüü",
     "Width" : "Laius",
     "Height" : "Kõrgus",
-    "No preview available for this crop item" : "Selle kadreerimistüübi jaoks pole eelvaadet saadaval"
+    "No preview available for this crop item" : "Selle kadreerimistüübi jaoks pole eelvaadet saadaval",
+    "Restart" : "Taaskäivita",
+    "Play" : "Esita",
+    "Pause" : "Peata",
+    "Current time" : "Praegune aeg",
+    "Duration" : "Kestus",
+    "Mute" : "Summuta",
+    "Settings" : "Seadistused",
+    "Speed" : "Kiirus",
+    "Normal" : "Tavaline",
+    "Start" : "Algus",
+    "End" : "Lõpp",
+    "Enabled" : "Sisselülitatud"
 },
 "nplurals=2; plural=(n != 1);");

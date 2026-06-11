@@ -113,6 +113,22 @@ OC.L10N.register(
     "Actual size (100%)" : "Faktisk størrelse (100%)",
     "Fit size" : "Tilpass størrelse",
     "Menu" : "Meny",
-    "Height" : "Høyde"
+    "Height" : "Høyde",
+    "Restart" : "Omstart",
+    "Play" : "Spill",
+    "Pause" : "Pause",
+    "Current time" : "Gjeldende tidspunkt",
+    "Duration" : "Varighet",
+    "Volume" : "Volum",
+    "Mute" : "Dempe",
+    "Exit fullscreen" : "Avslutt fullskjermsvisning",
+    "Settings" : "Innstillinger",
+    "Speed" : "Hastighet",
+    "Normal" : "Normal",
+    "Start" : "Start",
+    "End" : "Slutt",
+    "All" : "Alle",
+    "Disabled" : "Deaktivert",
+    "Enabled" : "Aktivert"
 },
 "nplurals=2; plural=(n != 1);");
