@@ -130,6 +130,18 @@ OC.L10N.register(
     "Menu" : "Menu",
     "Width" : "Lebar",
     "Height" : "Tinggi",
-    "No preview available for this crop item" : "Tidak ada pratinjau yang tersedia untuk item potong ini"
+    "No preview available for this crop item" : "Tidak ada pratinjau yang tersedia untuk item potong ini",
+    "Play" : "Putar",
+    "Pause" : "Jeda",
+    "Current time" : "Waktu saat ini",
+    "Duration" : "Durasi",
+    "Volume" : "Volume",
+    "Settings" : "Pengaturan",
+    "Normal" : "Normal",
+    "Start" : "Mulai",
+    "End" : "Selesai",
+    "All" : "Semua",
+    "Disabled" : "Dinonaktifkan",
+    "Enabled" : "Diaktifkan"
 },
 "nplurals=1; plural=0;");

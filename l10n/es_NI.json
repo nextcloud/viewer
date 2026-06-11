@@ -15,6 +15,10 @@
     "Text" : "Texto",
     "Size" : "Tamaño",
     "Position" : "Posición",
-    "Menu" : "Menú"
+    "Menu" : "Menú",
+    "Pause" : "Pausar",
+    "Normal" : "Normal",
+    "End" : "Fin",
+    "Enabled" : "Habilitado"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

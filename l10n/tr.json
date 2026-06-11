@@ -128,6 +128,22 @@
     "Menu" : "Menü",
     "Width" : "Genişlik",
     "Height" : "Yükseklik",
-    "No preview available for this crop item" : "Bu kırpılmış ögenin ön izlemesi yok"
+    "No preview available for this crop item" : "Bu kırpılmış ögenin ön izlemesi yok",
+    "Restart" : "Yeniden başlat",
+    "Play" : "Oynat",
+    "Pause" : "Duraklat",
+    "Current time" : "Geçerli saat",
+    "Duration" : "Süre",
+    "Volume" : "Ses düzeyi",
+    "Mute" : "Sesi kıs",
+    "Exit fullscreen" : "Tam ekrandan çık",
+    "Settings" : "Ayarlar",
+    "Speed" : "Hız",
+    "Normal" : "Normal",
+    "Start" : "Başlangıç",
+    "End" : "Bitiş",
+    "All" : "Tümü",
+    "Disabled" : "Kullanılmıyor",
+    "Enabled" : "Kullanılıyor"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

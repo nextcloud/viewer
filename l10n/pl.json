@@ -128,6 +128,21 @@
     "Menu" : "Menu",
     "Width" : "Szerokość",
     "Height" : "Wysokość",
-    "No preview available for this crop item" : "Brak podglądu dla tego elementu kadrowania"
+    "No preview available for this crop item" : "Brak podglądu dla tego elementu kadrowania",
+    "Restart" : "Restart",
+    "Play" : "Odtwarzaj",
+    "Pause" : "Wstrzymaj",
+    "Duration" : "Czas trwania",
+    "Volume" : "Głośność",
+    "Mute" : "Wycisz",
+    "Exit fullscreen" : "Opuść tryb pełnoekranowy",
+    "Settings" : "Ustawienia",
+    "Speed" : "Prędkość",
+    "Normal" : "W normie",
+    "Start" : "Start",
+    "End" : "Koniec",
+    "All" : "Wszystkie",
+    "Disabled" : "Wyłączone",
+    "Enabled" : "Włączone"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }

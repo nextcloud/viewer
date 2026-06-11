@@ -25,6 +25,7 @@ OC.L10N.register(
     "Text" : "Teksto",
     "Size" : "Grando",
     "Position" : "Loko",
-    "Extension" : "Dosiersufikso"
+    "Extension" : "Dosiersufikso",
+    "Start" : "Komenco"
 },
 "nplurals=2; plural=(n != 1);");

@@ -130,6 +130,22 @@ OC.L10N.register(
     "Menu" : "Menu",
     "Width" : "Largura",
     "Height" : "Altura",
-    "No preview available for this crop item" : "Nenhuma visualização disponível para este item de corte"
+    "No preview available for this crop item" : "Nenhuma visualização disponível para este item de corte",
+    "Restart" : "Reiniciar",
+    "Play" : "Reproduzir",
+    "Pause" : "Pausar",
+    "Current time" : "Hora atual",
+    "Duration" : "Duração",
+    "Volume" : "Volume",
+    "Mute" : "Desativar microfone",
+    "Exit fullscreen" : "Sair da tela cheia",
+    "Settings" : "Configurações",
+    "Speed" : "Velocidade",
+    "Normal" : "Normal",
+    "Start" : "Início",
+    "End" : "Fim",
+    "All" : "Todos",
+    "Disabled" : "Desativado",
+    "Enabled" : "Ativado"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

@@ -10,6 +10,12 @@
     "Warning" : "បម្រាម",
     "Value" : "តម្លៃ",
     "Line" : "បន្ទាត់",
-    "Size" : "ទំហំ"
+    "Size" : "ទំហំ",
+    "Play" : "លេង",
+    "Pause" : "ផ្អាក",
+    "Settings" : "ការកំណត់",
+    "All" : "ទាំងអស់",
+    "Disabled" : "បាន​បិទ",
+    "Enabled" : "បាន​បើក"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

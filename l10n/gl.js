@@ -130,6 +130,20 @@ OC.L10N.register(
     "Menu" : "Menú",
     "Width" : "Largo",
     "Height" : "Altura",
-    "No preview available for this crop item" : "Non hai ningunha vista previa dispoñíbel para este elemento de recorte"
+    "No preview available for this crop item" : "Non hai ningunha vista previa dispoñíbel para este elemento de recorte",
+    "Restart" : "Reiniciar",
+    "Play" : "Reproducir",
+    "Pause" : "Pausa",
+    "Current time" : "Hora actual",
+    "Duration" : "Duración",
+    "Volume" : "Volume",
+    "Mute" : "Silenciar",
+    "Settings" : "Axustes",
+    "Speed" : "Velocidade",
+    "Start" : "Iniciar",
+    "End" : "Fin",
+    "All" : "Todo",
+    "Disabled" : "Desactivado",
+    "Enabled" : "Activado"
 },
 "nplurals=2; plural=(n != 1);");

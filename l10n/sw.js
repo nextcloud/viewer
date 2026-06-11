@@ -129,6 +129,20 @@ OC.L10N.register(
     "Menu" : "Mwongozo",
     "Width" : "Upana",
     "Height" : "Urefu",
-    "No preview available for this crop item" : "Hakuna onyesho la kukagua linalopatikana la bidhaa hii ya kupunguza"
+    "No preview available for this crop item" : "Hakuna onyesho la kukagua linalopatikana la bidhaa hii ya kupunguza",
+    "Restart" : "Anza upya",
+    "Play" : "Cheza",
+    "Pause" : "Sitisha",
+    "Duration" : "Muda",
+    "Volume" : "Sauti",
+    "Mute" : "Zima",
+    "Settings" : "Mipangilio",
+    "Speed" : "Kasi",
+    "Normal" : "Kawaida",
+    "Start" : "Anza",
+    "End" : "Maliza",
+    "All" : "Zote",
+    "Disabled" : "Ilizimwa",
+    "Enabled" : "Washwa"
 },
 "nplurals=2; plural=(n != 1);");

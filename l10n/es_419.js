@@ -17,6 +17,9 @@ OC.L10N.register(
     "Text" : "Texto",
     "Size" : "Tamaño",
     "Position" : "Posición",
-    "Menu" : "Menú"
+    "Menu" : "Menú",
+    "Normal" : "Normal",
+    "Start" : "Inicio",
+    "End" : "Fin"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

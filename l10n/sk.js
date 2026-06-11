@@ -130,6 +130,21 @@ OC.L10N.register(
     "Menu" : "Menu",
     "Width" : "Šírka",
     "Height" : "Výška",
-    "No preview available for this crop item" : "Pre túto položku orezania nie je k dispozícii žiadna ukážka"
+    "No preview available for this crop item" : "Pre túto položku orezania nie je k dispozícii žiadna ukážka",
+    "Restart" : "Reštartovať",
+    "Play" : "Hrať",
+    "Pause" : "Pauza",
+    "Current time" : "Aktuálny čas",
+    "Duration" : "Trvanie",
+    "Volume" : "Hlasitosť",
+    "Mute" : "Stlmiť",
+    "Settings" : "Nastavenia",
+    "Speed" : "Rýchlosť",
+    "Normal" : "Normálna",
+    "Start" : "Začiatok",
+    "End" : "Koniec",
+    "All" : "Všetko",
+    "Disabled" : "Vypnuté",
+    "Enabled" : "Zapnuté"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

@@ -129,6 +129,18 @@ OC.L10N.register(
     "Menu" : "Menua",
     "Width" : "Zabalera",
     "Height" : "Altuera",
-    "No preview available for this crop item" : "Ez dago aurreikuspenik eskuragarri ebakitako elementu honentzat"
+    "No preview available for this crop item" : "Ez dago aurreikuspenik eskuragarri ebakitako elementu honentzat",
+    "Restart" : "Berrabiarazi",
+    "Play" : "Jokatu",
+    "Pause" : "Gelditu",
+    "Current time" : "Uneko ordua",
+    "Duration" : "Iraupena",
+    "Mute" : "Isilarazi",
+    "Settings" : "Ezarpenak",
+    "Speed" : "Abiadura",
+    "Normal" : "Normala",
+    "Start" : "Hasi",
+    "End" : "Amaiera",
+    "Enabled" : "Gaituta"
 },
 "nplurals=2; plural=(n != 1);");

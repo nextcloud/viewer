@@ -36,6 +36,16 @@ OC.L10N.register(
     "Name is required." : "Su nùmene est rechertu: ",
     "Quality" : "Calidade",
     "Menu" : "Menu",
-    "Height" : "Altezza"
+    "Height" : "Altezza",
+    "Pause" : "Pàusa",
+    "Duration" : "Durata",
+    "Volume" : "Volùmene",
+    "Mute" : "Tira s'àudiu",
+    "Settings" : "Cunfiguratzione",
+    "Speed" : "Lestresa",
+    "End" : "Acabba",
+    "All" : "Totu",
+    "Disabled" : "Disativadu",
+    "Enabled" : "Ativadu"
 },
 "nplurals=2; plural=(n != 1);");

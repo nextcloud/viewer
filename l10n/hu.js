@@ -113,6 +113,20 @@ OC.L10N.register(
     "Actual size (100%)" : "Tényleges méret (100%)",
     "Fit size" : "Illeszkedő méret",
     "Menu" : "Menü",
-    "Height" : "Magasság"
+    "Height" : "Magasság",
+    "Restart" : "Újraindítás",
+    "Play" : "Lejátszás",
+    "Pause" : "Szünet",
+    "Duration" : "Időtartam",
+    "Volume" : "Hangerő",
+    "Mute" : "Némítás",
+    "Settings" : "Beállítások",
+    "Speed" : "Sebesség",
+    "Normal" : "Normális",
+    "Start" : "Kezdés",
+    "End" : "Vég",
+    "All" : "Összes",
+    "Disabled" : "Letiltva",
+    "Enabled" : "Engedélyezve"
 },
 "nplurals=2; plural=(n != 1);");
