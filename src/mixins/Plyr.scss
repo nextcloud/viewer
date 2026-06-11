@@ -66,8 +66,11 @@
 
 	// Menu items
 	.plyr__menu__container button {
-		// avoid size change and flicker
-		width: 120px;
+		// Keep a baseline width to avoid size change and flicker when
+		// switching panes, but allow growing so labels (e.g. the localized
+		// "Speed: Normal") are never cut off.
+		min-width: 120px;
+		width: max-content;
 		margin: 0;
 		// background is main-bg
 		color: var(--color-main-text);
