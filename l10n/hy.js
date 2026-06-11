@@ -8,6 +8,8 @@ OC.L10N.register(
     "Name" : "Անուն",
     "Save" : "Պահպանել",
     "Warning" : "Զգուշացում",
-    "Size" : "Չափս"
+    "Size" : "Չափս",
+    "Play" : "Նվագարկել",
+    "Settings" : "Կարգավորումներ"
 },
 "nplurals=2; plural=(n != 1);");

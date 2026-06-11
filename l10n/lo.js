@@ -97,6 +97,19 @@ OC.L10N.register(
     "Saved image size (width x height)" : "ຂະໜາດຮູບທີ່ບັນທຶກ (ກວ້າງ x ສູງ)",
     "Note that the selected crop area is lower than the applied resize which might cause quality decrease" : "ໝາຍເຫດ: ພື້ນທີ່ຕັດຂອບທີ່ເລືອກນ້ອຍກວ່າຂະໜາດທີ່ປັບໃໝ່ ຊຶ່ງອາດເຮັດໃຫ້ຄຸນນະພາບຫຼຸດລົງ",
     "Actual size (100%)" : "ຂະໜາດຈິງ (100%)",
-    "Fit size" : "ຂະໜາດພໍດີ"
+    "Fit size" : "ຂະໜາດພໍດີ",
+    "Play" : "Play",
+    "Pause" : "ຢຸດຊົ່ວຄາວ",
+    "Duration" : "ໄລຍະເວລາ",
+    "Volume" : "ລະດັບສຽງ",
+    "Mute" : "Mute",
+    "Settings" : "ການຕັ້ງຄ່າ",
+    "Speed" : "ຄວາມໄວ",
+    "Normal" : "Normal",
+    "Start" : "ເລີ່ມ",
+    "End" : "End",
+    "All" : "ທັງໝົດ",
+    "Disabled" : "ປິດໃຊ້ງານ",
+    "Enabled" : "ເປີດໃຊ້ງານ"
 },
 "nplurals=1; plural=0;");

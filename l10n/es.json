@@ -128,6 +128,10 @@
     "Menu" : "Menú",
     "Width" : "Anchura",
     "Height" : "Altura",
-    "No preview available for this crop item" : "Previsualización no disponible para este recorte"
+    "No preview available for this crop item" : "Previsualización no disponible para este recorte",
+    "Current time" : "Hora actual",
+    "Normal" : "Normal",
+    "Start" : "Iniciar",
+    "Enabled" : "Habilitado"
 },"pluralForm" :"nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;"
 }

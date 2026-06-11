@@ -119,6 +119,18 @@ OC.L10N.register(
     "Failed to load image." : "Kuvan lataus epäonnistui.",
     "Menu" : "Valikko",
     "Width" : "Leveys",
-    "Height" : "Pituus"
+    "Height" : "Pituus",
+    "Restart" : "Käynnistä uudelleen",
+    "Play" : "Esitys",
+    "Pause" : "Keskeytä",
+    "Duration" : "Kesto",
+    "Volume" : "Äänenvoimakkuus",
+    "Mute" : "Mykistä",
+    "Settings" : "Asetukset",
+    "Speed" : "Nopeus",
+    "Normal" : "Normaali",
+    "Start" : "Alku",
+    "End" : "Loppu",
+    "Enabled" : "Käytössä"
 },
 "nplurals=2; plural=(n != 1);");

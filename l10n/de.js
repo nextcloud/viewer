@@ -130,6 +130,8 @@ OC.L10N.register(
     "Menu" : "Menü",
     "Width" : "Breite",
     "Height" : "Größe",
-    "No preview available for this crop item" : "Für diesen Zuschnitt ist keine Vorschau verfügbar"
+    "No preview available for this crop item" : "Für diesen Zuschnitt ist keine Vorschau verfügbar",
+    "Normal" : "Normal",
+    "Enabled" : "Aktiviert"
 },
 "nplurals=2; plural=(n != 1);");

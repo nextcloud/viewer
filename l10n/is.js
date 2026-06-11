@@ -130,6 +130,18 @@ OC.L10N.register(
     "Menu" : "Valmynd",
     "Width" : "Breidd",
     "Height" : "Hæð",
-    "No preview available for this crop item" : "Engin forskoðun til fyrir þetta afskurðaratriði"
+    "No preview available for this crop item" : "Engin forskoðun til fyrir þetta afskurðaratriði",
+    "Play" : "Spila",
+    "Pause" : "Í bið",
+    "Duration" : "Tímalengd",
+    "Exit fullscreen" : "Hætta í skjáfylli",
+    "Settings" : "Stillingar",
+    "Speed" : "Hraði",
+    "Normal" : "Venjulegt",
+    "Start" : "Byrjun",
+    "End" : "Endar",
+    "All" : "Allt",
+    "Disabled" : "Óvirkt",
+    "Enabled" : "Virkt"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

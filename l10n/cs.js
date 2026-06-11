@@ -130,6 +130,8 @@ OC.L10N.register(
     "Menu" : "Nabídka",
     "Width" : "Šířka",
     "Height" : "Výška",
-    "No preview available for this crop item" : "Pro tuto položku ořezu není k dispozici žádný náhled"
+    "No preview available for this crop item" : "Pro tuto položku ořezu není k dispozici žádný náhled",
+    "Normal" : "Normální",
+    "Enabled" : "Zapnuto"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

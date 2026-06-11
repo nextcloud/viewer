@@ -111,6 +111,19 @@ OC.L10N.register(
     "Actual size (100%)" : "Prava velikost (100%)",
     "Fit size" : "Prilagodi velikosti",
     "Menu" : "Meni",
-    "Height" : "Višina"
+    "Height" : "Višina",
+    "Play" : "Predvajaj",
+    "Pause" : "Premor",
+    "Duration" : "Trajanje",
+    "Volume" : "Glasnost",
+    "Mute" : "Utišaj",
+    "Settings" : "Nastavitve",
+    "Speed" : "Hitrost",
+    "Normal" : "Običajna",
+    "Start" : "Začetek",
+    "End" : "Konec",
+    "All" : "Vse",
+    "Disabled" : "Onemogočeno",
+    "Enabled" : "Omogočeno"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

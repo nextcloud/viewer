@@ -21,6 +21,11 @@ OC.L10N.register(
     "Line" : "Chiziq",
     "Text" : "Matn",
     "Size" : "Size",
-    "Format" : "Formatlash"
+    "Format" : "Formatlash",
+    "Play" : "O'ynang",
+    "Duration" : "Davomiyligi",
+    "Settings" : "Sozlamalar",
+    "Normal" : "Oddiy",
+    "All" : "Barchasi"
 },
 "nplurals=1; plural=0;");

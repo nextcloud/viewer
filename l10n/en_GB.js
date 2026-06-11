@@ -130,6 +130,10 @@ OC.L10N.register(
     "Menu" : "Menu",
     "Width" : "Width",
     "Height" : "Height",
-    "No preview available for this crop item" : "No preview available for this crop item"
+    "No preview available for this crop item" : "No preview available for this crop item",
+    "Current time" : "Current time",
+    "Normal" : "Normal",
+    "Start" : "Start",
+    "Enabled" : "Enabled"
 },
 "nplurals=2; plural=(n != 1);");

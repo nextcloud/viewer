@@ -128,6 +128,21 @@
     "Menu" : "選項單",
     "Width" : "寬度",
     "Height" : "身高",
-    "No preview available for this crop item" : "此裁剪項目沒有可用的預覽"
+    "No preview available for this crop item" : "此裁剪項目沒有可用的預覽",
+    "Restart" : "重新啟動",
+    "Play" : "播放",
+    "Pause" : "暫停",
+    "Current time" : "目前時間",
+    "Duration" : "歷時",
+    "Volume" : "音量",
+    "Mute" : "無聲",
+    "Settings" : "設定",
+    "Speed" : "速度",
+    "Normal" : "正常",
+    "Start" : "開始",
+    "End" : "結束",
+    "All" : "全部",
+    "Disabled" : "停用",
+    "Enabled" : "已啟用"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -130,6 +130,21 @@ OC.L10N.register(
     "Menu" : "تىزىملىك",
     "Width" : "كەڭلىك",
     "Height" : "ئېگىزلىكى",
-    "No preview available for this crop item" : "بۇ زىرائەت تۈرىگە ئالدىن كۆزىتىش يوق"
+    "No preview available for this crop item" : "بۇ زىرائەت تۈرىگە ئالدىن كۆزىتىش يوق",
+    "Restart" : "قايتا قوزغىتىڭ",
+    "Play" : "ئويناش",
+    "Pause" : "توختات",
+    "Current time" : "نۆۋەتتىكى ۋاقىت",
+    "Duration" : "ئۇزۇنلىقى",
+    "Volume" : "ھەجىم",
+    "Mute" : "جىمجىتلا",
+    "Settings" : "تەڭشەكلەر",
+    "Speed" : "سۈرئەت",
+    "Normal" : "نورمال",
+    "Start" : "باشلاش",
+    "End" : "ئاخىر",
+    "All" : "ھەممىسى",
+    "Disabled" : "چەكلەنگەن",
+    "Enabled" : "قوزغىتىلدى"
 },
 "nplurals=2; plural=(n != 1);");

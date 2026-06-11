@@ -128,6 +128,20 @@
     "Menu" : "メニュー",
     "Width" : "幅",
     "Height" : "身長",
-    "No preview available for this crop item" : "このクロップアイテムにはプレビューはありません"
+    "No preview available for this crop item" : "このクロップアイテムにはプレビューはありません",
+    "Play" : "再生",
+    "Pause" : "一時停止",
+    "Current time" : "現在時刻",
+    "Duration" : "期間",
+    "Volume" : "音量",
+    "Mute" : "ミュート",
+    "Settings" : "設定",
+    "Speed" : "スピード",
+    "Normal" : "ノーマル",
+    "Start" : "開始する",
+    "End" : "終了",
+    "All" : "すべて",
+    "Disabled" : "無効",
+    "Enabled" : "有効"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

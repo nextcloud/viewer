@@ -130,6 +130,10 @@ OC.L10N.register(
     "Menu" : "Μενού",
     "Width" : "Πλάτος",
     "Height" : "Ύψος",
-    "No preview available for this crop item" : "Δεν υπάρχει διαθέσιμη προεπισκόπηση για αυτό το αντικείμενο περικοπής"
+    "No preview available for this crop item" : "Δεν υπάρχει διαθέσιμη προεπισκόπηση για αυτό το αντικείμενο περικοπής",
+    "Current time" : "Τρέχουσα ώρα",
+    "Normal" : "Κανονικό",
+    "Start" : "Έναρξη",
+    "Enabled" : "Ενεργοποιημένο"
 },
 "nplurals=2; plural=(n != 1);");

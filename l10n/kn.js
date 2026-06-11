@@ -9,6 +9,10 @@ OC.L10N.register(
     "Save" : "﻿ಉಳಿಸಿ",
     "Reset" : "ಮರುಹೊಂದಿಸಿ",
     "Warning" : "﻿ಎಚ್ಚರಿಕೆ",
-    "Size" : "﻿ ಗಾತ್ರ"
+    "Size" : "﻿ ಗಾತ್ರ",
+    "Settings" : "ಆಯ್ಕೆ",
+    "All" : "﻿ಎಲ್ಲಾ",
+    "Disabled" : "ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ",
+    "Enabled" : "ಸಕ್ರಿಯಗೊಳಿಸಿದೆ"
 },
 "nplurals=2; plural=(n > 1);");

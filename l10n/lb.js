@@ -14,6 +14,12 @@ OC.L10N.register(
     "Confirm" : "Konfirméieren",
     "Custom" : "Individualiséier",
     "Size" : "Gréisst",
-    "Menu" : "Menü"
+    "Menu" : "Menü",
+    "Play" : "Ofspillen",
+    "Pause" : "Paus",
+    "Settings" : "Astellungen",
+    "All" : "All",
+    "Disabled" : "Deaktivéiert",
+    "Enabled" : "Aktivéiert"
 },
 "nplurals=2; plural=(n != 1);");
