@@ -109,6 +109,19 @@ OC.L10N.register(
     "Actual size (100%)" : "실제 크기 (100%)",
     "Fit size" : "크기 맞추기",
     "Menu" : "메뉴",
-    "Height" : "신장"
+    "Height" : "신장",
+    "Restart" : "재시작",
+    "Play" : "재생",
+    "Pause" : "일시 정지",
+    "Volume" : "볼륨",
+    "Mute" : "음소거",
+    "Exit fullscreen" : "전체 화면 끝내기",
+    "Settings" : "설정",
+    "Speed" : "속도",
+    "Start" : "시작",
+    "End" : "끝",
+    "All" : "모두",
+    "Disabled" : "비활성화됨",
+    "Enabled" : "활성화"
 },
 "nplurals=1; plural=0;");

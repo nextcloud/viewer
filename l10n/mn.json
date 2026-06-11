@@ -128,6 +128,18 @@
     "Menu" : "Цэс",
     "Width" : "Өргөн",
     "Height" : "Өндөр",
-    "No preview available for this crop item" : "Энэ таслах зүйлд урьдчилсан харагдац байхгүй"
+    "No preview available for this crop item" : "Энэ таслах зүйлд урьдчилсан харагдац байхгүй",
+    "Restart" : "Дахин эхлүүлэх",
+    "Pause" : "–¢“Ø—Ä –∑–æ–≥—Å–æ–æ—Ö",
+    "Duration" : "Хугацаа",
+    "Mute" : "Хаах",
+    "Settings" : "–¢–æ—Ö–∏—Ä–≥–æ–æ",
+    "Speed" : "Хурд",
+    "Normal" : "Хэвийн",
+    "Start" : "—ç—Ö–ª—ç—Ö",
+    "End" : "–¥—É—É—Å–≥–∞—Ö",
+    "All" : "–±“Ø—Ö",
+    "Disabled" : "–∏–¥—ç–≤—Ö–∏–≥“Ø–π",
+    "Enabled" : "–ò–¥—ç–≤—Ö–∏–∂“Ø“Ø–ª—ç—Ö"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

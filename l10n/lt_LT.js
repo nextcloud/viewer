@@ -130,6 +130,22 @@ OC.L10N.register(
     "Menu" : "Meniu",
     "Width" : "Plotis",
     "Height" : "Aukštis",
-    "No preview available for this crop item" : "Šio apkarpymo elemento peržiūra negalima"
+    "No preview available for this crop item" : "Šio apkarpymo elemento peržiūra negalima",
+    "Restart" : "Paleisti iš naujo",
+    "Play" : "Groti",
+    "Pause" : "Pristabdyti",
+    "Current time" : "Dabartinis laikas",
+    "Duration" : "Trukmė",
+    "Volume" : "Garsis",
+    "Mute" : "Nutildyti",
+    "Exit fullscreen" : "Išeiti iš viso ekrano",
+    "Settings" : "Nustatymai",
+    "Speed" : "Greitis",
+    "Normal" : "Normalus",
+    "Start" : "Pradėti",
+    "End" : "Pabaiga",
+    "All" : "Visos",
+    "Disabled" : "Išjungta",
+    "Enabled" : "Įjungta"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

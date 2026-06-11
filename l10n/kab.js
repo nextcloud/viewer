@@ -13,8 +13,14 @@ OC.L10N.register(
     "Loading …" : "Asali ...",
     "Warning" : "Alɣu",
     "Confirm" : "Serggeg",
+    "Filters" : "Imsizdigen",
     "Image" : "Tugna",
     "Text" : "Aḍris",
-    "Size" : "Teɣzi"
+    "Size" : "Teɣzi",
+    "Pause" : "Aḥbas",
+    "Settings" : "Iɣewwaren",
+    "All" : "Akk",
+    "Disabled" : "Ittwarermed",
+    "Enabled" : "Yermed"
 },
 "nplurals=2; plural=(n != 1);");

@@ -9,6 +9,10 @@ OC.L10N.register(
     "Save" : "சேமிக்க ",
     "Back" : "பின்னுக்கு",
     "Value" : "Value",
-    "Size" : "அளவு"
+    "Size" : "அளவு",
+    "Play" : "Play",
+    "Pause" : "இடைநிறுத்துக",
+    "Settings" : "அமைப்புகள்",
+    "All" : "எல்லாம்"
 },
 "nplurals=2; plural=(n != 1);");

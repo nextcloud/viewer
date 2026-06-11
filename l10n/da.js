@@ -129,6 +129,8 @@ OC.L10N.register(
     "Menu" : "Menu",
     "Width" : "Bredde",
     "Height" : "Højde",
-    "No preview available for this crop item" : "Ingen forhåndsvisning tilgængelig for dette beskæringselement"
+    "No preview available for this crop item" : "Ingen forhåndsvisning tilgængelig for dette beskæringselement",
+    "Normal" : "Normal",
+    "Enabled" : "Aktiveret"
 },
 "nplurals=2; plural=(n != 1);");

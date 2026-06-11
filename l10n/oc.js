@@ -31,6 +31,16 @@ OC.L10N.register(
     "Size" : "Talha",
     "Position" : "Posicion",
     "Extension" : "Extension",
-    "Menu" : "Menú"
+    "Menu" : "Menú",
+    "Play" : "Aviar",
+    "Pause" : "Pausa",
+    "Duration" : "Durada",
+    "Volume" : "Volum",
+    "Mute" : "Mut",
+    "Settings" : "Paramètres",
+    "Normal" : "Normala",
+    "All" : "Tot",
+    "Disabled" : "Desactivat",
+    "Enabled" : "Activada"
 },
 "nplurals=2; plural=(n > 1);");

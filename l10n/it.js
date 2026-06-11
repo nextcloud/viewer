@@ -130,6 +130,21 @@ OC.L10N.register(
     "Menu" : "Menu",
     "Width" : "Larghezza",
     "Height" : "Altezza",
-    "No preview available for this crop item" : "Nessuna anteprima disponibile per questo articolo"
+    "No preview available for this crop item" : "Nessuna anteprima disponibile per questo articolo",
+    "Restart" : "Ricomincia",
+    "Play" : "Gioca",
+    "Pause" : "Pausa",
+    "Duration" : "Durata",
+    "Volume" : "Volume",
+    "Mute" : "Silenzia",
+    "Exit fullscreen" : "Esci da schermo intero",
+    "Settings" : "Impostazioni",
+    "Speed" : "Velocità",
+    "Normal" : "Normale",
+    "Start" : "Avvia",
+    "End" : "Fine",
+    "All" : "Tutti",
+    "Disabled" : "Disabilitata",
+    "Enabled" : "Abilitata"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
