@@ -10,6 +10,9 @@ OC.L10N.register(
     "Back" : "Kembali",
     "Warning" : "Amaran",
     "Value" : "Nilai",
-    "Size" : "Saiz"
+    "Size" : "Saiz",
+    "Play" : "Main",
+    "Pause" : "Jeda",
+    "Settings" : "Tetapan"
 },
 "nplurals=1; plural=0;");

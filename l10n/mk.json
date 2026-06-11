@@ -103,6 +103,15 @@
     "Saved image size (width x height)" : "Зачувана големина на сликата (ширина x висина)",
     "Note that the selected crop area is lower than the applied resize which might cause quality decrease" : "Избраната област за сечење е помала од применетата промена на големината, што може да предизвика намалување на квалитетот",
     "Actual size (100%)" : "Актуелна големина (100%)",
-    "Fit size" : "Соодветна големина"
+    "Fit size" : "Соодветна големина",
+    "Play" : "Слајдшоу",
+    "Pause" : "Пауза",
+    "Mute" : "Занеми",
+    "Settings" : "Параметри",
+    "Speed" : "Брзина",
+    "End" : "Крај",
+    "All" : "Сите",
+    "Disabled" : "Оневозможено",
+    "Enabled" : "Овозможено"
 },"pluralForm" :"nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;"
 }

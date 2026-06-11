@@ -18,6 +18,15 @@ OC.L10N.register(
     "Text" : "ტექსტი",
     "Size" : "ზომა",
     "Position" : "პოზიცია",
-    "Menu" : "მენიუ"
+    "Menu" : "მენიუ",
+    "Play" : "დაკვრა",
+    "Pause" : "პაუზა",
+    "Exit fullscreen" : "მთელი ეკრანიდან გამოსვლა",
+    "Settings" : "პარამეტრები",
+    "Normal" : "ნორმალური",
+    "End" : "დამთავრება",
+    "All" : "ყველა",
+    "Disabled" : "არაა მოქმედი",
+    "Enabled" : "მოქმედია"
 },
 "nplurals=2; plural=(n!=1);");

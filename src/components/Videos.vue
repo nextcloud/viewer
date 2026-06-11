@@ -48,6 +48,7 @@ import logger from '../services/logger.js'
 import { findLivePhotoPeerFromName } from '../utils/livePhotoUtils'
 import { getPreviewIfAny } from '../utils/previewUtils'
 import { preloadMedia } from '../services/mediaPreloader.js'
+import { plyrTranslations } from '../utils/plyrTranslations'
 
 const VuePlyr = () => import(/* webpackChunkName: 'plyr' */'@skjnldsv/vue-plyr')
 
@@ -88,6 +89,7 @@ export default {
 				blankVideo,
 				controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
 				loadSprite: false,
+				i18n: plyrTranslations,
 				fullscreen: {
 					iosNative: true,
 				},

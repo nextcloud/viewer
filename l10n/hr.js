@@ -130,6 +130,18 @@ OC.L10N.register(
     "Menu" : "Izbornik",
     "Width" : "Širina",
     "Height" : "Visina",
-    "No preview available for this crop item" : "Nema dostupnog pregleda za ovu izrezanu stavku."
+    "No preview available for this crop item" : "Nema dostupnog pregleda za ovu izrezanu stavku.",
+    "Play" : "Reprodukcija",
+    "Pause" : "Pauza",
+    "Duration" : "Trajanje",
+    "Mute" : "Utišaj",
+    "Settings" : "Postavke",
+    "Speed" : "Brzina",
+    "Normal" : "Normalno",
+    "Start" : "Pokreni",
+    "End" : "Završetak",
+    "All" : "Sve",
+    "Disabled" : "Onemogućeno",
+    "Enabled" : "Omogućeno"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

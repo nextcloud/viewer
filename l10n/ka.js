@@ -24,6 +24,16 @@ OC.L10N.register(
     "Text" : "Text",
     "Size" : "Size",
     "Position" : "Position",
-    "Menu" : "Menu"
+    "Menu" : "Menu",
+    "Play" : "Play",
+    "Duration" : "Duration",
+    "Mute" : "Mute",
+    "Settings" : "ოფციები",
+    "Normal" : "Normal",
+    "Start" : "Start",
+    "End" : "End",
+    "All" : "All",
+    "Disabled" : "Disabled",
+    "Enabled" : "Enabled"
 },
 "nplurals=2; plural=(n!=1);");

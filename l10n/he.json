@@ -33,6 +33,17 @@
     "Name is required." : "נדרש שם.",
     "Quality" : "איכות",
     "Menu" : "תפריט",
-    "Height" : "גובה"
+    "Height" : "גובה",
+    "Play" : "נגן",
+    "Pause" : "השהה",
+    "Duration" : "משך",
+    "Settings" : "הגדרות",
+    "Speed" : "מהירות",
+    "Normal" : "רגיל",
+    "Start" : "התחלה",
+    "End" : "סיום",
+    "All" : "הכול",
+    "Disabled" : "מושבת",
+    "Enabled" : "מופעל"
 },"pluralForm" :"nplurals=3; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: 2;"
 }

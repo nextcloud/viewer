@@ -16,6 +16,13 @@ OC.L10N.register(
     "Undo" : "Disfacer",
     "Custom" : "Personalisate",
     "Size" : "Dimension",
-    "Menu" : "Menu"
+    "Menu" : "Menu",
+    "Play" : "Reproducer",
+    "Pause" : "Pausar",
+    "Settings" : "Configurationes",
+    "Start" : "Initio",
+    "End" : "Fin",
+    "All" : "Tote",
+    "Enabled" : "Activate"
 },
 "nplurals=2; plural=(n != 1);");

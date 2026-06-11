@@ -130,6 +130,22 @@ OC.L10N.register(
     "Menu" : "Menu",
     "Width" : "Breedte",
     "Height" : "Hoogte",
-    "No preview available for this crop item" : "Geen voorbeeld beschikbaar voor dit bijsnij item"
+    "No preview available for this crop item" : "Geen voorbeeld beschikbaar voor dit bijsnij item",
+    "Restart" : "Restart",
+    "Play" : "Spelen",
+    "Pause" : "Pauze",
+    "Current time" : "Huidige tijd",
+    "Duration" : "Duur",
+    "Volume" : "Volume",
+    "Mute" : "Dempen",
+    "Exit fullscreen" : "Terug uit volledig scherm",
+    "Settings" : "Instellingen",
+    "Speed" : "Snelheid",
+    "Normal" : "Normaal",
+    "Start" : "Start",
+    "End" : "Einde",
+    "All" : "Alle",
+    "Disabled" : "Uitgeschakeld",
+    "Enabled" : "Ingeschakeld"
 },
 "nplurals=2; plural=(n != 1);");
