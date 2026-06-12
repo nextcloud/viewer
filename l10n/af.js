@@ -26,6 +26,10 @@ OC.L10N.register(
     "Size" : "Grootte",
     "Position" : "Posisie",
     "Quality" : "Kwaliteit",
-    "Menu" : "Kieslys"
+    "Menu" : "Kieslys",
+    "Settings" : "Instellings",
+    "Start" : "Begin",
+    "End" : "Einde",
+    "All" : "Alle"
 },
 "nplurals=2; plural=(n != 1);");

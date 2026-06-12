@@ -124,6 +124,18 @@ OC.L10N.register(
     "Menu" : "Menú",
     "Width" : "Amplada",
     "Height" : "Alçada",
-    "No preview available for this crop item" : "No hi ha cap previsualització disponible per a aquest element retallat"
+    "No preview available for this crop item" : "No hi ha cap previsualització disponible per a aquest element retallat",
+    "Play" : "Joguina",
+    "Pause" : "Posa en pausa",
+    "Volume" : "Volum",
+    "Mute" : "Silencia",
+    "Settings" : "Paràmetres",
+    "Speed" : "Velocitat",
+    "Normal" : "Normal",
+    "Start" : "Inici",
+    "End" : "Final",
+    "All" : "Totes",
+    "Disabled" : "Inhabilitat",
+    "Enabled" : "Habilitat"
 },
 "nplurals=2; plural=(n != 1);");

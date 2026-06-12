@@ -24,8 +24,13 @@ OC.L10N.register(
     "Size" : "Tamaño",
     "Position" : "Posición",
     "Menu" : "Menú",
+    "Play" : "Reproducir",
+    "Pause" : "Pausar",
+    "Settings" : "Configuración",
     "Normal" : "Normal",
     "End" : "Fin",
+    "All" : "Todos",
+    "Disabled" : "Deshabilitado",
     "Enabled" : "Habilitado"
 },
 "nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");
