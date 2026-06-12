@@ -124,6 +124,20 @@ OC.L10N.register(
     "Menu" : "القائمة ",
     "Width" : "العرض",
     "Height" : "الطول",
-    "No preview available for this crop item" : "لا توجد معاينة لهذا العنصر المقصوص"
+    "No preview available for this crop item" : "لا توجد معاينة لهذا العنصر المقصوص",
+    "Restart" : "إعادة التشغيل",
+    "Play" : "تشغيل",
+    "Pause" : "إيقاف",
+    "Current time" : "الوقت الحالي",
+    "Duration" : "المُدَّة",
+    "Volume" : "عُلُوُ الصّوت",
+    "Mute" : "كتم الصوت",
+    "Settings" : "الإعدادات",
+    "Speed" : "السرعة",
+    "Start" : "ابدأ",
+    "End" : "النهاية",
+    "All" : "الكل",
+    "Disabled" : "مُعطّل",
+    "Enabled" : "مُفعّل"
 },
 "nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;");

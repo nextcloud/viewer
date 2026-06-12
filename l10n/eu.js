@@ -135,12 +135,15 @@ OC.L10N.register(
     "Pause" : "Gelditu",
     "Current time" : "Uneko ordua",
     "Duration" : "Iraupena",
+    "Volume" : "Bolumena",
     "Mute" : "Isilarazi",
     "Settings" : "Ezarpenak",
     "Speed" : "Abiadura",
     "Normal" : "Normala",
     "Start" : "Hasi",
     "End" : "Amaiera",
+    "All" : "Denak",
+    "Disabled" : "Desgaituta",
     "Enabled" : "Gaituta"
 },
 "nplurals=2; plural=(n != 1);");
