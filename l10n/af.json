@@ -24,6 +24,10 @@
     "Size" : "Grootte",
     "Position" : "Posisie",
     "Quality" : "Kwaliteit",
-    "Menu" : "Kieslys"
+    "Menu" : "Kieslys",
+    "Settings" : "Instellings",
+    "Start" : "Begin",
+    "End" : "Einde",
+    "All" : "Alle"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

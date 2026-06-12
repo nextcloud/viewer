@@ -138,11 +138,14 @@ OC.L10N.register(
     "Duration" : "Durée",
     "Volume" : "Volume",
     "Mute" : "Mettre en sourdine",
+    "Exit fullscreen" : "Quitter le plein écran",
     "Settings" : "Paramètres",
     "Speed" : "Vitesse",
     "Normal" : "Normale",
     "Start" : "Démarrer",
     "End" : "Arrivée",
+    "All" : "Tout",
+    "Disabled" : "Désactivé",
     "Enabled" : "Activé"
 },
 "nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;");

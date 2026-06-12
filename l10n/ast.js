@@ -112,6 +112,17 @@ OC.L10N.register(
     "Actual size (100%)" : "Tamañu actual (100%)",
     "Fit size" : "Axustar el tamañu",
     "Menu" : "Menú",
-    "Height" : "Altor"
+    "Height" : "Altor",
+    "Play" : "Reproducir",
+    "Pause" : "Posar",
+    "Current time" : "Hora actual",
+    "Duration" : "Duración",
+    "Volume" : "Volume",
+    "Exit fullscreen" : "Colar de la pantalla completa",
+    "Settings" : "Configuración",
+    "Normal" : "Normal",
+    "All" : "Too",
+    "Disabled" : "Desactivóse",
+    "Enabled" : "Activóse"
 },
 "nplurals=2; plural=(n != 1);");

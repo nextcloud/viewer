@@ -126,11 +126,14 @@ OC.L10N.register(
     "Duration" : "Kesto",
     "Volume" : "Äänenvoimakkuus",
     "Mute" : "Mykistä",
+    "Exit fullscreen" : "Poistu koko näytön tilasta",
     "Settings" : "Asetukset",
     "Speed" : "Nopeus",
     "Normal" : "Normaali",
     "Start" : "Alku",
     "End" : "Loppu",
+    "All" : "Kaikki",
+    "Disabled" : "Pois käytöstä",
     "Enabled" : "Käytössä"
 },
 "nplurals=2; plural=(n != 1);");

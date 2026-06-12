@@ -10,6 +10,12 @@ OC.L10N.register(
     "Back" : "পেছনে যাও",
     "Reset" : "পূণঃনির্ধানণ",
     "Warning" : "সতর্কবাণী",
-    "Size" : "আকার"
+    "Size" : "আকার",
+    "Play" : "বাজাও",
+    "Pause" : "বিরতি",
+    "Settings" : "সেটিংস",
+    "All" : "সবাই",
+    "Disabled" : "অকার্যকর",
+    "Enabled" : "কার্যকর"
 },
 "nplurals=2; plural=(n != 1);");
