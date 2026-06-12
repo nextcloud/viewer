@@ -16,6 +16,11 @@ OC.L10N.register(
     "Undo" : "Dadwneud",
     "Custom" : "Cyfaddas",
     "Size" : "Maint",
-    "Normal" : "Arferol"
+    "Play" : "Chwarae",
+    "Pause" : "Seibio",
+    "Duration" : "Hyd",
+    "Settings" : "Gosodiadau",
+    "Normal" : "Arferol",
+    "All" : "Popeth"
 },
 "nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;");

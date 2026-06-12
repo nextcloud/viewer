@@ -12,6 +12,12 @@ OC.L10N.register(
     "Warning" : "Xəbərdarlıq",
     "Confirm" : "Təsdiq edin",
     "Size" : "Həcm",
-    "Menu" : "Menyu"
+    "Menu" : "Menyu",
+    "Play" : "Oxu",
+    "Pause" : "Ara ver",
+    "Settings" : "Quraşdırmalar",
+    "All" : "Hamısı",
+    "Disabled" : "Dayandırılıb",
+    "Enabled" : "İşə salınıb"
 },
 "nplurals=2; plural=(n != 1);");

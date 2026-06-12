@@ -128,7 +128,19 @@
     "Width" : "Bredde",
     "Height" : "Højde",
     "No preview available for this crop item" : "Ingen forhåndsvisning tilgængelig for dette beskæringselement",
+    "Play" : "Afspil",
+    "Pause" : "Pause",
+    "Current time" : "Nuværende tid",
+    "Duration" : "Varighed",
+    "Volume" : "Lydstyrke",
+    "Mute" : "Mute",
+    "Exit fullscreen" : "Luk fuldskærm",
+    "Settings" : "Indstillinger",
+    "Speed" : "Hastighed",
     "Normal" : "Normal",
+    "End" : "Stop",
+    "All" : "Alle",
+    "Disabled" : "Deaktiveret",
     "Enabled" : "Aktiveret"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
