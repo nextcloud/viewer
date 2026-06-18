@@ -5,6 +5,7 @@ OC.L10N.register(
     "Cancel" : "අවලංගු කරන්න",
     "Edit" : "සංස්කරණය",
     "Download" : "බාගන්න",
+    "Delete" : "Delete",
     "Name" : "නම",
     "Save" : "සුරකින්න",
     "Back" : "ආපසු",
