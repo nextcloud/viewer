@@ -120,6 +120,7 @@ OC.L10N.register(
     "Duration" : "Időtartam",
     "Volume" : "Hangerő",
     "Mute" : "Némítás",
+    "Exit fullscreen" : "Teljes képernyő bezárása",
     "Settings" : "Beállítások",
     "Speed" : "Sebesség",
     "Normal" : "Normális",

@@ -5,6 +5,7 @@ OC.L10N.register(
     "Download" : "Escargar",
     "Delete" : "Borrar",
     "Name" : "Nombre",
+    "Save" : "Save",
     "Back" : "Dezaga",
     "Size" : "Grandario",
     "Settings" : "Configuración",
