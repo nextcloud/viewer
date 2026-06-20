@@ -152,6 +152,7 @@ OC.L10N.register(
     "Player for {title}" : "Reprodutor para {title}",
     "Captions" : "Legendas",
     "Settings" : "Configurações",
+    "PIP" : "PIP (Imagem na Imagem)",
     "Go back to previous menu" : "Voltar ao menu anterior",
     "Speed" : "Velocidade",
     "Normal" : "Normal",
