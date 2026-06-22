@@ -133,23 +133,41 @@ export function genFileInfo(obj: FileStat): FileInfo {
 	Object.keys(obj).forEach(key => {
 		const data = obj[key]
 
+		// Skip structured DAV sub-trees that are not scalar file metadata
+		// (e.g. nc:system-tags). Flattening them would camelCase the parsed
+		// XML-attribute keys (prefixed with "@" by the WebDAV parser) into
+		// invalid attribute names like "@canAssign", which crash v-bind /
+		// setAttribute on Firefox and Safari. See richdocuments#5490.
+		if (key === 'system-tags') {
+			return
+		}
+
+		const ccKey = camelcase(key)
+
+		// Never expose XML-attribute artifacts: the WebDAV parser prefixes
+		// element attributes with "@", which camelcase preserves, yielding
+		// invalid DOM qualified names that throw in setAttribute.
+		if (ccKey.startsWith('@')) {
+			return
+		}
+
 		// flatten object if any
 		if (!!data && typeof data === 'object' && !Array.isArray(data)) {
 			Object.assign(fileInfo, genFileInfo(data))
 		} else {
 			// format key and add it to the fileInfo
 			if (data === 'false') {
-				fileInfo[camelcase(key)] = false
+				fileInfo[ccKey] = false
 			} else if (data === 'true') {
-				fileInfo[camelcase(key)] = true
+				fileInfo[ccKey] = true
 			} else {
 				// preserve string typed properties as string (FileStat interface in webdav)
 				const stringTypedProperties = ['filename', 'basename', 'owner-id']
 				if (stringTypedProperties.includes(key)) {
-					fileInfo[camelcase(key)] = String(data)
+					fileInfo[ccKey] = String(data)
 					return
 				}
-				fileInfo[camelcase(key)] = isNumber(data)
+				fileInfo[ccKey] = isNumber(data)
 					? Number(data)
 					: data
 			}
