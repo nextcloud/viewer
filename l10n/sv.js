@@ -135,6 +135,7 @@ OC.L10N.register(
     "Play" : "Spela",
     "Pause" : "Pausa",
     "Duration" : "Varaktighet",
+    "Volume" : "Volym",
     "Mute" : "Tyst",
     "Exit fullscreen" : "Avsluta helskärm",
     "Settings" : "Inställningar",
