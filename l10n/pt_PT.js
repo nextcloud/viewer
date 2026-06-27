@@ -107,6 +107,7 @@ OC.L10N.register(
     "Play" : "Reproduzir",
     "Pause" : "Pausar",
     "Duration" : "Duração",
+    "Mute" : "Desativar microfone",
     "Exit fullscreen" : "Sair de ecrã completo",
     "Settings" : "Definições",
     "Speed" : "velocidade",
