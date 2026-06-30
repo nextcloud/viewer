@@ -132,6 +132,7 @@ OC.L10N.register(
     "No preview available for this crop item" : "Ingen forhåndsvisning tilgængelig for dette beskæringselement",
     "Play" : "Afspil",
     "Pause" : "Pause",
+    "{currentTime} of {duration}" : "{currentTime} af {duration}",
     "Current time" : "Nuværende tid",
     "Duration" : "Varighed",
     "Volume" : "Lydstyrke",
