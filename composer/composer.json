@@ -4,7 +4,7 @@
 		"vendor-dir": ".",
 		"optimize-autoloader": true,
 		"classmap-authoritative": true,
-		"autoloader-suffix": "Viewer",
+		"autoloader-suffix": "Viewer"
 	},
 	"autoload": {
 		"psr-4": {
