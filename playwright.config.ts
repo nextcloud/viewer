@@ -12,12 +12,19 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:8081'
 export default defineConfig({
 	testDir: './playwright',
 
+	// Files run in parallel (specs isolate by createRandomUser()), but tests
+	// within a file stay ordered — the stateful viewer flows depend on it, and
+	// full within-file parallelism overwhelms the single shared test container.
 	fullyParallel: false,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	workers: 1,
+	workers: 4,
 
 	reporter: process.env.CI ? [['blob'], ['dot'], ['github']] : 'html',
+
+	// The Cypress suite waited up to 10s for file-list rows; keep that budget so
+	// slower preview/DAV responses under parallel load don't flake assertions.
+	expect: { timeout: 10000 },
 
 	use: {
 		baseURL: baseURL + '/index.php/',
