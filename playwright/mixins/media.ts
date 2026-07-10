@@ -27,8 +27,10 @@ import {
  * @param fileName the media file to upload and test against
  * @param mimeType the media mime type
  */
-function mediaTest(type: 'video' | 'audio', fileName: string, mimeType: string) {
+function mediaTest(type: 'video' | 'audio', fileName: string, mimeType: string, skipReason?: string) {
 	test.describe.serial(`Open ${fileName} in viewer`, () => {
+		test.skip(!!skipReason, skipReason)
+
 		let page: Page
 		let user: User
 
@@ -78,9 +80,10 @@ function mediaTest(type: 'video' | 'audio', fileName: string, mimeType: string) 
  *
  * @param fileName the video to upload and test against
  * @param mimeType the video mime type
+ * @param skipReason if set, the whole group is skipped with this reason
  */
-export function videoTest(fileName: string, mimeType: string) {
-	mediaTest('video', fileName, mimeType)
+export function videoTest(fileName: string, mimeType: string, skipReason?: string) {
+	mediaTest('video', fileName, mimeType, skipReason)
 }
 
 /**

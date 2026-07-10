@@ -45,8 +45,9 @@ function naughtyFileName(realName: string): string {
  * @param file the fixture file to upload
  * @param mimeType the fixture mime type
  * @param sidebar whether to also exercise the sidebar
+ * @param skipReason if set, the whole group is skipped with this reason
  */
-export function oddnameTest(file: string, mimeType: string, sidebar = false) {
+export function oddnameTest(file: string, mimeType: string, sidebar = false, skipReason?: string) {
 	const placedName = naughtyFileName(file)
 	const folderName = 'Nextcloud "%27%22%60%25%21%23" >`⛰️<' + file + "><` e*'rocks!#?#%~"
 
@@ -62,6 +63,8 @@ export function oddnameTest(file: string, mimeType: string, sidebar = false) {
 	}
 
 	test.describe.serial(`Open ${file} in viewer with a naughty name ${sidebar ? 'with sidebar' : ''}`, () => {
+		test.skip(!!skipReason, skipReason)
+
 		let page: Page
 		let user: User
 
