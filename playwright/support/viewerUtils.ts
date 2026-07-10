@@ -96,5 +96,7 @@ export async function expectViewerLoaded(page: Page): Promise<void> {
 	const viewer = getViewer(page)
 	await expect(viewer).toBeVisible()
 	await expect(viewer).toHaveClass(/modal-mask/)
-	await expect(viewer).not.toHaveClass(/icon-loading/)
+	// Generating the preview of a large image (image.png is 15 MB) can take a
+	// while under parallel CPU load, so give the loading state room to clear.
+	await expect(viewer).not.toHaveClass(/icon-loading/, { timeout: 30000 })
 }

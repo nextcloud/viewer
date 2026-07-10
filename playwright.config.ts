@@ -18,13 +18,13 @@ export default defineConfig({
 	fullyParallel: false,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	workers: 4,
+	workers: 2,
 
 	reporter: process.env.CI ? [['blob'], ['dot'], ['github']] : 'html',
 
-	// The Cypress suite waited up to 10s for file-list rows; keep that budget so
-	// slower preview/DAV responses under parallel load don't flake assertions.
-	expect: { timeout: 10000 },
+	// The Cypress suite waited up to 10s for file-list rows; bump it further so
+	// slower list renders / DAV responses under parallel load don't flake.
+	expect: { timeout: 15000 },
 
 	use: {
 		baseURL: baseURL + '/index.php/',
