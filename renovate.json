@@ -34,11 +34,10 @@
   },
   "packageRules": [
     {
-      "groupName": "cypress",
+      "groupName": "playwright",
       "matchPackageNames": [
-        "/^@cypress//",
-        "/cypress/",
-        "/eslint-plugin-cypress/"
+        "/^@playwright//",
+        "/playwright/"
       ]
     },
     {
