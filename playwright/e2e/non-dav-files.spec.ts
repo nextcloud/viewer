@@ -15,7 +15,6 @@ import {
 	getMenuToggle,
 	getNextButton,
 	getPrevButton,
-	getViewer,
 	getViewerName,
 } from '../support/viewerUtils.ts'
 

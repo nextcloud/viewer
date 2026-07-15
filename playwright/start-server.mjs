@@ -12,14 +12,18 @@ import {
 	waitOnNextcloud,
 } from '@nextcloud/e2e-test-server/docker'
 
+// Keep the event loop alive until Playwright signals shutdown; clearing this is
+// what lets the process exit naturally (no process.exit needed).
+const keepAlive = setInterval(() => { /* keep the event loop alive */ }, 60000)
+
 async function stop() {
 	process.stderr.write('Stopping Nextcloud server…\n')
+	clearInterval(keepAlive)
 	// Only tear down the container in CI; locally we leave it running so the
 	// next test run can reuse it without a slow cold start.
 	if (process.env.CI) {
 		await stopNextcloud()
 	}
-	process.exit(0)
 }
 
 process.on('SIGTERM', stop)
@@ -39,8 +43,3 @@ await runExec(['php', '-r', '$db = new SQLite3("data/owncloud.db");$db->busyTime
 await runExec(['php', 'cron.php'])
 
 process.stdout.write('Nextcloud ready at http://localhost:8081\n')
-
-// Keep the process alive so Playwright's gracefulShutdown can signal us.
-while (true) {
-	await new Promise((resolve) => setTimeout(resolve, 5000))
-}
