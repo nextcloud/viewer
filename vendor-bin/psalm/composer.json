@@ -1,7 +1,7 @@
 {
 	"require-dev": {
 		"vimeo/psalm": "^6.14",
-		"nextcloud/ocp": "dev-master"
+		"nextcloud/ocp": "dev-stable34"
 	},
 	"config": {
 		"platform": {
