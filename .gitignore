@@ -1,9 +1,6 @@
 # SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# We do not ship the Roboto font files (only needed for Cypress) - but we need to ship the other font files
-css/fonts/roboto-*
-
 .DS_Store
 node_modules/
 npm-debug.log*
@@ -20,14 +17,20 @@ yarn-error.log*
 
 .marginalia
 
-build/
-coverage/
-
+# PHP tooling
 vendor
 .php_cs.cache
+.php-cs-fixer.cache
+
+build/
+coverage/
+*.orig
+
+# We do not ship the Roboto font files (only needed for Playwright) - but we need to ship the other font files
+css/fonts/roboto-*
+js/*roboto*
 
 # Playwright files
-js/*roboto*
 playwright-report/
 test-results/
 blob-report/
@@ -35,4 +38,3 @@ playwright/.cache/
 
 # RelativeCI webpack bundle stats
 webpack-stats.json
-*.orig
