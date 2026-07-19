@@ -134,6 +134,7 @@ OC.L10N.register(
     "Restart" : "Επανεκκίνηση",
     "Play" : "Αναπαραγωγή",
     "Pause" : "Παύση",
+    "{currentTime} of {duration}" : "{currentTime} από {duration}",
     "Current time" : "Τρέχουσα ώρα",
     "Duration" : "Διάρκεια",
     "Volume" : "Ένταση",
