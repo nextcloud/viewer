@@ -49,7 +49,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 3.4.1
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
-	- version: 8.37.0
+	- version: 8.40.0
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue-select
 	- version: 3.26.0
@@ -79,10 +79,10 @@ This file is generated from multiple sources. Included packages:
 	- version: 1.1.6
 	- license: MIT
 - linkify-string
-	- version: 4.3.2
+	- version: 4.3.3
 	- license: MIT
 - linkifyjs
-	- version: 4.3.2
+	- version: 4.3.3
 	- license: MIT
 - md5
 	- version: 2.3.0
