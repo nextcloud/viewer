@@ -1240,7 +1240,7 @@ export default defineComponent({
 		performDownload() {
 			logger.debug('Performing download', { file: this.currentFile })
 			const path = this.currentFile.source ?? this.currentFile.davPath
-			if(!path) {
+			if (!path) {
 				logger.debug('File path undefined; aborting download', { file: this.currentFile })
 				return
 			}
