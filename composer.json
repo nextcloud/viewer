@@ -28,6 +28,7 @@
 		"psalm:fix": "psalm --alter --issues=InvalidReturnType,InvalidNullableReturnType,MissingParamType,InvalidFalsableReturnType"
 	},
 	"require-dev": {
-		"bamarni/composer-bin-plugin": "^1.8"
+		"bamarni/composer-bin-plugin": "^1.8",
+		"nextcloud/ocp": "dev-master"
 	}
 }
