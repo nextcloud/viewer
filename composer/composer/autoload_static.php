@@ -31,7 +31,6 @@ class ComposerStaticInitViewer {
 			$loader->prefixLengthsPsr4 = ComposerStaticInitViewer::$prefixLengthsPsr4;
 			$loader->prefixDirsPsr4 = ComposerStaticInitViewer::$prefixDirsPsr4;
 			$loader->classMap = ComposerStaticInitViewer::$classMap;
-
 		}, null, ClassLoader::class);
 	}
 }
