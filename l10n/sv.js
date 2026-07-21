@@ -134,6 +134,8 @@ OC.L10N.register(
     "Restart" : "Starta om",
     "Play" : "Spela upp",
     "Pause" : "Pausa",
+    "{currentTime} of {duration}" : "{currentTime} av {duration}",
+    "Current time" : "Aktuell tid",
     "Duration" : "Varaktighet",
     "Volume" : "Volym",
     "Mute" : "Stäng av ljudet",
