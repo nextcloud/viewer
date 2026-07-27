@@ -88,6 +88,8 @@ import { findLivePhotoPeerFromFileId } from '../utils/livePhotoUtils'
 import { getDavPath } from '../utils/fileUtils'
 import { preloadMedia } from '../services/mediaPreloader'
 
+import { loadState } from '@nextcloud/initial-state'
+
 Vue.use(AsyncComputed)
 
 export default {
@@ -117,6 +119,7 @@ export default {
 			pinchDistance: 0,
 			pinchStartZoomRatio: 1,
 			pointerCache: [],
+			disablePreview: loadState(appName, 'disable_preview', false)
 		}
 	},
 
@@ -178,6 +181,11 @@ export default {
 			// Load the raw gif instead of the static preview
 			if (this.mime === 'image/gif') {
 				return this.src
+			}
+
+			// If disablePreview is set in config.php then return the original file source
+			if(this.disablePreview) {
+				return this.src;
 			}
 
 			// If there is no preview and we have a direct source
