@@ -127,6 +127,7 @@ OC.L10N.register(
     "No preview available for this crop item" : "No hi ha cap previsualització disponible per a aquest element retallat",
     "Play" : "Joguina",
     "Pause" : "Posa en pausa",
+    "{currentTime} of {duration}" : "{currentTime} de {duration}",
     "Volume" : "Volum",
     "Mute" : "Silencia",
     "Settings" : "Paràmetres",
