@@ -180,6 +180,7 @@ import Vue, { defineComponent } from 'vue'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
 import { File as NcFile, Node, davRemoteURL, davRootPath, davGetRootPath, sortNodes } from '@nextcloud/files'
+import { defaultRemoteURL, getRootPath } from '@nextcloud/files/dav'
 import { showError } from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
 
@@ -1157,14 +1158,18 @@ export default defineComponent({
 			try {
 				const fileid = this.currentFile.fileid
 				const url = this.currentFile.source ?? this.currentFile.davPath
+				const isDavResource = url.includes('remote.php/dav')
 
 				// Fake node to emit the event until Viewer is migrated to the new Node API.
+				// The node source must stay un-encoded (like the nodes built elsewhere in
+				// this file) as consumers of the event compare it against the store, which
+				// keeps sources decoded. The request below still uses the encoded `url`.
 				const node = new NcFile({
-					source: url,
+					source: isDavResource ? (defaultRemoteURL + getRootPath() + this.currentFile.filename) : url,
 					id: fileid,
 					mime: this.currentFile.mime,
 					owner: this.currentFile.ownerId,
-					root: url.includes('remote.php/dav') ? davGetRootPath() : undefined,
+					root: isDavResource ? davGetRootPath() : undefined,
 				})
 
 				await axios.delete(url)
