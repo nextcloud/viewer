@@ -69,7 +69,11 @@ async function execAction({ nodes, view, folder }): Promise<boolean|null> {
 		const newQuery = { ...window.OCP?.Files?.Router?.query }
 		delete newQuery.openfile
 		delete newQuery.editing
-		window.OCP?.Files?.Router?.goToRoute(null, window.OCP?.Files?.Router?.params, newQuery)
+		// Replace rather than push: opening the file already replaced the folder's
+		// history entry, so closing has to give it back. Pushing leaves the entry
+		// carrying `openfile` behind, and going back then reopens the file that was
+		// just closed instead of leaving the folder.
+		window.OCP?.Files?.Router?.goToRoute(null, window.OCP?.Files?.Router?.params, newQuery, true)
 	}
 
 	if (window.OCP?.Files?.Router) {
