@@ -1168,14 +1168,18 @@ export default defineComponent({
 			try {
 				const fileid = this.currentFile.fileid
 				const url = this.currentFile.source ?? this.currentFile.davPath
+				const isDavResource = url.includes('remote.php/dav')
 
 				// Fake node to emit the event until Viewer is migrated to the new Node API.
+				// The node source must stay un-encoded (like the nodes built elsewhere in
+				// this file) as consumers of the event compare it against the store, which
+				// keeps sources decoded. The request below still uses the encoded `url`.
 				const node = new NcFile({
-					source: url,
+					source: isDavResource ? (defaultRemoteURL + getRootPath() + this.currentFile.filename) : url,
 					id: fileid,
 					mime: this.currentFile.mime,
 					owner: this.currentFile.ownerId,
-					root: url.includes('remote.php/dav') ? getRootPath() : undefined,
+					root: isDavResource ? getRootPath() : undefined,
 				})
 
 				await axios.delete(url)
