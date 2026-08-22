@@ -18,6 +18,7 @@ OC.L10N.register(
     "Value" : "Verdi",
     "Image" : "Bilete",
     "Upload image" : "Last opp bilete",
+    "Text" : "Tekst",
     "Size" : "Storleik",
     "Play" : "Spel",
     "Pause" : "Pause",
