@@ -324,6 +324,9 @@ export default {
 		 * @param {DragEvent} event the event
 		 */
 		pointerDown(event) {
+			if (!this.canZoom) {
+     			   return
+    			}
 			// New pointer - mouse down or additional touch --> store client coordinates in the pointer cache
 			this.pointerCache.push({ pointerId: event.pointerId, x: event.clientX, y: event.clientY })
 
