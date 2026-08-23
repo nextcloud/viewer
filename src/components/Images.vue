@@ -18,13 +18,14 @@
 				:class="{
 					dragging,
 					loaded,
-					zoomed: zoomRatio > 1
+					zoomed: zoomRatio > 1,
+					canZoom
 				}"
 				:src="data"
 				:style="imgStyle"
 				@error.capture.prevent.stop.once="onFail"
 				@load="updateImgSize"
-				@wheel.stop.prevent="updateZoom"
+				@wheel="updateZoom"
 				@dblclick.prevent="onDblclick"
 				@pointerdown.prevent="pointerDown"
 				@pointerup.prevent="pointerUp"
@@ -36,7 +37,8 @@
 					:class="{
 						dragging,
 						loaded,
-						zoomed: zoomRatio > 1
+						zoomed: zoomRatio > 1,
+						canZoom
 					}"
 					:style="imgStyle"
 					:playsinline="true"
@@ -45,7 +47,7 @@
 					preload="metadata"
 					@canplaythrough="doneLoadingLivePhoto"
 					@loadedmetadata="updateImgSize"
-					@wheel.stop.prevent="updateZoom"
+					@wheel="updateZoom"
 					@error.capture.prevent.stop.once="onFail"
 					@dblclick.prevent="onDblclick"
 					@pointerdown.prevent="pointerDown"
@@ -293,6 +295,8 @@ export default {
 			if (!this.canZoom) {
 				return
 			}
+			event.stopPropagation()
+			event.preventDefault()
 
 			const isZoomIn = event.deltaY < 0
 			const newZoomRatio = isZoomIn
@@ -325,8 +329,8 @@ export default {
 		 */
 		pointerDown(event) {
 			if (!this.canZoom) {
-     			   return
-    			}
+				return
+			}
 			// New pointer - mouse down or additional touch --> store client coordinates in the pointer cache
 			this.pointerCache.push({ pointerId: event.pointerId, x: event.clientX, y: event.clientY })
 
@@ -472,7 +476,6 @@ img, video {
 	background-color: #000;
 	// disable animations during zooming/resize
 	transition: none !important;
-	touch-action: none;
 	// show checkered bg on hover if not currently zooming (but ok if zoomed)
 	&:hover {
 		background-image: linear-gradient(45deg, #{$checkered-color} 25%, transparent 25%),
@@ -494,6 +497,13 @@ img, video {
 	&.dragging {
 		transition: none !important;
 		cursor: move;
+	}
+
+	// only claim wheel/touch gestures when zoom is actually available;
+	// otherwise let the browser scroll the page as normal (canZoom=false
+	// in embedded previews, e.g. the Smart Picker file-link widget)
+	&.canZoom {
+		touch-action: none;
 	}
 }
 
