@@ -85,6 +85,11 @@ export default {
 			type: Number,
 			default: undefined,
 		},
+		// is the component mounted outside of the viewer modal?
+		isEmbedded: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -157,6 +162,11 @@ export default {
 		 * based on the viewer maximum size
 		 */
 		updateHeightWidth() {
+			// let CSS size the element when mounted outside of the viewer modal
+			if (this.isEmbedded) {
+				return
+			}
+
 			const modalWrapper = this.$parent.$el.querySelector('.modal-wrapper')
 			if (modalWrapper && this.naturalHeight > 0 && this.naturalWidth > 0) {
 				const modalContainer = modalWrapper.querySelector('.modal-container')

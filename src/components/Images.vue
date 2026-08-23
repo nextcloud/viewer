@@ -18,7 +18,8 @@
 				:class="{
 					dragging,
 					loaded,
-					zoomed: zoomRatio > 1
+					zoomed: zoomRatio > 1,
+					embedded: isEmbedded
 				}"
 				:src="data"
 				:style="imgStyle"
@@ -36,7 +37,8 @@
 					:class="{
 						dragging,
 						loaded,
-						zoomed: zoomRatio > 1
+						zoomed: zoomRatio > 1,
+						embedded: isEmbedded
 					}"
 					:style="imgStyle"
 					:playsinline="true"
@@ -134,6 +136,10 @@ export default {
 			return this.basename
 		},
 		imgStyle() {
+			// let CSS size the element instead of forcing dimensions in JS
+			if (this.isEmbedded) {
+				return {}
+			}
 			if (this.zoomRatio === 1) {
 				return {
 					height: this.zoomHeight + 'px',
@@ -491,6 +497,14 @@ img, video {
 	&.dragging {
 		transition: none !important;
 		cursor: move;
+	}
+
+	&.embedded {
+		max-width: 100%;
+		max-height: 100%;
+		width: auto;
+		height: auto;
+		object-fit: contain;
 	}
 }
 
