@@ -41,7 +41,7 @@
 		:enable-swipe="canSwipe && !editing"
 		:has-next="hasNext"
 		:has-previous="hasPrevious"
-		:inline-actions="canEdit ? 1 : 0"
+		:inline-actions="(canEdit ? 1 : 0) + (canRotate ? 2 : 0)"
 		:spread-navigation="true"
 		:style="{ width: isSidebarShown ? `${sidebarPosition}px` : null }"
 		:name="currentFile.basename"
@@ -60,6 +60,24 @@
 					<Pencil :size="20" />
 				</template>
 				{{ t('viewer', 'Edit') }}
+			</NcActionButton>
+			<NcActionButton v-if="canRotate"
+				:close-after-click="false"
+				:aria-label="t('viewer', 'Rotate counterclockwise')"
+				@click="rotateLeft">
+				<template #icon>
+					<RotateLeft :size="20" />
+				</template>
+				{{ t('viewer', 'Rotate counterclockwise') }}
+			</NcActionButton>
+			<NcActionButton v-if="canRotate"
+				:close-after-click="false"
+				:aria-label="t('viewer', 'Rotate clockwise')"
+				@click="rotateRight">
+				<template #icon>
+					<RotateRight :size="20" />
+				</template>
+				{{ t('viewer', 'Rotate clockwise') }}
 			</NcActionButton>
 			<!-- Menu items -->
 			<NcActionButton :close-after-click="true"
@@ -148,6 +166,7 @@
 					:is-full-screen="isFullscreen"
 					:is-sidebar-shown="isSidebarShown"
 					:loaded.sync="currentFile.loaded"
+					:rotation="rotation"
 					class="viewer__file viewer__file--active"
 					@update:editing="toggleEditor"
 					@error="currentFailed" />
@@ -207,6 +226,8 @@ import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
 import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
 import Pencil from 'vue-material-design-icons/PencilOutline.vue'
 import DockRight from 'vue-material-design-icons/DockRight.vue'
+import RotateLeft from 'vue-material-design-icons/RotateLeft.vue'
+import RotateRight from 'vue-material-design-icons/RotateRight.vue'
 
 import '@nextcloud/dialogs/style.css'
 
@@ -229,6 +250,8 @@ export default defineComponent({
 		NcActionLink,
 		NcModal,
 		Pencil,
+		RotateLeft,
+		RotateRight,
 	},
 
 	mixins: [isFullscreen, isMobile],
@@ -251,6 +274,7 @@ export default defineComponent({
 			comparisonFile: null,
 			nextFile: {},
 			fileList: [],
+			rotation: 0,
 			sortingConfig: null,
 
 			// States
@@ -331,6 +355,10 @@ export default defineComponent({
 
 		isImage() {
 			return ['image/jpeg', 'image/png', 'image/webp'].includes(this.currentFile?.mime)
+		},
+
+		canRotate() {
+			return this.isImage && !this.comparisonFile
 		},
 
 		sidebarOpenFilePath() {
@@ -1062,7 +1090,16 @@ export default defineComponent({
 		/**
 		 * Open previous available file
 		 */
+		rotateLeft() {
+			this.rotation = ((this.rotation - 90) + 360) % 360
+		},
+
+		rotateRight() {
+			this.rotation = (this.rotation + 90) % 360
+		},
+
 		previous() {
+			this.rotation = 0
 			this.currentIndex--
 			if (this.currentIndex < 0) {
 				this.currentIndex = this.fileList.length - 1
@@ -1078,6 +1115,7 @@ export default defineComponent({
 		 * Open next available file
 		 */
 		next() {
+			this.rotation = 0
 			this.currentIndex++
 			if (this.currentIndex > this.fileList.length - 1) {
 				this.currentIndex = 0
