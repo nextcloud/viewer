@@ -23,6 +23,7 @@ use OCP\Util;
  */
 class LoadViewerScript implements IEventListener {
 	private IInitialState $initialStateService;
+
 	private IPreview $previewManager;
 
 	public function __construct(
@@ -35,14 +36,12 @@ class LoadViewerScript implements IEventListener {
 
 	#[\Override]
 	public function handle(Event $event): void {
-		if (!($event instanceof LoadViewer || $event instanceof LoadAdditionalScriptsEvent)) {
+		if (!$event instanceof LoadViewer && !$event instanceof LoadAdditionalScriptsEvent) {
 			return;
 		}
 
 		Util::addStyle(Application::APP_ID, 'viewer-init');
-		Util::addStyle(Application::APP_ID, 'viewer-main');
 		Util::addInitScript(Application::APP_ID, 'viewer-init');
-		Util::addScript(Application::APP_ID, 'viewer-main', 'files');
 		$this->initialStateService->provideInitialState('enabled_preview_providers', array_keys($this->previewManager->getProviders()));
 	}
 }

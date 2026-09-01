@@ -5,12 +5,9 @@
 
 import type { FileStat } from 'webdav'
 
-import { defaultRemoteURL, defaultRootPath } from '@nextcloud/files/dav'
-import { getLanguage } from '@nextcloud/l10n'
-import { encodePath } from '@nextcloud/paths'
 import { getCurrentUser } from '@nextcloud/auth'
 import camelcase from 'camelcase'
-import { isNumber } from './numberUtil'
+import { isNumber } from './numberUtil.ts'
 
 export interface FileInfo {
 	/** ID of the file (not unique if shared, use source instead) */
@@ -32,9 +29,9 @@ export interface FileInfo {
 	/** File is marked as favorite */
 	isFavorite?: boolean
 	/** File type */
-	type: 'directory'|'file'
+	type: 'directory' | 'file'
 	/** Attributes for file shares */
-	shareAttributes?: string|Array<{value:boolean|string|number|null|object|Array<unknown>, key: string, scope: string}>
+	shareAttributes?: string | Array<{ value: boolean | string | number | null | object | Array<unknown>, key: string, scope: string }>
 	/** Share hidden state since Nextcloud 31 */
 	hideDownload?: boolean
 
@@ -62,6 +59,10 @@ export function extractFilePaths(path: string): [string, string] {
 	const pathSections = path.split('/')
 	const fileName = pathSections[pathSections.length - 1]
 	const dirPath = pathSections.slice(0, pathSections.length - 1).join('/')
+	if (!fileName) {
+		throw new Error(`Invalid path: ${path}. Unable to extract file name.`)
+	}
+
 	return [dirPath, fileName]
 }
 
@@ -84,53 +85,15 @@ export function extractFilePathFromSource(source: string): string {
 }
 
 /**
- * Sorting comparison function
- *
- * @param fileInfo1 file 1 FileInfo
- * @param fileInfo2 file 2 FileInfo
- * @param key key to sort with
- * @param asc sort ascending (default true)
- */
-export function sortCompare(fileInfo1: FileInfo, fileInfo2: FileInfo, key: string, asc = true): number {
-
-	if (fileInfo1.isFavorite && !fileInfo2.isFavorite) {
-		return -1
-	} else if (!fileInfo1.isFavorite && fileInfo2.isFavorite) {
-		return 1
-	}
-
-	// if this is a number, let's sort by integer
-	if (isNumber(fileInfo1[key]) && isNumber(fileInfo2[key])) {
-		const result = Number(fileInfo1[key]) - Number(fileInfo2[key])
-		return asc ? result : -result
-	}
-
-	// else we sort by string, so let's sort directories first
-	if (fileInfo1.type === 'directory' && fileInfo2.type !== 'directory') {
-		return -1
-	} else if (fileInfo1.type !== 'directory' && fileInfo2.type === 'directory') {
-		return 1
-	}
-	// sort by date if key is lastmod
-	if (key === 'lastmod') {
-		const result = new Date(fileInfo1.lastmod ?? 0).getTime() - new Date(fileInfo2.lastmod ?? 0).getTime()
-		return asc ? -result : result
-	}
-	// finally sort by name
-	return asc
-		? fileInfo1[key].toString()?.localeCompare(fileInfo2[key].toString(), getLanguage(), { numeric: true })
-		: -fileInfo1[key].toString()?.localeCompare(fileInfo2[key].toString(), getLanguage(), { numeric: true })
-}
-
-/**
  * Generate a FileInfo object based on the full dav properties
  * It will flatten everything and put all keys to camelCase
+ *
  * @param obj The stat response to convert
  */
 export function genFileInfo(obj: FileStat): FileInfo {
 	const fileInfo = {}
 
-	Object.keys(obj).forEach(key => {
+	Object.keys(obj).forEach((key) => {
 		const data = obj[key]
 
 		// Skip structured DAV sub-trees that are not scalar file metadata
@@ -175,28 +138,4 @@ export function genFileInfo(obj: FileStat): FileInfo {
 	})
 
 	return fileInfo as FileInfo
-}
-
-/**
- * Generate absolute dav remote path of the file
- *
- * @param fileInfo The fileInfo
- * @param fileInfo.filename the file full path
- * @param fileInfo.source the file source if any
- */
-export function getDavPath({ filename, source = '' }: { filename: string, source?: string }): string|null {
-	if (!filename || typeof filename !== 'string') {
-		return null
-	}
-
-	// If we have a source but we're not a dav resource, return null
-	if (source && !source.includes(defaultRootPath)) {
-		return null
-	}
-
-	// Workaround for files with different root like /remote.php/dav
-	if (!filename.startsWith(defaultRootPath)) {
-		filename = `${defaultRootPath}${filename}`
-	}
-	return defaultRemoteURL + encodePath(filename)
 }

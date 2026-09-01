@@ -5,28 +5,14 @@
 
 import type { FileStat, ResponseDataDetailed } from 'webdav'
 
-import { client } from './WebdavClient'
-import { genFileInfo, type FileInfo } from '../utils/fileUtils'
 import { getClient, getDavNameSpaces, getDavProperties } from '@nextcloud/files/dav'
 
 /**
  * Retrieve the files list
- * @param path
- * @param options
- */
-export default async function(path: string, options = {}): Promise<FileInfo> {
-	const response = await client.stat(path, Object.assign({
-		data: getStatData(),
-		details: true,
-	}, options)) as ResponseDataDetailed<FileStat>
-	return genFileInfo(response.data)
-}
-
-/**
- * Retrieve the files list
- * @param origin
- * @param path
- * @param options
+ *
+ * @param origin - The WebDAV base URL of the client to use
+ * @param path - The path of the file to stat
+ * @param options - Additional options passed to the WebDAV stat request
  */
 export async function rawStat(origin: string, path: string, options = {}) {
 	const response = await getClient(origin).stat(path, {
@@ -38,6 +24,9 @@ export async function rawStat(origin: string, path: string, options = {}) {
 	return response.data
 }
 
+/**
+ *
+ */
 function getStatData() {
 	return `<?xml version="1.0"?>
 	<d:propfind ${getDavNameSpaces()}>
