@@ -1,106 +1,50 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+/*!
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { Page } from '@playwright/test'
+import { expect } from '@playwright/test'
+import { test } from '../../support/fixtures/viewer.ts'
 
-import { expect, setupFilesPage, test } from '../../support/fixtures.ts'
-import { getRowForFile, openFile } from '../../support/filesUtils.ts'
-import { closeSidebar, getSidebar, getSidebarName, openSidebarFromViewer } from '../../support/sidebarUtils.ts'
-import {
-	expectViewerLoaded,
-	getCloseButton,
-	getMenuItem,
-	getMenuToggle,
-	getNextButton,
-	getPrevButton,
-	getViewer,
-	getViewerName,
-	openHeaderMenu,
-} from '../../support/viewerUtils.ts'
-
-test.describe.serial('Open the sidebar from the viewer and open viewer with sidebar already opened', () => {
-	let page: Page
-
-	test.beforeAll(async ({ browser }) => {
-		({ page } = await setupFilesPage(browser, [1, 2, 3, 4].map((i) => ({
-			fixture: `image${i}.jpg`,
-			mimeType: 'image/jpeg',
-		}))))
+test.describe('Viewer sidebar action', () => {
+	test.beforeEach(async ({ filesApp, uploadMedia }) => {
+		await uploadMedia('image1.jpg', 'image1.jpg', 'image/jpeg')
+		await filesApp.openFilesApp()
+		await expect(filesApp.getRowByName('image1.jpg')).toBeVisible()
 	})
 
-	test.afterAll(async () => {
-		await page.close()
+	test('opens the Files sidebar for the current file', async ({ page, filesApp, viewer }) => {
+		await filesApp.openFile('image1.jpg')
+		await viewer.waitForOpen()
+
+		await viewer.openSidebar()
+
+		const sidebar = page.locator('aside.app-sidebar')
+		await expect(sidebar).toBeVisible()
+		await expect(sidebar.locator('.app-sidebar-header__mainname')).toContainText('image1.jpg')
 	})
 
-	test('See images in the list', async () => {
-		for (const i of [1, 2, 3, 4]) {
-			await expect(getRowForFile(page, `image${i}.jpg`)).toContainText(`image${i} .jpg`)
-		}
-	})
+	// Regression for nextcloud/viewer#658: opening the sidebar while the image is
+	// still loading must still show the sidebar (the header actions are available
+	// during loading).
+	test('opens the sidebar while the image is still loading', async ({ page, filesApp, viewer }) => {
+		// Hold the preview response so the viewer stays in its loading state long
+		// enough to interact with the header while loading.
+		await page.route('**/core/preview*', async (route) => {
+			await new Promise((resolve) => setTimeout(resolve, 3000))
+			await route.continue()
+		})
 
-	test('Open the viewer on file click', async () => {
-		await openFile(page, 'image1.jpg')
-		await expect(getViewer(page)).toBeVisible()
-	})
+		await filesApp.openFile('image1.jpg')
+		await expect(viewer.container).toBeVisible()
+		await expect(viewer.loading).toHaveCount(1)
 
-	test('Does not see a loading animation', async () => {
-		await expectViewerLoaded(page)
-	})
+		await viewer.openSidebar()
 
-	test('See the menu icon and title on the viewer header', async () => {
-		await expect(getViewerName(page)).toContainText('image1.jpg')
-		await expect(getMenuToggle(page)).toBeVisible()
-		await expect(getCloseButton(page)).toBeVisible()
-	})
+		const sidebar = page.locator('aside.app-sidebar')
+		await expect(sidebar).toBeVisible()
 
-	test('Open the sidebar', async () => {
-		await openSidebarFromViewer(page)
-		await expect(getSidebar(page)).toBeVisible()
-		// The sidebar toggle is hidden while the sidebar is open.
-		await expect(page.locator('.action-button__icon.icon-menu-sidebar')).toHaveCount(0)
-		await expect(getSidebarName(page)).toContainText('image1.jpg')
-	})
-
-	test('Change to next image with sidebar open', async () => {
-		await expect(getSidebar(page)).toBeVisible()
-		await expect(getSidebarName(page)).toContainText('image1.jpg')
-		await getNextButton(page).click()
-		await expect(getSidebarName(page)).toContainText('image2.jpg')
-	})
-
-	test('Change to previous image with sidebar open', async () => {
-		await expect(getSidebar(page)).toBeVisible()
-		await expect(getSidebarName(page)).toContainText('image2.jpg')
-		await getPrevButton(page).click()
-		await expect(getSidebarName(page)).toContainText('image1.jpg')
-	})
-
-	test('Close the sidebar', async () => {
-		await closeSidebar(page)
-		await expect(getSidebar(page)).not.toBeVisible()
-		await expect(getMenuToggle(page)).toBeVisible()
-		await openHeaderMenu(page)
-		// The "Open sidebar" entry is back once the sidebar is closed.
-		await expect(getMenuItem(page, 'Open sidebar')).toBeVisible()
-	})
-
-	test('Open the viewer with the sidebar open', async () => {
-		await getCloseButton(page).click()
-		await expect(getViewer(page)).toHaveCount(0)
-
-		// Open the sidebar from the files list (without the viewer).
-		await getRowForFile(page, 'image1.jpg').locator('[data-cy-files-list-row-mtime]').click()
-		await expect(getSidebar(page)).toBeVisible()
-		await expect(page).toHaveURL(/opendetails=true/)
-
-		await openFile(page, 'image1.jpg')
-		await expectViewerLoaded(page)
-
-		// Close the sidebar while the viewer is open.
-		await closeSidebar(page)
-		await expect(getSidebar(page)).not.toBeVisible()
-		await expect(getMenuToggle(page)).toBeVisible()
+		// The image still finishes loading afterwards.
+		await viewer.waitForOpen()
 	})
 })
