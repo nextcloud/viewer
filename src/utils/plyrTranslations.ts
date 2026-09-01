@@ -66,14 +66,11 @@ export const plyrTranslations: Record<string, string> = {
  */
 export function localizeSpeedLabels(root: ParentNode): void {
 	const formatter = new Intl.NumberFormat(getCanonicalLocale())
-	const speedLabel = (value: number): string =>
-		value === 1 ? t('viewer', 'Normal') : `${formatter.format(value)}×`
+	const speedLabel = (value: number): string => value === 1 ? t('viewer', 'Normal') : `${formatter.format(value)}×`
 
 	// Speed submenu radio items, scoped to the speed panel so we don't touch
 	// quality (e.g. "1080") or captions entries.
-	const items = root.querySelectorAll<HTMLButtonElement>(
-		'.plyr__menu__container [id$="-speed"] [role="menuitemradio"]',
-	)
+	const items = root.querySelectorAll<HTMLButtonElement>('.plyr__menu__container [id$="-speed"] [role="menuitemradio"]')
 	items.forEach((item) => {
 		const value = Number.parseFloat(item.value)
 		if (Number.isNaN(value)) {
@@ -89,7 +86,7 @@ export function localizeSpeedLabels(root: ParentNode): void {
 	// bare "<number>×" form so quality/captions badges are left untouched.
 	root.querySelectorAll<HTMLElement>('.plyr__menu__value').forEach((badge) => {
 		const match = /^(\d+(?:\.\d+)?)×$/.exec((badge.textContent ?? '').trim())
-		if (match) {
+		if (match?.[1]) {
 			badge.textContent = `${formatter.format(Number.parseFloat(match[1]))}×`
 		}
 	})

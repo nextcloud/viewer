@@ -1,76 +1,47 @@
 <!--
-  - SPDX-FileCopyrightText: 2019 Nextcloud GmbH and Nextcloud contributors
+  - SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-
 <template>
-	<!-- Single-file rendering -->
-	<div v-if="el"
-		id="viewer"
-		:data-handler="handlerId">
-		<component :is="currentFile.modal"
-			v-if="!currentFile.failed"
-			:key="uniqueKey(currentFile)"
-			ref="content"
-			:active="true"
-			:can-swipe="false"
-			:can-zoom="false"
-			v-bind="currentFile"
-			:file-list="[currentFile]"
-			:is-full-screen="false"
-			:loaded.sync="currentFile.loaded"
-			:is-sidebar-shown="false"
-			class="viewer__file viewer__file--active"
-			@error="currentFailed" />
-		<Error v-else
-			:name="currentFile.basename" />
-	</div>
-
-	<!-- Modal view rendering -->
-	<NcModal v-else-if="initiated || currentFile.modal"
-		id="viewer"
+	<NcModal
+		ref="modal"
 		:additional-trap-elements="trapElements"
-		:class="modalClass"
 		:clear-view-delay="-1 /* disable fade-out because of accessibility reasons */"
-		:close-button-contained="false"
+		:close-button-outside="true"
 		:dark="true"
-		:light-backdrop="lightBackdrop"
-		:data-handler="handlerId"
-		:enable-slideshow="hasPrevious || hasNext"
-		:slideshow-paused="editing"
-		:enable-swipe="canSwipe && !editing"
-		:has-next="hasNext"
-		:has-previous="hasPrevious"
+		:data-handler="currentHandler?.id"
+		:disable-swipe="!canSwipe && editing"
+		:enable-slideshow="!isComparing && (hasPrevious || hasNext)"
+		:has-next="!isComparing && hasNext"
+		:has-previous="!isComparing && hasPrevious"
 		:inline-actions="canEdit ? 1 : 0"
+		:light-backdrop="lightBackdrop"
+		:name="modalName"
+		:show="!!currentFile"
+		:slideshow-paused="editing"
 		:spread-navigation="true"
 		:style="{ width: isSidebarShown ? `${sidebarPosition}px` : null }"
-		:name="currentFile.basename"
-		class="viewer"
+		class="viewer__modal"
 		size="full"
 		@close="close"
 		@previous="previous"
 		@next="next">
-		<!-- ACTIONS -->
+		<!-- Header actions -->
 		<template #actions>
-			<!-- Inline items -->
-			<NcActionButton v-if="canEdit"
-				:close-after-click="true"
-				@click="onEdit">
+			<!-- Internal edit action, handled by the handler itself -->
+			<NcActionButton
+				v-if="currentHandler?.canEdit && !editing"
+				close-after-click
+				@click="editing = true">
 				<template #icon>
-					<Pencil :size="20" />
+					<PencilIcon :size="20" />
 				</template>
 				{{ t('viewer', 'Edit') }}
 			</NcActionButton>
-			<!-- Menu items -->
-			<NcActionButton :close-after-click="true"
-				@click="toggleFullScreen">
-				<template #icon>
-					<Fullscreen v-if="!isFullscreenMode" :size="20" />
-					<FullscreenExit v-else :size="20" />
-				</template>
-				{{ isFullscreenMode ? t('viewer', 'Exit full screen') : t('viewer', 'Full screen') }}
-			</NcActionButton>
-			<NcActionButton v-if="enableSidebar && sidebarOpenFilePath && !isSidebarShown"
+
+			<!-- Open sidebar for the current file -->
+			<NcActionButton
+				v-if="!isSidebarShown && !!currentFile"
 				close-after-click
 				@click="showSidebar">
 				<template #icon>
@@ -78,1411 +49,853 @@
 				</template>
 				{{ t('viewer', 'Open sidebar') }}
 			</NcActionButton>
-			<NcActionButton v-if="canDownload"
-				:close-after-click="true"
-				@click="onDownload">
-				<template #icon>
-					<Download :size="20" />
-				</template>
-				{{ t('viewer', 'Download') }}
-			</NcActionButton>
-			<NcActionButton v-if="canDelete"
-				:close-after-click="true"
-				@click="onDelete">
-				<template #icon>
-					<Delete :size="20" />
-				</template>
-				{{ t('viewer', 'Delete') }}
-			</NcActionButton>
+
+			<!-- Files actions available for the current file (download, delete, …).
+			     Top-level actions, unless a submenu (e.g. "Set reminder") is open. -->
+			<template v-if="!openedSubmenu">
+				<NcActionButton
+					v-for="action in fileActions"
+					:key="action.id"
+					:is-menu="isValidMenu(action)"
+					:close-after-click="!isValidMenu(action)"
+					@click="onActionClick(action)">
+					<template #icon>
+						<NcIconSvgWrapper :svg="actionIcon(action)" :size="20" />
+					</template>
+					{{ actionLabel(action) }}
+				</NcActionButton>
+			</template>
+
+			<!-- Open submenu: a back entry followed by the parent's children -->
+			<template v-else>
+				<NcActionButton @click="onBackToMenuClick">
+					<template #icon>
+						<ChevronLeft :size="20" />
+					</template>
+					{{ actionLabel(openedSubmenu) }}
+				</NcActionButton>
+				<NcActionButton
+					v-for="action in enabledSubmenuActions[openedSubmenu.id]"
+					:key="action.id"
+					close-after-click
+					@click="handleAction(action)">
+					<template #icon>
+						<NcIconSvgWrapper :svg="actionIcon(action)" :size="20" />
+					</template>
+					{{ actionLabel(action) }}
+				</NcActionButton>
+			</template>
 		</template>
 
-		<div class="viewer__content"
-			:class="contentClass"
-			@click.self.exact="close"
-			@contextmenu="preventContextMenu">
-			<!-- COMPARE FILE -->
-			<div v-if="comparisonFile && !comparisonFile.failed && showComparison" class="viewer__file-wrapper">
-				<component :is="comparisonFile.modal"
-					:key="uniqueKey(comparisonFile)"
-					ref="comparison-content"
-					v-bind="comparisonFile"
-					:active="true"
-					:can-swipe="false"
-					:can-zoom="false"
-					:editing="false"
-					:is-full-screen="isFullscreen"
-					:is-sidebar-shown="isSidebarShown"
-					:loaded.sync="comparisonFile.loaded"
-					class="viewer__file viewer__file--active"
-					@error="comparisonFailed" />
-			</div>
+		<!-- Loading overlay, shown on top of the (mounted but hidden) handler -->
+		<span v-if="loading && !errorString" class="viewer__loading">
+			<NcLoadingIcon :appearance="lightBackdrop ? 'dark' : 'light'" :size="32" />
+		</span>
 
-			<!-- PREVIOUS -->
-			<div v-if="hasPreviousFile"
-				:key="uniqueKey(previousFile)"
-				class="viewer__file-wrapper viewer__file-wrapper--hidden"
-				aria-hidden="true"
-				inert>
-				<component :is="previousFile.modal"
-					v-if="!previousFile.failed"
-					ref="previous-content"
-					v-bind="previousFile"
-					:file-list="fileList"
-					class="viewer__file"
-					@error="previousFailed" />
-				<Error v-else
-					:name="previousFile.basename" />
-			</div>
+		<!-- Error message -->
+		<NcEmptyContent
+			v-else-if="errorString"
+			:name="errorString"
+			:description="t('viewer', 'We were unable to display the requested file.')">
+			<template #icon>
+				<FileAlertOutlineIcon />
+			</template>
+		</NcEmptyContent>
 
-			<!-- CURRENT -->
-			<div :key="uniqueKey(currentFile)" class="viewer__file-wrapper">
-				<component :is="currentFile.modal"
-					v-if="!currentFile.failed"
-					ref="content"
-					v-bind="currentFile"
-					:active="true"
-					:can-swipe.sync="canSwipe"
-					:can-zoom="true"
-					:editing.sync="editing"
-					:file-list="fileList"
-					:is-full-screen="isFullscreen"
-					:is-sidebar-shown="isSidebarShown"
-					:loaded.sync="currentFile.loaded"
-					class="viewer__file viewer__file--active"
-					@update:editing="toggleEditor"
-					@error="currentFailed" />
-				<Error v-else
-					:name="currentFile.basename" />
-			</div>
-
-			<!-- NEXT -->
-			<div v-if="hasNextFile"
-				:key="uniqueKey(nextFile)"
-				class="viewer__file-wrapper viewer__file-wrapper--hidden"
-				aria-hidden="true"
-				inert>
-				<component :is="nextFile.modal"
-					v-if="!nextFile.failed"
-					ref="next-content"
-					v-bind="nextFile"
-					:file-list="fileList"
-					class="viewer__file"
-					@error="nextFailed" />
-				<Error v-else
-					:name="nextFile.basename" />
-			</div>
+		<!--
+			The handler is always mounted while a file is set (only hidden with
+			v-show while loading or on error) so that it can actually load and
+			emit its `loaded` event. It must not share the v-if chain with the
+			loading spinner, otherwise it would never mount and never load.
+		-->
+		<!-- Comparison of two files, rendered side by side -->
+		<div
+			v-if="isComparing"
+			v-show="!loading && !errorString"
+			class="viewer__comparison">
+			<component
+				:is="currentHandler?.tagname"
+				v-if="currentFile"
+				:file="currentFile"
+				:files="[]"
+				:is-sidebar-shown="isSidebarShown"
+				:max-height="height"
+				:max-width="width / 2"
+				:editing="false"
+				@loaded="onLoad"
+				@errored="onError" />
+			<component
+				:is="comparisonHandler?.tagname"
+				v-if="comparisonFile"
+				:file="comparisonFile"
+				:files="[]"
+				:is-sidebar-shown="isSidebarShown"
+				:max-height="height"
+				:max-width="width / 2"
+				:editing="false"
+				@loaded="onLoad"
+				@errored="onError" />
 		</div>
+
+		<!-- Single file view -->
+		<component
+			:is="currentHandler?.tagname"
+			v-else-if="currentFile"
+			v-show="!loading && !errorString"
+			v-model:can-swipe="canSwipe"
+			v-model:editing="editing"
+			:file="currentFile"
+			:files="currentFileList"
+			:is-sidebar-shown="isSidebarShown"
+			:max-height="height"
+			:max-width="width"
+			@loaded="onLoad"
+			@errored="onError" />
 	</NcModal>
+
+	<!-- In-viewer rename dialog: the Files rename action edits the file-list row,
+	     which the viewer does not host, so we rename here instead. -->
+	<NcDialog
+		:open="renameDialogOpen"
+		:name="t('viewer', 'Rename file')"
+		size="small"
+		:buttons="renameButtons"
+		@update:open="renameDialogOpen = $event">
+		<form @submit.prevent="submitRename">
+			<NcTextField
+				v-model="renameValue"
+				:label="t('viewer', 'New name')"
+				label-visible />
+		</form>
+	</NcDialog>
 </template>
 
-<script>
-import Vue, { defineComponent } from 'vue'
+<script setup lang="ts">
+import type { IFile, IFolder, INode, IView } from '@nextcloud/files'
+import type { IFileAction } from '@nextcloud/files'
+import type { IHandler } from '../api_package/index.ts'
+import type { ViewerAPI, ViewerOptions } from '../api_package/viewer.ts'
 
-import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { loadState } from '@nextcloud/initial-state'
-import { File as NcFile, Node, sortNodes } from '@nextcloud/files'
-import { defaultRemoteURL, defaultRootPath, getRootPath } from '@nextcloud/files/dav'
 import { showError } from '@nextcloud/dialogs'
-import axios from '@nextcloud/axios'
-
-import isFullscreen from '@nextcloud/vue/dist/Mixins/isFullscreen.js'
-import isMobile from '@nextcloud/vue/dist/Mixins/isMobile.js'
-
-import { canDownload } from '../utils/canDownload.ts'
-import { extractFilePaths, extractFilePathFromSource } from '../utils/fileUtils.ts'
-import { toggleEditor } from '../files_actions/viewerAction.ts'
-import cancelableRequest from '../utils/CancelableRequest.js'
-import Error from '../components/Error.vue'
-import fetchNode from '../services/FetchFile.ts'
-import File from '../models/file.js'
-import getFileInfo from '../services/FileInfo.ts'
-import getFileList from '../services/FileList.ts'
-import getSortingConfig from '../services/FileSortingConfig.ts'
-import logger from '../services/logger.js'
-import Mime from '../mixins/Mime.js'
-
-import Delete from 'vue-material-design-icons/TrashCanOutline.vue'
-import Download from 'vue-material-design-icons/TrayArrowDown.vue'
-import Fullscreen from 'vue-material-design-icons/Fullscreen.vue'
-import FullscreenExit from 'vue-material-design-icons/FullscreenExit.vue'
-import Pencil from 'vue-material-design-icons/PencilOutline.vue'
+import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
+import { FileType } from '@nextcloud/files'
+import { t } from '@nextcloud/l10n'
+import debounce from 'debounce'
+import { computed, onMounted, onUnmounted, ref, triggerRef, useTemplateRef, watch } from 'vue'
+import NcActionButton from '@nextcloud/vue/components/NcActionButton'
+import NcDialog from '@nextcloud/vue/components/NcDialog'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcModal from '@nextcloud/vue/components/NcModal'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
+import ChevronLeft from 'vue-material-design-icons/ChevronLeft.vue'
 import DockRight from 'vue-material-design-icons/DockRight.vue'
+import FileAlertOutlineIcon from 'vue-material-design-icons/FileAlertOutline.vue'
+import PencilIcon from 'vue-material-design-icons/Pencil.vue'
+import { getHandlers } from '../api_package/index.ts'
+import { useViewerActions } from '../composables/useViewerActions.ts'
+import { getHandlerForFile } from '../helpers/handlerHelper.ts'
+import { fetchFolderContent } from '../services/dav.ts'
+import { logger } from '../services/logger.ts'
+import { renameFile } from '../utils/rename.ts'
 
-import '@nextcloud/dialogs/style.css'
+defineOptions({ name: 'ViewerModal' })
 
-// Dynamic loading
-const NcModal = () => import('@nextcloud/vue/dist/Components/NcModal.js')
-const NcActionLink = () => import('@nextcloud/vue/dist/Components/NcActionLink.js')
-const NcActionButton = () => import('@nextcloud/vue/dist/Components/NcActionButton.js')
+let resizeObserver = null as ResizeObserver | null
+const modal = useTemplateRef<{ $el: HTMLElement }>('modal')
+const height = ref(0)
+const width = ref(0)
 
-export default defineComponent({
-	name: 'Viewer',
+// State
+const loading = ref(true)
+const errorString = ref<string | null>(null)
+// Number of handler components still loading before the spinner is hidden.
+// 1 for a normal open, 2 while comparing two files side by side.
+const pendingLoads = ref(0)
 
-	components: {
-		Delete,
-		DockRight,
-		Download,
-		Error,
-		Fullscreen,
-		FullscreenExit,
-		NcActionButton,
-		NcActionLink,
-		NcModal,
-		Pencil,
-	},
+// Abilities
+const canEdit = ref(true)
+const canSwipe = ref(true)
+const editing = ref(false)
+const lightBackdrop = ref(false)
 
-	mixins: [isFullscreen, isMobile],
+// Sidebar handling
+const sidebarPosition = ref(0)
+const isSidebarShown = computed(() => sidebarPosition.value > 0)
+const trapElements = ref<Element[]>([])
 
-	data() {
-		return {
-			// Reactivity bindings
-			Viewer: OCA.Viewer,
-			handlers: OCA.Viewer.availableHandlers,
+// Current context
+const currentFile = ref<IFile>()
+const currentFileList = ref<IFile[]>([])
+const currentHandler = ref<IHandler>()
+const currentOptions = ref<ViewerOptions>({
+	canLoop: true,
+	onClose: () => {},
+	onNext: () => {},
+	onPrev: () => {},
+	loadMore: () => Promise.resolve([]),
+})
 
-			// Viewer variables
-			components: {},
-			mimeGroups: {},
-			registeredHandlers: {},
+// Comparison context (compare API)
+const comparisonFile = ref<IFile>()
+const comparisonHandler = ref<IHandler>()
+const isComparing = computed(() => !!comparisonFile.value)
 
-			// Files variables
-			currentIndex: 0,
-			previousFile: {},
-			currentFile: {},
-			comparisonFile: null,
-			nextFile: {},
-			fileList: [],
-			sortingConfig: null,
+// Files actions rendered in the viewer menu (download, delete, …), linked to
+// the Files actions and run with the view/folder forwarded by the opener.
+const { actions: fileActions, enabledSubmenuActions, isValidMenu, actionLabel, actionIcon, execAction } = useViewerActions(
+	() => currentFile.value as IFile | undefined,
+	() => currentFileList.value as IFile[],
+	() => currentOptions.value.view as IView | undefined,
+	() => currentOptions.value.folder as IFolder | undefined,
+)
 
-			// States
-			isLoaded: false,
-			initiated: false,
-			editing: false,
+// The parent action whose submenu is currently open in the menu, if any.
+const openedSubmenu = ref<IFileAction | null>(null)
 
-			// cancellable requests
-			cancelRequestFile: () => {},
-			cancelRequestFolder: () => {},
+// Stable Files action ids the viewer handles itself instead of delegating,
+// because their default UI lives on the (hidden) file-list row.
+const RENAME_ACTION_ID = 'rename'
 
-			// Flags
-			sidebarPosition: 0,
-			isSidebarShown: false,
-			isFullscreenMode: false,
-			canSwipe: true,
-			isStandalone: false,
-			theme: null,
-			lightBackdrop: null,
-			root: defaultRemoteURL,
-			handlerId: '',
+// Rename dialog state
+const renameDialogOpen = ref(false)
+const renameValue = ref('')
 
-			trapElements: [],
-		}
-	},
+/**
+ * Handle a click on a menu action: open its submenu if it has one, otherwise
+ * run it.
+ *
+ * @param action - The clicked file action
+ */
+function onActionClick(action: IFileAction) {
+	if (isValidMenu(action)) {
+		openedSubmenu.value = action
+		return
+	}
+	handleAction(action)
+}
 
-	computed: {
-		downloadPath() {
-			return this.currentFile.source ?? this.currentFile.davPath
-		},
-		hasPrevious() {
-			return this.fileList.length > 1
-				&& (this.canLoop || !this.isStartOfList)
-		},
-		hasNext() {
-			return this.fileList.length > 1
-				&& (this.canLoop || !this.isEndOfList)
-		},
-		file() {
-			return this.Viewer.file
-		},
-		fileInfo() {
-			return this.Viewer.fileInfo
-		},
-		comparisonFileInfo() {
-			return this.Viewer.compareFileInfo
-		},
-		files() {
-			return this.Viewer.files
-		},
-		enableSidebar() {
-			return this.Viewer.enableSidebar
-		},
-		el() {
-			return this.Viewer.el
-		},
-		loadMore() {
-			return this.Viewer.loadMore
-		},
-		canLoop() {
-			return this.Viewer.canLoop
-		},
-		isStartOfList() {
-			return this.currentIndex === 0
-		},
-		isEndOfList() {
-			return this.currentIndex === this.fileList.length - 1
-		},
+/**
+ * Go back from a submenu to the top-level menu.
+ */
+function onBackToMenuClick() {
+	openedSubmenu.value = null
+}
 
-		hasPreviousFile() {
-			// Check if empty object
-			return Object.keys(this.previousFile).length > 0
-		},
-		hasNextFile() {
-			// Check if empty object
-			return Object.keys(this.nextFile).length > 0
-		},
+/**
+ * Run a viewer menu action. The rename action is intercepted and handled with
+ * an in-viewer dialog; everything else is delegated to the Files action.
+ *
+ * @param action - The file action to run
+ */
+function handleAction(action: IFileAction) {
+	openedSubmenu.value = null
+	if (action.id === RENAME_ACTION_ID) {
+		openRenameDialog()
+		return
+	}
+	execAction(action)
+}
 
-		isImage() {
-			return ['image/jpeg', 'image/png', 'image/webp'].includes(this.currentFile?.mime)
-		},
-
-		sidebarOpenFilePath() {
-			try {
-				const relativePath = this.currentFile?.davPath?.split(defaultRootPath)[1]
-				return relativePath?.split('/')?.map(decodeURIComponent)?.join('/')
-			} catch (e) {
-				return false
-			}
-		},
-
-		/**
-		 * Is the current user allowed to delete the file?
-		 *
-		 * @return {boolean}
-		 */
-		canDelete() {
-			return this.currentFile?.permissions?.includes('D')
-		},
-
-		/**
-		 * Is the current user allowed to download the file
-		 *
-		 * @return {boolean}
-		 */
-		canDownload() {
-			// download not possible for comparison
-			if (this.comparisonFile) {
-				return false
-			}
-			return this.currentFile && canDownload(this.currentFile)
-		},
-
-		/**
-		 * Is the current user allowed to edit the file ?
-		 * https://github.com/nextcloud/server/blob/7718c9776c5903474b8f3cf958cdd18a53b2449e/apps/dav/lib/Connector/Sabre/Node.php#L357-L387
-		 *
-		 * @return {boolean}
-		 */
-		canEdit() {
-			return !this.isMobile
-				&& this.canDownload
-				&& this.currentFile?.permissions?.includes('W')
-				&& this.isImage
-				&& !this.comparisonFile
-				&& (loadState('core', 'config', [])['enable_non-accessible_features'] ?? true)
-		},
-
-		modalClass() {
-			return {
-				'icon-loading': !this.currentFile.loaded && !this.currentFile.failed,
-				'theme--undefined': this.theme === null,
-				'theme--dark': this.theme === 'dark',
-				'theme--light': this.theme === 'light',
-				'theme--default': this.theme === 'default',
-				'image--fullscreen': this.isImage && this.isFullscreenMode,
-			}
-		},
-
-		showComparison() {
-			return !this.isMobile
-		},
-
-		contentClass() {
-			return {
-				'viewer--split': this.comparisonFile,
-			}
-		},
-
-		isSameFile() {
-			return (fileInfo = null, path = null) => {
-				if (
-					path && path === this.currentFile.path
-					&& !this.currentFile.source
-				) {
-					return true
-				}
-
-				if (path === this.currentFile.filename) {
-					// if the path is the same as the current file, we can assume it's the same file
-					return true
-				}
-
-				if (
-					fileInfo && fileInfo.fileid === this.currentFile.fileid
-					&& fileInfo.mtime && fileInfo.mtime === this.currentFile.mtime
-					&& fileInfo.source && fileInfo.source === this.currentFile.source
-				) {
-					return true
-				}
-
-				return false
-			}
+const renameButtons = computed(() => [
+	{
+		label: t('viewer', 'Cancel'),
+		callback: () => {
+			renameDialogOpen.value = false
 		},
 	},
-
-	watch: {
-		el(element) {
-			logger.info(element)
-			this.$nextTick(() => {
-				const viewerRoot = document.getElementById('viewer')
-				if (element) {
-					const el = document.querySelector(element)
-					if (el) {
-						el.appendChild(viewerRoot)
-					} else {
-						logger.warn('Could not find element ', { element })
-					}
-				} else {
-					document.body.appendChild(viewerRoot)
-				}
-			})
-		},
-
-		file(path) {
-			// we got a valid path! Load file...
-			if (path && path.trim() !== '') {
-				logger.info('Opening viewer for file ', { path })
-				this.openFile(path, OCA.Viewer.overrideHandlerId)
-			} else {
-				// path is empty, we're closing!
-				this.cleanup()
-			}
-		},
-
-		fileInfo(fileInfo) {
-			if (fileInfo) {
-				logger.info('Opening viewer for fileInfo ', { fileInfo })
-				this.openFileInfo(fileInfo, OCA.Viewer.overrideHandlerId)
-			} else {
-				// object is undefined, we're closing!
-				this.cleanup()
-			}
-		},
-
-		comparisonFileInfo(fileInfo) {
-			if (fileInfo) {
-				logger.info('Opening viewer for comparisonFileInfo ', { fileInfo })
-				this.compareFile(fileInfo)
-			} else {
-				// object is undefined, we're closing!
-				this.cleanup()
-			}
-		},
-
-		files(fileList) {
-			if (!fileList || !Array.isArray(fileList) || fileList.length === 0) {
-				logger.warn('No files provided, skipping update')
-				return
-			}
-
-			// the files list changed, let's update the current opened index
-			const currentIndex = fileList.findIndex(file => file.filename === this.currentFile.filename)
-			if (currentIndex > -1) {
-				this.currentIndex = currentIndex
-				logger.debug('The files list changed, new current file index is ' + currentIndex)
-			}
-
-			// finally replace the fileList
-			this.fileList = fileList
-		},
-
-		// user reached the end of list
-		async isEndOfList(isEndOfList) {
-			if (!isEndOfList || this.el) {
-				return
-			}
-
-			// if we have a loadMore handler, let's fetch more files
-			if (this.loadMore && typeof this.loadMore === 'function') {
-				logger.debug('Fetching additional files...')
-				const list = await this.loadMore()
-
-				if (Array.isArray(list) && list.length > 0) {
-					this.fileList.push(...list)
-				}
-			}
-		},
-
+	{
+		label: t('viewer', 'Rename'),
+		variant: 'primary' as const,
+		callback: submitRename,
 	},
+])
 
-	beforeMount() {
-		this.isStandalone = window.OCP?.Files === undefined
-		if (this.isStandalone) {
-			logger.info('No OCP.Files app found, viewer is now in standalone mode')
-		}
+/**
+ * Open the rename dialog prefilled with the current file name.
+ */
+function openRenameDialog() {
+	if (!currentFile.value) {
+		return
+	}
+	renameValue.value = currentFile.value.basename
+	renameDialogOpen.value = true
+}
 
-		// register on load
-		document.addEventListener('DOMContentLoaded', () => {
-			// load all init handlers
-			if (window._oca_viewer_handlers) {
-				window._oca_viewer_handlers.forEach((handler) => {
-					OCA.Viewer.registerHandler(handler)
-				})
-			}
+/**
+ * Perform the rename of the current file.
+ */
+async function submitRename() {
+	const file = currentFile.value
+	if (!file) {
+		return
+	}
+	try {
+		await renameFile(file, renameValue.value)
+		// The node is mutated in place; force the header/name to re-read it.
+		triggerRef(currentFile)
+		triggerRef(currentFileList)
+		renameDialogOpen.value = false
+	} catch (error) {
+		showError((error as Error).message)
+	}
+}
 
-			// register all primary components mimes
-			this.handlers.forEach(handler => {
-				this.registerHandler(handler)
-			})
+/**
+ * When a file is deleted (by the delete action or elsewhere), drop it from the
+ * viewer list and move to the next file, then the previous, then close if the
+ * list is now empty.
+ *
+ * @param node - The deleted node
+ */
+function onNodeDeleted(node: INode) {
+	const index = currentFileList.value.findIndex((file) => file.fileid === node.fileid || file.source === node.source)
+	if (index === -1) {
+		return
+	}
 
-			// then register aliases. We need to have the components
-			// first so we can bind the alias to them.
-			this.handlers.forEach(handler => {
-				this.registerHandlerAlias(handler)
-			})
-			this.isLoaded = true
+	const wasCurrent = currentFileList.value[index]?.fileid === currentFile.value?.fileid
+	currentFileList.value = currentFileList.value.filter((_, i) => i !== index)
 
-			logger.info(`${this.handlers.length} viewer handlers registered`, { handlers: this.handlers })
+	if (!wasCurrent) {
+		return
+	}
+
+	if (currentFileList.value.length === 0) {
+		close()
+		return
+	}
+
+	// Same index now points to the former next file; clamp to the last one when
+	// the deleted file was at the end (i.e. fall back to the previous file).
+	const newFile = currentFileList.value[Math.min(index, currentFileList.value.length - 1)] as IFile
+	currentHandler.value = getHandlerForFile(newFile)
+	currentFile.value = newFile
+	preloadNeighbors()
+}
+
+const modalName = computed(() => {
+	if (isComparing.value) {
+		return t('viewer', 'Comparing {file1} and {file2}', {
+			file1: currentFile.value?.basename ?? '',
+			file2: comparisonFile.value?.basename ?? '',
 		})
+	}
+	return currentFile.value?.basename || ''
+})
 
-		window.addEventListener('resize', this.onResize)
-	},
+const hasNext = computed(() => {
+	const canLoop = currentOptions.value.canLoop ?? true
+	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
+	if (currentIndex === -1) {
+		return false
+	}
 
-	mounted() {
-		// React to Files' Sidebar events.
-		subscribe('files:sidebar:opened', this.handleAppSidebarOpen)
-		subscribe('files:sidebar:closed', this.handleAppSidebarClose)
-		subscribe('files:node:updated', this.handleFileUpdated)
-		subscribe('viewer:trapElements:changed', this.handleTrapElementsChange)
-		subscribe('editor:toggle', this.toggleEditor)
-		subscribe('editor:file:created', this.handleNewFile)
-		window.addEventListener('keydown', this.keyboardDeleteFile)
-		window.addEventListener('keydown', this.keyboardDownloadFile)
-		window.addEventListener('keydown', this.keyboardEditFile)
-		this.addFullscreenEventListeners()
-	},
+	// If we are not allowed to loop and we are at the end,
+	// we cannot go next
+	if (currentIndex < currentFileList.value.length - 1) {
+		return true
+	}
 
-	beforeDestroy() {
-		window.removeEventListener('resize', this.onResize)
-	},
+	// If we are allowed to loop and we are at the end,
+	// we can go next if there is more than one file
+	if (canLoop && currentIndex === currentFileList.value.length - 1 && currentFileList.value.length > 1) {
+		return true
+	}
 
-	destroyed() {
-		// Unsubscribe to Files Sidebar events.
-		unsubscribe('files:sidebar:opened', this.handleAppSidebarOpen)
-		unsubscribe('files:sidebar:closed', this.handleAppSidebarClose)
-		unsubscribe('viewer:trapElements:changed', this.handleTrapElementsChange)
-		unsubscribe('editor:toggle', this.toggleEditor)
-		window.removeEventListener('keydown', this.keyboardDeleteFile)
-		window.removeEventListener('keydown', this.keyboardDownloadFile)
-		window.removeEventListener('keydown', this.keyboardEditFile)
-		this.removeFullscreenEventListeners()
-	},
+	return false
+})
+const hasPrevious = computed(() => {
+	const canLoop = currentOptions.value.canLoop ?? true
+	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
+	if (currentIndex === -1) {
+		return false
+	}
 
-	methods: {
-		uniqueKey(file) {
-			return '' + file.fileid + file.source
-		},
+	// If we are not allowed to loop and we are at the start,
+	// we cannot go previous
+	if (currentIndex > 0) {
+		return true
+	}
 
-		toggleEditor(isOpen) {
-			toggleEditor(isOpen)
-			this.editing = isOpen
-		},
+	// If we are allowed to loop and we are at the start,
+	// we can go previous if there is more than one file
+	if (canLoop && currentIndex === 0 && currentFileList.value.length > 1) {
+		return true
+	}
 
-		/**
-		 * If there is no download permission also hide the context menu.
-		 * @param {MouseEvent} event The mouse click event
-		 */
-		preventContextMenu(event) {
-			if (this.canDownload) {
-				return
+	return false
+})
+
+const open: ViewerAPI['open'] = async (files, file, options, handlerId) => {
+	logger.debug('Opening files', { files, file, options, handlerId })
+	loading.value = true
+
+	// Filter out any non-file files
+	files = files.filter((n) => n.type === FileType.File)
+
+	// Ensure we have at least one file to open
+	if (files.length === 0 && !file) {
+		logger.error('No files provided to open')
+		errorString.value = t('viewer', 'No files were provided to open.')
+		return
+	}
+
+	if (handlerId && !getHandlers().has(handlerId)) {
+		logger.error('There is no handler matching the given handler ID')
+		errorString.value = t('viewer', 'There was no plugin available to open this file.')
+		return
+	}
+
+	// Slight adjustment: if there is a mismatch between
+	// the provided file and the list of files
+	if (!file) {
+		file = files[0]
+	} else if (!files.includes(file)) {
+		files = [file, ...files]
+	}
+
+	// Last check, we need to have something to open
+	if (!file) {
+		logger.error('No file provided to open')
+		errorString.value = t('viewer', 'No files were provided to open.')
+		return
+	}
+
+	const handler = handlerId ? getHandlers().get(handlerId) : getHandlerForFile(file)
+	if (!handler) {
+		logger.error('No handler found for the given file', { file, files })
+		errorString.value = t('viewer', 'There was no plugin available to open this file.')
+		return
+	}
+
+	/**
+	 * Let's compute the current file list based on the current handler
+	 * and its group. We only want to show files that can be handled
+	 * by the same handler or handlers from the same group.
+	 */
+	currentFileList.value = files.filter((f) => {
+		const h = getHandlerForFile(f)
+		const group = h?.group
+		return group === handler.group || h?.id === handler.id
+	})
+
+	if (currentFileList.value.length === 0) {
+		// Fallback to just the provided file
+		currentFileList.value = [file]
+	}
+
+	if (currentFileList.value.length !== files.length) {
+		logger.debug(`Found ${currentFileList.value.length} files for the current handler/group out of ${files.length} provided files`, {
+			filtered: currentFileList.value,
+			provided: files,
+		})
+	}
+
+	comparisonFile.value = undefined
+	comparisonHandler.value = undefined
+	currentHandler.value = handler
+	currentFile.value = file
+	currentOptions.value = options ?? {} as ViewerOptions
+	pendingLoads.value = 1
+
+	onOpen()
+	preloadNeighbors()
+}
+
+const openFolder: ViewerAPI['openFolder'] = async (folder, file, options, handlerId) => {
+	logger.debug('Opening folder', { folder, file, options, handlerId })
+	loading.value = true
+
+	if (handlerId && !getHandlers().has(handlerId)) {
+		logger.error('There is no handler matching the given handler ID')
+		errorString.value = t('viewer', 'We were not able to open the file.')
+		return
+	}
+
+	if (!folder || folder.type !== FileType.Folder) {
+		logger.error('The provided folder is not a directory', { folder })
+		errorString.value = t('viewer', 'We were not able to open the file.')
+		return
+	}
+
+	try {
+		const files = await fetchFolderContent(folder)
+		return open(files, file, options, handlerId)
+	} catch (error) {
+		logger.error('Failed to fetch folder contents', { folder, error })
+		errorString.value = t('viewer', 'We were not able to open the file.')
+		return
+	}
+}
+
+const compare: ViewerAPI['compare'] = async (file1, file2, handlerId) => {
+	logger.debug('Comparing files', { file1, file2, handlerId })
+	loading.value = true
+
+	if (handlerId && !getHandlers().has(handlerId)) {
+		logger.error('There is no handler matching the given handler ID')
+		errorString.value = t('viewer', 'We were not able to open the file.')
+		return
+	}
+
+	if (!file1 || !file2 || file1.type !== FileType.File || file2.type !== FileType.File) {
+		logger.error('Two files are required to compare', { file1, file2 })
+		errorString.value = t('viewer', 'We were not able to open the file.')
+		return
+	}
+
+	const handler1 = handlerId ? getHandlers().get(handlerId) : getHandlerForFile(file1)
+	const handler2 = handlerId ? getHandlers().get(handlerId) : getHandlerForFile(file2)
+	if (!handler1 || !handler2) {
+		logger.error('No handler found for one of the files to compare', { file1, file2 })
+		errorString.value = t('viewer', 'There was no plugin available to open this file.')
+		return
+	}
+
+	// Comparison mode has no navigation, so we reset the slideshow context
+	currentFileList.value = []
+	currentOptions.value = {} as ViewerOptions
+	currentHandler.value = handler1
+	currentFile.value = file1
+	comparisonHandler.value = handler2
+	comparisonFile.value = file2
+	pendingLoads.value = 2
+
+	onOpen()
+}
+
+/**
+ * Handle Viewer opening to determine backdrop style
+ */
+function onOpen() {
+	// Determine if we should use a light backdrop
+	const backgroundInvertIfDark = getComputedStyle(document.documentElement).getPropertyValue('--background-invert-if-dark')
+	const defaultThemeIsLight = backgroundInvertIfDark.trim() !== 'invert(100%)'
+	const theme = currentHandler.value?.theme ?? 'default'
+	lightBackdrop.value = theme === 'light' || (theme === 'default' && defaultThemeIsLight)
+}
+
+/**
+ * Preload the previous and next files so navigation feels instant.
+ * Uses the handler's optional preload function.
+ */
+function preloadNeighbors() {
+	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
+	if (currentIndex === -1) {
+		return
+	}
+
+	const neighbors = [
+		currentFileList.value[currentIndex - 1],
+		currentFileList.value[currentIndex + 1],
+	].filter((f): f is IFile => Boolean(f))
+
+	for (const node of neighbors) {
+		const handler = getHandlerForFile(node)
+		if (!handler?.preload) {
+			continue
+		}
+		handler.preload(node).catch((error) => {
+			logger.debug('Failed to preload neighbor file', { node, error })
+		})
+	}
+}
+
+/**
+ * Handle successful loading of the current file
+ * This is emitted by the handler web component
+ */
+function onLoad() {
+	errorString.value = null
+	pendingLoads.value = Math.max(0, pendingLoads.value - 1)
+	if (pendingLoads.value === 0) {
+		loading.value = false
+	}
+}
+
+/**
+ * Handle error while loading the current file
+ * This is emitted by the handler web component
+ *
+ * @param error The error that occurred
+ */
+function onError(error: Error) {
+	logger.error('Error while loading file in viewer', { error })
+	loading.value = false
+	pendingLoads.value = 0
+	errorString.value = error.message || t('viewer', 'An unknown error occurred while loading the file.')
+}
+
+/**
+ * Close the viewer and reset state
+ */
+function close() {
+	currentOptions.value.onClose?.()
+	currentFile.value = undefined
+	currentFileList.value = []
+	currentHandler.value = undefined
+	comparisonFile.value = undefined
+	comparisonHandler.value = undefined
+	currentOptions.value = {} as ViewerOptions
+	errorString.value = null
+	// Reset transient UI state so it never leaks into the next open
+	loading.value = true
+	editing.value = false
+	canSwipe.value = true
+	pendingLoads.value = 0
+	openedSubmenu.value = null
+}
+
+/**
+ * Go to the next file in the list if possible
+ */
+async function next() {
+	const canLoop = currentOptions.value.canLoop ?? true
+	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
+	let newIndex = currentIndex + 1
+
+	if (currentIndex === -1) {
+		logger.error('Current file not found in the file list', { currentFile: currentFile.value, fileList: currentFileList.value })
+		return
+	}
+
+	// If we are not allowed to loop and we are at the end, do nothing
+	if (!canLoop && currentIndex >= currentFileList.value.length - 1) {
+		// We are at the end and cannot loop, do nothing
+		return
+	}
+
+	// If we are allowed to loop and we are at the end, go to the start
+	if (canLoop && newIndex >= currentFileList.value.length) {
+		newIndex = 0
+	}
+
+	const newFile = currentFileList.value[newIndex] as IFile
+	// Should not happen™, but just in case
+	if (!newFile) {
+		logger.error('Next file not found in the file list', { newIndex, fileList: currentFileList.value })
+		return
+	}
+
+	currentHandler.value = getHandlerForFile(newFile)
+	currentFile.value = newFile
+	currentOptions.value.onNext?.(newFile)
+
+	// If we are at the end of the list, try to load more files if possible
+	if (newIndex === currentFileList.value.length - 1) {
+		try {
+			const moreFiles = await currentOptions.value.loadMore?.() ?? []
+			if (moreFiles.length > 0) {
+				currentFileList.value = currentFileList.value.concat(moreFiles)
 			}
-			event.preventDefault()
-		},
-
-		async beforeOpen() {
-			// initial loading start
-			this.initiated = true
-
-			const sidebar = document.querySelector('aside.app-sidebar')
-			if (sidebar && sidebar.style.display !== 'none') {
-				this.isSidebarShown = true
-				this.sidebarPosition = sidebar.getBoundingClientRect().left
-				this.trapElements = [sidebar]
-			} else {
-				this.isSidebarShown = false
-				this.trapElements = []
-			}
-
-			if (OCA?.Files?.Sidebar?.setFullScreenMode) {
-				OCA.Files.Sidebar.setFullScreenMode(true)
-			}
-			this.sortingConfig = await getSortingConfig()
-
-			// Load Roboto font for visual regression tests
-			if (window.loadRoboto) {
-				logger.debug('⚠️ Loading roboto font for visual regression tests')
-				import('@fontsource/roboto/index.css')
-				delete window.loadRoboto
-			}
-		},
-
-		/**
-		 * Open the view and display the clicked file
-		 *
-		 * @param {string} path the file path to open
-		 * @param {string|null} overrideHandlerId the ID of the handler with which to view the files, if any
-		 */
-		async openFile(path, overrideHandlerId = null) {
-			await this.beforeOpen()
-
-			// cancel any previous request
-			this.cancelRequestFile()
-
-			// do not open the same file again
-			if (this.isSameFile(null, path)) {
-				logger.debug('Viewer already opened with the same path, ignoring', { path })
-				return
-			}
-
-			const { request: fileRequest, cancel: cancelRequestFile } = cancelableRequest(getFileInfo)
-			this.cancelRequestFile = cancelRequestFile
-
-			// extract needed info from path
-			const [, fileName] = extractFilePaths(path)
-
-			// prevent scrolling while opened
-			if (!this.el) {
-				document.body.style.overflow = 'hidden'
-				document.documentElement.style.overflow = 'hidden'
-			}
-
-			// swap title with original one
-			const title = document.getElementsByTagName('head')[0].getElementsByTagName('title')[0]
-			if (title && !title.dataset.old && fileName !== '') {
-				title.dataset.old = document.title
-				this.updateTitle(fileName)
-			}
-
-			try {
-				// retrieve and store the file info
-				const fileInfo = await fileRequest(path)
-				console.debug('File info for ' + path + ' fetched', fileInfo)
-				await this.openFileInfo(fileInfo, overrideHandlerId)
-				if (!this.isStandalone && this.canEdit
-					&& window.OCP?.Files?.Router?.query?.editing === 'true') {
-					this.toggleEditor(true)
-				}
-			} catch (error) {
-				if (error?.response?.status === 404) {
-					logger.error('The file no longer exists, error: ', { error })
-					showError(t('viewer', 'This file no longer exists'))
-					this.close()
-				} else {
-					console.error('Could not open file ' + path, error)
-				}
-			}
-		},
-		async handleNewFile(source) {
-			let path
-			try {
-				path = extractFilePathFromSource(source)
-				this.openFile(path)
-
-			} catch (e) {
-				logger.error('Could not extract file path from source', { source, e })
-			}
-			try {
-				const node = await fetchNode('/' + path)
-				emit('files:node:created', node)
-			} catch (e) {
-				logger.error('Could not fetch new file', { path, e })
-			}
-		},
-
-		/**
-		 * Open the view and display the clicked file from a known file info object
-		 *
-		 * @param {object} fileInfo the file info object to open
-		 * @param {string|null} overrideHandlerId the ID of the handler with which to view the files, if any
-		 */
-		async openFileInfo(fileInfo, overrideHandlerId = null) {
-			this.beforeOpen()
-			// cancel any previous request
-			this.cancelRequestFolder()
-
-			// do not open the same file info again
-			if (this.isSameFile(fileInfo)) {
-				logger.debug('Viewer already opened with the same fileInfo, ignoring', { fileInfo })
-				return
-			}
-
-			// get original mime and alias
-			const mime = fileInfo.mime
-			const alias = mime.split('/')[0]
-
-			let handler
-			// Try provided handler, if any
-			if (overrideHandlerId !== null) {
-				const overrideHandler = Object.values(this.registeredHandlers).find(h => h.id === overrideHandlerId)
-				handler = overrideHandler ?? handler
-			}
-			// If no provided handler, or provided handler not found: try a supported handler with mime/mime-alias
-			if (!handler) {
-				handler = this.registeredHandlers[mime] ?? this.registeredHandlers[alias]
-			}
-
-			// if we don't have a handler for this mime, abort
-			if (!handler) {
-				logger.error('The following file could not be displayed', { fileInfo })
-				showError(t('viewer', 'There is no plugin available to display this file type'))
-				this.close()
-				return
-			}
-
-			this.theme = handler.theme ?? 'dark'
-			const defaultThemeIsLight = window.getComputedStyle(document.body).getPropertyValue('--background-invert-if-dark') !== 'invert(100%)'
-			this.lightBackdrop = handler.theme === 'light' || (handler.theme === 'default' && defaultThemeIsLight)
-			this.handlerId = handler.id
-
-			this.currentFile = new File(fileInfo, mime, handler.component)
-
-			// if openFile() couldn’t derive a name from the path (e.g. "/" for single-file shares),
-			// fall back to the displayname to set the title
-			const title = document.getElementsByTagName('head')[0].getElementsByTagName('title')[0]
-			if (title && !title.dataset.old && this.currentFile.displayname) {
-				title.dataset.old = document.title
-				this.updateTitle(this.currentFile.displayname)
-			}
-
-			this.comparisonFile = null
-			this.updatePreviousNext()
-
-			// check if part of a group, if so retrieve full files list
-			const group = this.mimeGroups[mime]
-			if (this.files && this.files.length > 0) {
-				logger.debug('A files list have been provided. No folder content will be fetched.')
-				// we won't sort files here, let's use the order the array has
-				this.fileList = this.files
-
-				// store current position
-				this.currentIndex = this.fileList.findIndex(file => file.filename === fileInfo.filename)
-			} else if (group && this.el === null) {
-				const mimes = this.mimeGroups[group]
-					? this.mimeGroups[group]
-					: [mime]
-
-				// retrieve folder list
-				const { request: folderRequest, cancel: cancelRequestFolder } = cancelableRequest(getFileList)
-				this.cancelRequestFolder = cancelRequestFolder
-				const [dirPath] = extractFilePaths(fileInfo.filename)
-
-				this.currentIndex = 0
-				this.fileList = [fileInfo]
-
-				const fileList = await folderRequest(dirPath)
-
-				// filter out the unwanted mimes
-				const filteredFiles = fileList.filter(file => file.mime && mimes.indexOf(file.mime) !== -1)
-
-				// sort like the files list
-				// TODO: implement global sorting API
-				// https://github.com/nextcloud/server/blob/a83b79c5f8ab20ed9b4d751167417a65fa3c42b8/apps/files/lib/Controller/ApiController.php#L247
-				const nodes = filteredFiles.map(
-					file => new NcFile({
-						source: defaultRemoteURL + getRootPath() + file.filename,
-						id: file.fileid,
-						displayname: file.displayname,
-						mime: file.mime,
-						mtime: new Date(file.lastmod),
-						owner: this.currentFile.ownerId,
-						root: getRootPath(),
-					}),
-				)
-				const sortedNodes = sortNodes(nodes, {
-					sortingMode: this.sortingConfig.key,
-					sortingOrder: this.sortingConfig.asc ? 'asc' : 'desc',
-				})
-
-				this.fileList = sortedNodes.map(node => {
-					return filteredFiles.find(file => file.filename === node.path)
-				})
-				// store current position
-				this.currentIndex = this.fileList.findIndex(file => file.filename === fileInfo.filename)
-				this.updatePreviousNext()
-			} else {
-				this.currentIndex = 0
-				this.fileList = [fileInfo]
-			}
-
-			// if sidebar was opened before, let's update the file
-			this.changeSidebar()
-		},
-
-		/**
-		 * Open the view and display the file from the file list
-		 *
-		 * @param {object} fileInfo the opened file info
-		 */
-		openFileFromList(fileInfo) {
-			// override mimetype if existing alias
-			const mime = fileInfo.mime
-			this.currentFile = new File(fileInfo, mime, this.components[mime])
-			this.changeSidebar()
-			this.updatePreviousNext()
-		},
-
-		async compareFile(fileInfo) {
-			this.comparisonFile = new File(fileInfo, fileInfo.mime, this.components[fileInfo.mime])
-		},
-
-		/**
-		 * Show sidebar if available and a file is already opened
-		 */
-		changeSidebar() {
-			if (this.isSidebarShown) {
-				this.showSidebar()
-			}
-		},
-
-		/**
-		 * Update the previous and next file components
-		 */
-		updatePreviousNext() {
-			const prev = this.fileList[this.currentIndex - 1]
-			const next = this.fileList[this.currentIndex + 1]
-
-			if (prev) {
-				const mime = prev.mime
-				if (this.components[mime]) {
-					this.previousFile = new File(prev, mime, this.components[mime])
-				}
-			} else {
-				// RESET
-				this.previousFile = {}
-			}
-
-			if (next) {
-				const mime = next.mime
-				if (this.components[mime]) {
-					this.nextFile = new File(next, mime, this.components[mime])
-				}
-			} else {
-				// RESET
-				this.nextFile = {}
-			}
-
-		},
-
-		updateTitle(fileName) {
-			document.title = `${fileName} - ${OCA.Theming?.name ?? oc_defaults.name}`
-		},
-
-		/**
-		 * Registering possible new handlers
-		 *
-		 * @param {object} handler the handler to register
-		 * @param {string} handler.id unique handler identifier
-		 * @param {Array} handler.mimes list of valid mimes compatible with the handler
-		 * @param {object} handler.component a VueJs component to render when a file matching the mime list is opened
-		 * @param {string} [handler.group] a group name to be associated with for the slideshow
-		 */
-		registerHandler(handler) {
-			// checking if handler is not already registered
-			if (handler.id && Object.values(this.registeredHandlers).findIndex((h) => h.id === handler.id) > -1) {
-				logger.error('The following handler is already registered', { handler })
-				return
-			}
-
-			// checking valid handler id
-			if (!handler.id || handler.id.trim() === '' || typeof handler.id !== 'string') {
-				logger.error('The following handler doesn\'t have a valid id', { handler })
-				return
-			}
-
-			// checking if no valid mimes data but alias. If so, skipping...
-			if (!(handler.mimes && Array.isArray(handler.mimes)) && handler.mimesAliases) {
-				return
-			}
-
-			// Nothing available to process! Failure
-			if (!(handler.mimes && Array.isArray(handler.mimes)) && !handler.mimesAliases) {
-				logger.error('The following handler doesn\'t have a valid mime array', { handler })
-				return
-			}
-
-			// checking valid handler component data
-			if ((!handler.component || (typeof handler.component !== 'object' && typeof handler.component !== 'function'))) {
-				logger.error('The following handler doesn\'t have a valid component', { handler })
-				return
-			}
-
-			// force apply mixin
-			handler.component.mixins = [...handler?.component?.mixins ?? [], Mime]
-
-			// parsing mimes registration
-			if (handler.mimes) {
-				handler.mimes.forEach(mime => {
-					// checking valid mime
-					if (this.components[mime]) {
-						logger.error('The following mime is already registered', { mime, handler })
-						return
-					}
-
-					// register groups
-					this.registerGroups({ mime, group: handler.group })
-
-					// register mime's component
-					this.components[mime] = handler.component
-					Vue.component(handler.component.name, handler.component)
-
-					// set the handler as registered
-					this.registeredHandlers[mime] = handler
-				})
-			}
-		},
-
-		registerHandlerAlias(handler) {
-			// parsing aliases registration
-			if (handler.mimesAliases) {
-				Object.keys(handler.mimesAliases).forEach(mime => {
-
-					if (handler.mimesAliases && typeof handler.mimesAliases !== 'object') {
-						logger.error('The following handler doesn\'t have a valid mimesAliases object', { handler })
-						return
-
-					}
-
-					// this is the targeted alias
-					const alias = handler.mimesAliases[mime]
-
-					// checking valid mime
-					if (this.components[mime]) {
-						logger.error('The following mime is already registered', { mime, handler })
-						return
-					}
-					if (!this.components[alias]) {
-						logger.error('The requested alias does not exists', { alias, mime, handler })
-						return
-					}
-
-					// register groups if the request alias had a group
-					this.registerGroups({ mime, group: this.mimeGroups[alias] })
-
-					// register mime's component
-					this.components[mime] = this.components[alias]
-
-					// set the handler as registered
-					this.registeredHandlers[mime] = handler
-				})
-			}
-		},
-
-		registerGroups({ mime, group }) {
-			if (group) {
-				this.mimeGroups[mime] = group
-				// init if undefined
-				if (!this.mimeGroups[group]) {
-					this.mimeGroups[group] = []
-				}
-				this.mimeGroups[group].push(mime)
-			}
-		},
-
-		/**
-		 * Close the viewer
-		 */
-		close() {
-			// This will set file to ''
-			// which then triggers cleanup.
-			OCA.Viewer.close()
-
-			if (OCA?.Files?.Sidebar) {
-				OCA.Files.Sidebar.setFullScreenMode(false)
-			}
-
-			if (this.isFullscreenMode) {
-				this.exitFullscreen()
-			}
-		},
-
-		keyboardDeleteFile(event) {
-			if (this.canDelete && event.key === 'Delete' && event.ctrlKey === true) {
-				this.onDelete()
-			}
-		},
-
-		keyboardDownloadFile(event) {
-			if (event.key === 's' && event.ctrlKey === true) {
-				event.preventDefault()
-				if (this.canDownload) {
-					this.onDownload()
-				}
-			}
-		},
-
-		keyboardEditFile(event) {
-			if (event.key === 'e' && event.ctrlKey === true) {
-				event.preventDefault()
-				if (this.canEdit) {
-					this.onEdit()
-				}
-			}
-		},
-
-		cleanup() {
-			logger.info('Cleaning up viewer')
-
-			// reset all properties
-			this.currentFile = {}
-			this.comparisonFile = null
-			this.currentModal = null
-			this.fileList = []
-			this.initiated = false
-			this.theme = null
-
-			// cancel requests
-			this.cancelRequestFile()
-			this.cancelRequestFolder()
-
-			// restore default
-			document.body.style.overflow = null
-			document.documentElement.style.overflow = null
-
-			// Callback before updating the title
-			// If the callback creates a new entry in browser history
-			// the title update will affect the new entry
-			// rather then the previous one.
-			this.Viewer.onClose()
-
-			// swap back original title
-			const title = document.getElementsByTagName('head')[0].getElementsByTagName('title')[0]
-			if (title && title.dataset.old) {
-				document.title = title.dataset.old
-				delete title.dataset.old
-			}
-		},
-
-		/**
-		 * Open previous available file
-		 */
-		previous() {
-			this.currentIndex--
-			if (this.currentIndex < 0) {
-				this.currentIndex = this.fileList.length - 1
-			}
-
-			const fileInfo = this.fileList[this.currentIndex]
-			this.openFileFromList(fileInfo)
-			this.Viewer.onPrev(fileInfo)
-			this.updateTitle(this.currentFile.basename)
-		},
-
-		/**
-		 * Open next available file
-		 */
-		next() {
-			this.currentIndex++
-			if (this.currentIndex > this.fileList.length - 1) {
-				this.currentIndex = 0
-			}
-
-			const fileInfo = this.fileList[this.currentIndex]
-			this.openFileFromList(fileInfo)
-			this.Viewer.onNext(fileInfo)
-
-			this.updateTitle(this.currentFile.basename)
-		},
-
-		/**
-		 * Failures handlers
-		 */
-		comparisonFailed() {
-			this.comparisonFile.failed = true
-		},
-
-		previousFailed() {
-			this.previousFile.failed = true
-		},
-
-		currentFailed() {
-			this.currentFile.failed = true
-		},
-
-		nextFailed() {
-			this.nextFile.failed = true
-		},
-
-		/**
-		 * Show the sharing sidebar
-		 */
-		async showSidebar() {
-			if (this.enableSidebar) {
-				// TODO remove when we finally use the node API
-				const node = new NcFile({
-					source: defaultRemoteURL + getRootPath() + this.currentFile.filename,
-					id: this.currentFile.fileid,
-					displayname: this.currentFile.displayname,
-					mime: this.currentFile.mime,
-					mtime: new Date(this.currentFile.lastmod),
-					owner: this.currentFile.ownerId,
-					root: getRootPath(),
-				})
-				emit('viewer:sidebar:open', node)
-
-				// some apps mocked the files api to allow their sidebar to be used with the viewer
-				// to not break them keep this at least until Nextcloud 34.
-				if (OCA?.Files?.Sidebar) {
-					// TODO: also hide figure, needs a proper method for it in server Sidebar
-					await OCA.Files.Sidebar.open(this.sidebarOpenFilePath)
-				}
-			}
-		},
-
-		handleAppSidebarOpen() {
-			this.isSidebarShown = true
-			const sidebar = document.querySelector('aside.app-sidebar')
-			if (sidebar) {
-				this.sidebarPosition = sidebar.getBoundingClientRect().left
-				this.trapElements = [sidebar]
-			}
-		},
-
-		handleAppSidebarClose() {
-			this.isSidebarShown = false
-			this.trapElements = []
-		},
-
-		// Update etag of updated file to break cache.
-		/**
-		 *
-		 * @param {Node} node
-		 */
-		async handleFileUpdated(node) {
-			const index = this.fileList.findIndex(({ fileid: currentFileId }) => currentFileId === node.fileid)
-
-			// Ensure compatibility with the legacy data model that the Viewer is using. (see "model.ts").
-			// This can be removed once Viewer is migrated to the new Node API.
-			node.etag = node.attributes.etag
-			this.fileList.splice(index, 1, node)
-			if (node.fileid === this.currentFile.fileid) {
-				this.currentFile.etag = node.attributes.etag
-			}
-		},
-
-		onResize() {
-			const sidebar = document.querySelector('aside.app-sidebar')
-			if (sidebar) {
-				this.sidebarPosition = sidebar.getBoundingClientRect().left
-			}
-		},
-
-		async onDelete() {
-			try {
-				const fileid = this.currentFile.fileid
-				const url = this.currentFile.source ?? this.currentFile.davPath
-				const isDavResource = url.includes('remote.php/dav')
-
-				// Fake node to emit the event until Viewer is migrated to the new Node API.
-				// The node source must stay un-encoded (like the nodes built elsewhere in
-				// this file) as consumers of the event compare it against the store, which
-				// keeps sources decoded. The request below still uses the encoded `url`.
-				const node = new NcFile({
-					source: isDavResource ? (defaultRemoteURL + getRootPath() + this.currentFile.filename) : url,
-					id: fileid,
-					mime: this.currentFile.mime,
-					owner: this.currentFile.ownerId,
-					root: isDavResource ? getRootPath() : undefined,
-				})
-
-				await axios.delete(url)
-				emit('files:node:deleted', node)
-
-				// fileid is not unique, basename is not unique, filename is
-				const currentIndex = this.fileList.findIndex(file => file.filename === this.currentFile.filename)
-				if (this.hasPrevious || this.hasNext) {
-					// Checking the previous or next file
-					this.hasNext ? this.next() : this.previous()
-
-					this.fileList.splice(currentIndex, 1)
-				} else {
-					this.close()
-				}
-			} catch (error) {
-				console.error(error)
-				showError(error)
-			}
-		},
-
-		onEdit() {
-			this.toggleEditor(true)
-		},
-
-		/**
-		 * Call handler's downloadCallback before downloading
-		 */
-		async onDownload() {
-			if (!this.canDownload) {
-				return
-			}
-
-			// Get the current handler for this file
-			const mime = this.currentFile.mime
-			const alias = mime?.split('/')[0]
-			const handler = this.registeredHandlers[mime] ?? this.registeredHandlers[alias]
-
-			if (handler?.downloadCallback && typeof handler.downloadCallback === 'function') {
-				try {
-					logger.debug('Calling handler downloadCallback before download')
-					await handler.downloadCallback(this.currentFile)
-				} catch (error) {
-					logger.error('Failed to execute downloadCallback', { error })
-					showError(t('viewer', 'Failed to save file before download'))
-					return
-				}
-			}
-
-			this.performDownload()
-		},
-
-		performDownload() {
-			logger.debug('Performing download', { file: this.currentFile })
-			const path = this.currentFile.source ?? this.currentFile.davPath
-			if (!path) {
-				logger.debug('File path undefined; aborting download', { file: this.currentFile })
-				return
-			}
-			const a = document.createElement('a')
-			a.href = path
-			a.download = this.currentFile.basename
-			document.body.appendChild(a)
-			a.click()
-			document.body.removeChild(a)
-		},
-
-		handleTrapElementsChange(element) {
-			this.trapElements.push(element)
-		},
-
-		// Support full screen API on standard-compliant browsers and Safari (apparently except iPhone).
-		// Implementation based on:
-		//   https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API/Guide
-
-		toggleFullScreen() {
-			if (this.isFullscreenMode) {
-				this.exitFullscreen()
-			} else {
-				this.requestFullscreen()
-			}
-		},
-
-		requestFullscreen() {
-			const el = document.documentElement
-			if (el.requestFullscreen) {
-				el.requestFullscreen()
-			} else if (el.webkitRequestFullscreen) {
-				el.webkitRequestFullscreen()
-			}
-		},
-
-		exitFullscreen() {
-			if (document.exitFullscreen) {
-				document.exitFullscreen()
-			} else if (document.webkitExitFullscreen) {
-				document.webkitExitFullscreen()
-			}
-		},
-
-		addFullscreenEventListeners() {
-			document.addEventListener('fullscreenchange', this.onFullscreenchange)
-			document.addEventListener('webkitfullscreenchange', this.onFullscreenchange)
-		},
-
-		removeFullscreenEventListeners() {
-			document.addEventListener('fullscreenchange', this.onFullscreenchange)
-			document.addEventListener('webkitfullscreenchange', this.onFullscreenchange)
-		},
-
-		onFullscreenchange() {
-			if (document.fullscreenElement === document.documentElement
-				|| document.webkitFullscreenElement === document.documentElement) {
-				this.isFullscreenMode = true
-			} else {
-				this.isFullscreenMode = false
-			}
-		},
-
-	},
+		} catch (error) {
+			logger.error('Failed to load more files', { error })
+		}
+	}
+
+	preloadNeighbors()
+}
+
+/**
+ * Go to the previous file in the list if possible
+ */
+function previous() {
+	const canLoop = currentOptions.value.canLoop ?? true
+	const currentIndex = currentFileList.value.findIndex((f) => f === currentFile.value)
+	let newIndex = currentIndex - 1
+
+	if (currentIndex === -1) {
+		logger.error('Current file not found in the file list', { currentFile: currentFile.value, fileList: currentFileList.value })
+		return
+	}
+
+	// If we are not allowed to loop and we are at the start, do nothing
+	if (!canLoop && currentIndex <= 0) {
+		// We are at the start and cannot loop, do nothing
+		return
+	}
+
+	// If we are allowed to loop and we are at the start, go to the end
+	if (canLoop && newIndex < 0) {
+		newIndex = currentFileList.value.length - 1
+	}
+
+	const newFile = currentFileList.value[newIndex] as IFile
+	// Should not happen™, but just in case
+	if (!newFile) {
+		logger.error('Previous file not found in the file list', { newIndex, fileList: currentFileList.value })
+		return
+	}
+
+	currentHandler.value = getHandlerForFile(newFile)
+	currentFile.value = newFile
+	currentOptions.value.onPrev?.(newFile)
+
+	preloadNeighbors()
+}
+
+/**
+ * Show an already-loaded file by its id without firing navigation callbacks.
+ * Used to sync the viewer to the browser history (back/forward) so the opener
+ * never pushes a new history entry for a move it triggered itself.
+ *
+ * @param fileid - The id of the file to show
+ */
+function goTo(fileid: number) {
+	const newFile = currentFileList.value.find((f) => f.fileid === fileid)
+	if (!newFile) {
+		logger.warn('Cannot go to file, not in the current list', { fileid })
+		return
+	}
+	if (newFile === currentFile.value) {
+		return
+	}
+
+	currentHandler.value = getHandlerForFile(newFile)
+	currentFile.value = newFile
+	preloadNeighbors()
+}
+
+/**
+ * Open the Files sidebar for the current file.
+ */
+function showSidebar() {
+	if (!currentFile.value) {
+		return
+	}
+
+	// The Files app sidebar store subscribes to this event and opens
+	// the sidebar for the file identified by its dav source.
+	emit('viewer:sidebar:open', { source: currentFile.value.source })
+}
+
+/**
+ * Handle app sidebar opening to adjust viewer size
+ */
+function onAppSidebarOpen() {
+	const sidebar = document.querySelector('aside.app-sidebar')
+	if (sidebar) {
+		sidebarPosition.value = sidebar.getBoundingClientRect().left
+		trapElements.value = [sidebar]
+	}
+}
+
+/**
+ * Reset viewer size to default when app sidebar is closed
+ */
+function onAppSidebarClose() {
+	sidebarPosition.value = 0
+	trapElements.value = []
+}
+
+/**
+ * Close viewer when clicking outside of the modal content
+ *
+ * @param event The mouse event
+ */
+function onClickOutside(event: Event) {
+	// check if we clicked on the modal container directly and not on its children
+	const modalContent = modal.value?.$el?.querySelector('.modal-container__content')
+	if (event.target === modalContent) {
+		logger.debug('Clicked outside the viewer, closing viewer')
+		close()
+	}
+}
+
+/**
+ * Update viewer dimensions on window resize
+ */
+function onViewerResize() {
+	const modalContainer = modal.value?.$el?.querySelector('.modal-container')
+	height.value = modalContainer?.clientHeight || 0
+	width.value = modalContainer?.clientWidth || 0
+	logger.debug('Screen resized, updating viewer dimensions', { height: height.value, width: width.value })
+}
+
+// Listen to Viewer file changes to trigger resize
+watch(currentFile, (newFile, oldFile) => {
+	// A submenu belongs to the previous file's action set; never carry it over.
+	openedSubmenu.value = null
+	if (newFile && !oldFile) {
+		onViewerResize()
+	}
+})
+
+onMounted(() => {
+	resizeObserver = new ResizeObserver(debounce(() => {
+		onViewerResize()
+	}, 100))
+
+	if (!modal?.value?.$el) {
+		logger.error('Modal element not found in Viewer onMounted')
+		return
+	}
+
+	// Observe viewer size changes
+	resizeObserver.observe(modal.value.$el)
+	logger.debug('Resize observer initialized for viewer')
+
+	const modalContent = modal.value?.$el?.querySelector('.modal-container__content')
+	if (modalContent) {
+		modalContent.addEventListener('click', onClickOutside)
+	}
+
+	// React to the Files app sidebar to resize the viewer accordingly
+	subscribe('files:sidebar:opened', onAppSidebarOpen)
+	subscribe('files:sidebar:closed', onAppSidebarClose)
+
+	// Advance the viewer when the shown file is deleted (from the menu or elsewhere)
+	subscribe('files:node:deleted', onNodeDeleted)
+})
+
+onUnmounted(() => {
+	resizeObserver?.disconnect()
+	unsubscribe('files:sidebar:opened', onAppSidebarOpen)
+	unsubscribe('files:sidebar:closed', onAppSidebarClose)
+	unsubscribe('files:node:deleted', onNodeDeleted)
+
+	const modalContent = modal.value?.$el?.querySelector('.modal-container__content')
+	if (modalContent) {
+		modalContent.removeEventListener('click', onClickOutside)
+	}
+})
+
+defineExpose<ViewerAPI>({
+	open,
+	openFolder,
+	compare,
+	goTo,
+	close,
 })
 </script>
 
-<style lang="scss" scoped>
-.viewer {
-	&.modal-mask {
-		transition: width ease 100ms, background-color .3s ease;
-	}
-
-	:deep(.modal-container),
-	&__content {
-		overflow: visible !important;
-		cursor: pointer;
-	}
-
-	&--split {
+<style scoped lang="scss">
+.viewer__modal {
+	:deep(.modal-container__content) {
 		display: flex;
-
-		.viewer__file--active {
-			width: 50%;
-			left: 0;
-			position: relative;
-		}
-	}
-
-	:deep(.modal-wrapper) {
-		.modal-container {
-			// Ensure some space at the bottom
-			top: var(--header-height);
-			bottom: var(--header-height);
-			height: auto;
-			// let the mime components manage their own background-color
-			background-color: transparent;
-			box-shadow: none;
-		}
-	}
-
-	&__content {
-		width: 100%;
-		height: 100%;
-	}
-
-	&__file-wrapper {
-		display: flex;
-		align-items: center;
 		justify-content: center;
-		width: 100%;
-		height: 100%;
-
-		// display on page but make it invisible
-		&--hidden {
-			position: absolute;
-			z-index: -1;
-			left: -10000px;
-		}
+		align-items: center;
 	}
 
-	&__file {
-		transition: height 100ms ease,
-			width 100ms ease;
-	}
-
-	&.theme--dark:deep(.button-vue--vue-tertiary) {
-		&:hover {
-			background-color: rgba(255, 255, 255, .08) !important;
-		}
-		&:focus,
-		&:focus-visible {
-			background-color: rgba(255, 255, 255, .08) !important;
-			outline: 2px solid var(--color-primary-element) !important;
-		}
-		&.action-item__menutoggle {
-			background-color: transparent;
-		}
-	}
-
-	&.theme--undefined.modal-mask {
+	:deep(.modal-container) {
+		top: var(--header-height) !important;
+		bottom: var(--header-height) !important;
+		height: auto !important;
 		background-color: transparent !important;
-	}
-
-	&.theme--light {
-		&.modal-mask {
-			background-color: rgba(255, 255, 255, .92) !important;
-		}
-		:deep(.modal-header__name),
-		:deep(.modal-header .icons-menu button svg) {
-			color: #000 !important;
-		}
-	}
-
-	&.theme--default {
-		&.modal-mask {
-			background-color: var(--color-main-background) !important;
-		}
-		:deep(.modal-header__name),
-		:deep(.modal-header .icons-menu) {
-			color: var(--color-main-text) !important;
-
-			button svg, a {
-				color: var(--color-main-text) !important;
-			}
-		}
-	}
-
-	&.image--fullscreen {
-		// Special display mode for images in full screen
-		:deep(.modal-header) {
-			.modal-header__name {
-				// Hide file name
-				opacity: 0;
-			}
-			.icons-menu {
-				// Semi-transparent background for icons only
-				background-color: rgba(0, 0, 0, 0.2);
-			}
-		}
-		:deep(.modal-wrapper) {
-			.modal-container {
-				// Use entire screen height
-				top: 0;
-				bottom: 0;
-				height: 100%;
-			}
-		}
+		box-shadow: none !important;
 	}
 }
 
-</style>
-
-<style lang="scss">
-body:has(#viewer) {
-	#app-sidebar-vue {
-		position: fixed;
-		width: calc(var(--app-sidebar-width) + var(--body-container-margin));
-	}
-
-	.app-navigation ~ #app-content-vue:has(~ #app-sidebar-vue:not([style*="display: none"])) {
-		flex-basis: calc(100% - 300px - clamp(300px, 27vw, 500px));
-	}
-
-	#app-content-vue:first-child:has(~ #app-sidebar-vue:not([style*="display: none"])),
-	.app-navigation--close ~ #app-content-vue:has(~ #app-sidebar-vue:not([style*="display: none"])),
-	.app-navigation--closed ~ #app-content-vue:has(~ #app-sidebar-vue:not([style*="display: none"])) {
-		flex-basis: calc(100% - clamp(300px, 27vw, 500px));
-	}
-
-	#header {
-		visibility: hidden;
-	}
-}
-
-.component-fade-enter-active,
-.component-fade-leave-active {
-	transition: opacity .3s ease;
-}
-
-.component-fade-enter, .component-fade-leave-to {
-	opacity: 0;
-}
-
-// force white icon on single buttons
-#viewer.modal-mask--dark .action-item--single.icon-menu-sidebar {
-	background-image: url('../assets/menu-sidebar-white.svg');
-}
-
-#viewer.modal-mask--dark .action-item--single.icon-download {
-	background-image: var(--icon-download-fff);
-}
-
-// put autocomplete over full sidebar
-// TODO: remove when new sharing sidebar (18)
-// is the min-version of viewer
-.ui-autocomplete {
-	z-index: 2050 !important;
+.viewer__comparison {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	height: 100%;
 }
 
 </style>

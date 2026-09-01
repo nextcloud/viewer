@@ -1,15 +1,15 @@
 {
 	"extends": "../tsconfig.json",
-	"include": ["../*.ts", "."],
+	"include": ["."],
 	"compilerOptions": {
-		"rootDir": "..",
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"allowImportingTsExtensions": true,
-		"noEmit": true,
+		"rootDir": ".",
+		"lib": [
+			"DOM",
+			"DOM.Iterable",
+			"ESNext"
+		],
 		"types": [
-			"node",
-			"@playwright/test"
+			"node"
 		]
 	}
 }

@@ -22,19 +22,18 @@ vendor
 .php_cs.cache
 .php-cs-fixer.cache
 
-build/
-coverage/
-*.orig
-
-# We do not ship the Roboto font files (only needed for Playwright) - but we need to ship the other font files
-css/fonts/roboto-*
 js/*roboto*
 
 # Playwright files
-playwright-report/
-test-results/
-blob-report/
-playwright/.cache/
+/playwright-report/
+/test-results/
+/blob-report/
+/playwright/.cache/
 
 # RelativeCI webpack bundle stats
 webpack-stats.json
+*.orig
+.php-cs-fixer.cache
+
+# Test coverage
+/coverage/

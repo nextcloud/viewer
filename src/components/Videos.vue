@@ -4,20 +4,27 @@
 -->
 
 <template>
+	<!-- eslint-disable vue/no-unused-refs -- plyr/audio refs are consumed by usePlyrPlayer via useTemplateRef -->
 	<!-- Plyr currently replaces the parent. Wrapping to prevent this
 	https://github.com/redxtech/vue-plyr/issues/259 -->
-	<div v-if="url">
-		<VuePlyr ref="plyr"
+	<div>
+		<VuePlyr
+			ref="plyr"
 			:options="options"
 			:style="{
 				height: height + 'px',
-				width: width + 'px'
+				width: width + 'px',
 			}">
-			<video ref="video"
-				:autoplay="active ? true : null"
+			<video
+				ref="video"
+				:autoplay="true"
 				:playsinline="true"
 				:poster="livePhotoPath"
-				:src="url"
+				:src="src"
+				:style="{
+					height: height + 'px',
+					width: width + 'px',
+				}"
 				preload="metadata"
 				@error.capture.prevent.stop.once="onFail"
 				@ended="donePlaying"
@@ -36,174 +43,78 @@
 	</div>
 </template>
 
-<script lang='ts'>
-// eslint-disable-next-line n/no-missing-import
-import Vue from 'vue'
-import AsyncComputed from 'vue-async-computed'
-import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
+<script setup lang="ts">
+import type { ViewerEmits, ViewerProps } from '../api_package/viewer.ts'
 
-import { imagePath } from '@nextcloud/router'
+import { translate as t } from '@nextcloud/l10n'
+import VuePlyr from '@skjnldsv/vue-plyr'
+import { computed, ref, watch } from 'vue'
+import { usePlyrPlayer } from '../composables/usePlyrPlayer.ts'
+import { useViewerProps } from '../composables/useViewerProps.ts'
+import { logger } from '../services/logger.ts'
+import { findLivePhotoPeerFromName } from '../utils/livePhotoUtils.ts'
+import { getPreviewIfAny } from '../utils/previewUtils.ts'
 
-import logger from '../services/logger.js'
-import { findLivePhotoPeerFromName } from '../utils/livePhotoUtils'
-import { getPreviewIfAny } from '../utils/previewUtils'
-import { preloadMedia } from '../services/mediaPreloader.js'
-import { localizeSpeedLabels, plyrTranslations } from '../utils/plyrTranslations'
+defineOptions({
+	name: 'ViewerVideos',
+})
 
-const VuePlyr = () => import(/* webpackChunkName: 'plyr' */'@skjnldsv/vue-plyr')
+const props = defineProps<ViewerProps>()
+const emit = defineEmits<ViewerEmits>()
 
-const blankVideo = imagePath('viewer', 'blank.mp4')
+const {
+	video,
+	onFail,
+	donePlaying,
+	doneLoading,
+	options,
+} = usePlyrPlayer(false, props, emit)
 
-Vue.use(AsyncComputed)
+const {
+	src,
+} = useViewerProps(props)
 
-export default {
-	name: 'Videos',
+const height = ref(0)
+const width = ref(0)
 
-	components: {
-		VuePlyr,
-	},
-	data() {
-		return {
-			isFullscreenButtonVisible: false,
-			fallback: false,
-			speedListenerBound: false,
-		}
-	},
+// Update video size when max height or width props change
+watch(() => props.maxHeight, updateVideoSize)
+watch(() => props.maxWidth, updateVideoSize)
 
-	computed: {
-		livePhotoPath() {
-			const peerFile = findLivePhotoPeerFromName(this, this.fileList)
+const livePhotoPath = computed(() => {
+	const peerFile = findLivePhotoPeerFromName(props.file, props.files)
+	if (peerFile === undefined) {
+		return undefined
+	}
+	return getPreviewIfAny(peerFile)
+})
 
-			if (peerFile === undefined) {
-				return undefined
-			}
+/**
+ * Update the video size based on the max height and width props
+ * We need to keep the aspect ratio of the video
+ * and fit it within the max height and width.
+ */
+function updateVideoSize() {
+	const videoHeight = video?.value?.videoHeight
+	const videoWidth = video?.value?.videoWidth
+	if (!videoHeight || !videoWidth) {
+		return
+	}
 
-			return getPreviewIfAny(peerFile)
-		},
-		player() {
-			return this.$refs.plyr.player
-		},
-		options() {
-			return {
-				autoplay: this.active === true,
-				// Used to reset the video streams https://github.com/sampotts/plyr#javascript-1
-				blankVideo,
-				controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
-				loadSprite: false,
-				i18n: plyrTranslations,
-				fullscreen: {
-					iosNative: true,
-				},
-			}
-		},
-	},
+	const heightRatio = props.maxHeight / videoHeight
+	const widthRatio = props.maxWidth / videoWidth
 
-	asyncComputed: {
-		async url(): Promise<string> {
-			if (this.fallback) {
-				return preloadMedia(this.filename)
-			} else {
-				return this.src
-			}
-		},
-	},
+	const ratio = Math.min(heightRatio, widthRatio)
+	height.value = Math.floor(videoHeight * ratio)
+	width.value = Math.floor(videoWidth * ratio)
+}
 
-	watch: {
-		active(val, old) {
-			// the item was hidden before and is now the current view
-			if (val === true && old === false) {
-				this.player.play()
-
-			// the item was playing before and is now hidden
-			} else if (val === false && old === true) {
-				this.player.pause()
-			}
-		},
-	},
-
-	// for some reason the video controls don't get mounted to the dom until after the component (Videos) is mounted,
-	// using the mounted() hook will leave us with an empty array
-	updated() {
-		// Prevent swiping to the next/previous item when scrubbing the timeline or changing volume
-		const plyrControls = this.$el.querySelectorAll('.plyr__controls__item')
-		if (!plyrControls || !plyrControls.length) {
-			return
-		}
-		[...plyrControls].forEach(control => {
-			if (control.getAttribute('data-plyr') === 'fullscreen') {
-				control.addEventListener('click', this.hideHeaderAndFooter)
-			}
-			if (!control?.addEventListener) {
-				return
-			}
-			control.addEventListener('mouseenter', this.disableSwipe)
-			control.addEventListener('mouseleave', this.enableSwipe)
-		})
-
-		// The Plyr menu is only in the DOM once the controls are mounted (see
-		// above), so wire up the speed-label localization here rather than in
-		// mounted(). Register the rate-change listener once.
-		if (!this.speedListenerBound && this.$refs.plyr?.player) {
-			this.$refs.plyr.player.on('ratechange', this.localizeSpeed)
-			this.speedListenerBound = true
-		}
-		this.localizeSpeed()
-	},
-
-	beforeDestroy() {
-		// Force stop any ongoing request
-		logger.debug('Closing video stream', { filename: this.filename })
-		this.$refs.video?.pause?.()
-		this.player.stop()
-		this.player.destroy()
-	},
-
-	methods: {
-		localizeSpeed() {
-			// Defer so we run after Plyr's own label/badge update for this event.
-			this.$nextTick(() => localizeSpeedLabels(this.$el))
-		},
-
-		hideHeaderAndFooter() {
-			// work arround to get the state of the fullscreen button, aria-selected attribute is not reliable
-			this.isFullscreenButtonVisible = !this.isFullscreenButtonVisible
-			if (this.isFullscreenButtonVisible) {
-				document.body.querySelector('main').classList.add('viewer__hidden-fullscreen')
-				document.body.querySelector('footer').classList.add('viewer__hidden-fullscreen')
-			} else {
-				document.body.querySelector('main').classList.remove('viewer__hidden-fullscreen')
-				document.body.querySelector('footer').classList.remove('viewer__hidden-fullscreen')
-			}
-		},
-		// Updates the dimensions of the modal
-		updateVideoSize() {
-			this.naturalHeight = this.$refs.video?.videoHeight
-			this.naturalWidth = this.$refs.video?.videoWidth
-			this.updateHeightWidth()
-		},
-
-		donePlaying() {
-			// reset and show poster after play
-			this.$refs.video.autoplay = false
-			this.$refs.video.load()
-		},
-
-		onLoadedMetadata() {
-			this.updateVideoSize()
-			// Force any further loading once we have the metadata
-			if (!this.active) {
-				this.player.stop()
-			}
-		},
-
-		// Fallback to the original image if not already done
-		onFail() {
-			if (!this.fallback) {
-				console.error(`Loading of file ${this.filename} failed, falling back to fetching it by hand`)
-				this.fallback = true
-			}
-		},
-	},
+/**
+ * Update video size when metadata is loaded
+ */
+function onLoadedMetadata() {
+	logger.debug('Video metadata loaded, updating size', { filename: props.file.basename })
+	updateVideoSize()
 }
 </script>
 
@@ -233,6 +144,7 @@ video {
 	}
 
 	.plyr {
+		// stylelint-disable-next-line no-invalid-position-at-import-rule -- scoped scss partial
 		@import '../mixins/Plyr';
 
 		// Override server font style
@@ -250,6 +162,10 @@ video {
 </style>
 
 <style lang="scss">
+@import '@skjnldsv/vue-plyr/dist/vue-plyr.css';
+
+// Fullscreen styles to hide header and footer
+// when in fullscreen mode
 main.viewer__hidden-fullscreen {
 	height: 100vh !important;
 	width: 100vw !important;

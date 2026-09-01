@@ -1,49 +1,48 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+/*!
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import type { Page } from '@playwright/test'
+import { createRandomUser, login } from '@nextcloud/e2e-test-server/playwright'
+import { expect } from '@playwright/test'
+import { test } from '../../support/fixtures/viewer.ts'
+import { FilesAppPage } from '../../support/sections/FilesAppPage.ts'
+import { ViewerPage } from '../../support/sections/ViewerPage.ts'
+import { createShare, ShareType } from '../../support/shares.ts'
+import { createFolder } from '../../support/uploadFile.ts'
 
-import { statSync } from 'node:fs'
-import { expect, setupFilesPage, test } from '../../support/fixtures.ts'
-import { getRowForFile, openFile } from '../../support/filesUtils.ts'
-import { expectViewerLoaded, getMenuItem, getViewer, openHeaderMenu } from '../../support/viewerUtils.ts'
-import { fixturePath } from '../../support/webdav.ts'
+test.describe('Viewer download restrictions', () => {
+	test('does not expose a download control when download is forbidden', async ({ browser, baseURL, user, uploadMedia }) => {
+		// The owner shares a folder with the sharee, forbidding download.
+		const sharee = await createRandomUser()
+		await createFolder(user, '/Photos')
+		await uploadMedia('image1.jpg', '/Photos/image1.jpg', 'image/jpeg')
+		await createShare(user, '/Photos', {
+			shareType: ShareType.User,
+			shareWith: sharee.userId,
+			attributes: [{ scope: 'permissions', key: 'download', value: false }],
+		})
 
-const fileName = 'image.png'
+		// Act as the sharee in a separate, clean context.
+		const shareeContext = await browser.newContext({ storageState: undefined, baseURL })
+		const shareePage = await shareeContext.newPage()
+		await login(shareePage.request, sharee)
 
-test.describe.serial(`Download ${fileName} in viewer`, () => {
-	let page: Page
+		const shareeFiles = new FilesAppPage(shareePage)
+		const shareeViewer = new ViewerPage(shareePage)
 
-	test.beforeAll(async ({ browser }) => {
-		({ page } = await setupFilesPage(browser, [{ fixture: fileName, mimeType: 'image/png' }]))
-	})
+		await shareeFiles.openFilesApp()
+		await shareeFiles.openFile('Photos')
+		await expect(shareeFiles.getRowByName('image1.jpg')).toBeVisible()
 
-	test.afterAll(async () => {
-		await page.close()
-	})
+		await shareeFiles.openFile('image1.jpg')
+		await shareeViewer.isVisible()
+		expect(await shareeViewer.currentName()).toBe('image1.jpg')
 
-	test(`See "${fileName}" in the list`, async () => {
-		await expect(getRowForFile(page, fileName)).toContainText(fileName.replace(/(.*)\./, '$1 .'))
-	})
+		// No download link nor download action is offered in the viewer.
+		await expect(shareeViewer.modal.locator('a[download]')).toHaveCount(0)
+		await expect(shareeViewer.modal.getByRole('button', { name: /download/i })).toHaveCount(0)
 
-	test('Open the viewer on file click', async () => {
-		await openFile(page, fileName)
-		await expect(getViewer(page)).toBeVisible()
-	})
-
-	test('Does not see a loading animation', async () => {
-		await expectViewerLoaded(page)
-	})
-
-	test('Download the image and compare it with the fixture by size', async () => {
-		const downloadPromise = page.waitForEvent('download')
-		await openHeaderMenu(page)
-		await getMenuItem(page, 'Download').click()
-
-		const download = await downloadPromise
-		const downloadedPath = await download.path()
-		expect(statSync(downloadedPath).size).toBe(statSync(fixturePath(fileName)).size)
+		await shareeContext.close()
 	})
 })

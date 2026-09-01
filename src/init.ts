@@ -2,20 +2,44 @@
  * SPDX-FileCopyrightText: 2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
-import { registerViewerAction } from './files_actions/viewerAction'
-import ViewerService from './services/Viewer.js'
+import { createApp } from 'vue'
+import Viewer from './views/Viewer.vue'
+import { getViewer } from './api_package/viewer.ts'
+import { registerAudioCustomElement, registerAudioHandler } from './models/audios.ts'
+import { registerImageCustomElement, registerImageHandler } from './models/images.ts'
+import { registerVideoCustomElement, registerVideoHandler } from './models/videos.ts'
+import { logger } from './services/logger.ts'
 
-// Register the files action
-registerViewerAction()
+const ViewerService = getViewer()
 
-// Init Viewer Service
-window.OCA = window.OCA ?? {}
-window.OCA.Viewer = new ViewerService()
-window.OCA.Viewer.version = appVersion
+// Register the custom elements and handlers FIRST, before mounting the Vue app.
+// This registers the viewer file actions as early as possible so they are part
+// of the Files app's initial actions snapshot — otherwise the default
+// "open in viewer" action can be missed and clicking a file navigates away
+// instead of opening the viewer.
+registerAudioCustomElement()
+registerAudioHandler()
+registerVideoCustomElement()
+registerVideoHandler()
+registerImageCustomElement()
+registerImageHandler()
 
-// Eagerly register any handlers queued before the viewer was initialized.
-// This must happen synchronously so that OCA.Viewer.mimetypes is complete
-// before the file action's enabled() callback is evaluated by the files app.
-if (window._oca_viewer_handlers) {
-	window._oca_viewer_handlers.forEach(handler => window.OCA.Viewer.registerHandler(handler))
-}
+const ViewerApp = createApp(Viewer)
+
+// Create top wrapper element
+const ViewerRoot = document.createElement('div')
+ViewerRoot.id = 'viewer'
+document.body.appendChild(ViewerRoot)
+
+// Put controls for video viewer
+// Needed as Firefox CSP blocks the loading of the svg through the normal plyr system
+const VideoControls = document.createElement('div')
+// @ts-expect-error PLYR_ICONS is a global injected by vite
+VideoControls.innerHTML = PLYR_ICONS
+VideoControls.style.display = 'none'
+document.body.appendChild(VideoControls)
+
+// Mount and set the viewer instance
+const ViewerInstance = ViewerApp.mount(ViewerRoot)
+ViewerService._setViewer(ViewerInstance as InstanceType<typeof Viewer>)
+logger.info('Viewer initialized', { ViewerInstance })
