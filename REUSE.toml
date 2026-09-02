@@ -36,7 +36,7 @@ SPDX-FileCopyrightText = "2023 Nextcloud GmbH and Nextcloud contributors"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
-path = [".eslintrc.json"]
+path = ["eslint.config.js", "stylelint.config.cjs", "rector.php"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2024 Nextcloud GmbH and Nextcloud contributors"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
@@ -84,12 +84,6 @@ SPDX-FileCopyrightText = "2012 AnRo0002 <https://commons.wikimedia.org/wiki/User
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = ["playwright/fixtures/test-card.mp4", "playwright/fixtures/test-card.png"]
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2023 Bulgarian National Television <https://commons.wikimedia.org/wiki/File:Bulgarian_colour_testcard.png>"
-SPDX-License-Identifier = "CC0-1.0"
-
-[[annotations]]
 path = ["playwright/fixtures/audio.mp3", "playwright/fixtures/audio.ogg"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2022 AC Krah <https://commons.wikimedia.org/wiki/User:AC_Krah>"
@@ -102,16 +96,10 @@ SPDX-FileCopyrightText = "2013 Wilfredor <https://commons.wikimedia.org/wiki/Use
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = ["playwright/fixtures/image.bmp", "playwright/fixtures/image.png", "playwright/fixtures/image.webp"]
+path = ["playwright/fixtures/image.png", "playwright/fixtures/image.webp"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2024 Master Unknown <https://unsplash.com/@exp00>"
 SPDX-License-Identifier = "LicenseRef-Unsplash"
-
-[[annotations]]
-path = ["playwright/fixtures/image.heic"]
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2024 HEIC Digital <https://heic.digital/download-sample/soundboard.heic>"
-SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
 path = ["img/app.svg"]
