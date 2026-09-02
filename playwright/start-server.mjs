@@ -11,11 +11,15 @@ import {
 	stopNextcloud,
 	waitOnNextcloud,
 } from '@nextcloud/e2e-test-server/docker'
+import process from 'node:process'
 
 // Keep the event loop alive until Playwright signals shutdown; clearing this is
 // what lets the process exit naturally (no process.exit needed).
 const keepAlive = setInterval(() => { /* keep the event loop alive */ }, 60000)
 
+/**
+ * Stop the Nextcloud container on shutdown signals.
+ */
 async function stop() {
 	process.stderr.write('Stopping Nextcloud server…\n')
 	clearInterval(keepAlive)
@@ -36,6 +40,9 @@ await configureNextcloud(['viewer'])
 // Playwright's Chromium is recent enough too, but disable the redirect explicitly
 // so a future browserslist bump can't send tests to the "unsupported browser" page.
 await runOcc(['config:system:set', 'no_unsupported_browser_warning', '--value', 'true', '--type', 'boolean'])
+// New users get an empty home instead of the default skeleton files (welcome.txt,
+// Documents, Photos, …) so the specs' folders contain only what they upload.
+await runOcc(['config:system:set', 'skeletondirectory', '--value', ''])
 // Avoid hitting the app store during tests.
 await runOcc(['config:system:set', 'appstoreenabled', '--value', 'false', '--type', 'boolean'])
 // SQLite locks up under the parallel DAV/OCS traffic the specs generate; WAL avoids it.

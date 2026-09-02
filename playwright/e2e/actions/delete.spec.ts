@@ -1,49 +1,29 @@
-/**
- * SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+/*!
+ * SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
+import { expect } from '@playwright/test'
+import { test } from '../../support/fixtures/viewer.ts'
 
-import type { Page } from '@playwright/test'
+test.describe('Viewer delete action', () => {
+	// Deleting the shown file advances the viewer to the next file, then the
+	// previous one, then closes when nothing is left.
+	test('advances to the next file, then closes when the list is empty', async ({ filesApp, uploadMedia, viewer }) => {
+		await uploadMedia('image1.jpg', 'image1.jpg', 'image/jpeg')
+		await uploadMedia('image2.jpg', 'image2.jpg', 'image/jpeg')
+		await filesApp.openFilesApp()
+		await filesApp.openFile('image1.jpg')
+		await viewer.waitForOpen()
 
-import { expect, setupFilesPage, test } from '../../support/fixtures.ts'
-import { getRowForFile, openFile } from '../../support/filesUtils.ts'
-import { expectViewerLoaded, getMenuItem, getViewer, openHeaderMenu } from '../../support/viewerUtils.ts'
+		// Delete the first file → viewer moves to the second, staying open.
+		await viewer.runAction('Delete file')
+		await viewer.waitForOpen()
+		await expect(async () => {
+			expect(await viewer.currentName()).toBe('image2.jpg')
+		}).toPass()
 
-test.describe.serial('Delete image.png in viewer', () => {
-	let page: Page
-
-	test.beforeAll(async ({ browser }) => {
-		({ page } = await setupFilesPage(browser, [{ fixture: 'image.png', mimeType: 'image/png' }]))
-	})
-
-	test.afterAll(async () => {
-		await page.close()
-	})
-
-	test('See image.png in the list', async () => {
-		await expect(getRowForFile(page, 'image.png')).toContainText('image .png')
-	})
-
-	test('Open the viewer on file click', async () => {
-		await openFile(page, 'image.png')
-		await expect(getViewer(page)).toBeVisible()
-	})
-
-	test('Does not see a loading animation', async () => {
-		await expectViewerLoaded(page)
-	})
-
-	test('Delete the image and close viewer', async () => {
-		await openHeaderMenu(page)
-		await getMenuItem(page, 'Delete').click()
-	})
-
-	test('Does not see the viewer anymore', async () => {
-		await expect(getViewer(page)).toHaveCount(0)
-	})
-
-	test('Does not see image.png in the list anymore', async () => {
-		await page.goto('apps/files')
-		await expect(getRowForFile(page, 'image.png')).toHaveCount(0)
+		// Delete the only remaining file → viewer closes.
+		await viewer.runAction('Delete file')
+		await viewer.waitForClosed()
 	})
 })

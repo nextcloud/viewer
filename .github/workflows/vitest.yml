@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2025 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: MIT
+
+name: Vitest
+
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vitest-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  vitest:
+    runs-on: ubuntu-latest
+    name: Unit & component tests
+
+    steps:
+      - name: Checkout app
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read package.json
+        uses: nextcloud-libraries/parse-package-engines-action@122ae05d4257008180a514e1ddeb0c1b9d094bdd # v0.1.0
+        id: versions
+
+      - name: Set up node
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        with:
+          node-version: ${{ steps.versions.outputs.node-version }}
+
+      - name: Set up npm
+        run: npm i -g 'npm@${{ steps.versions.outputs.package-manager-version }}'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run vitest
+        run: npm run test:coverage
