@@ -20,6 +20,8 @@
 				:src="url"
 				preload="metadata"
 				@error.capture.prevent.stop.once="onFail"
+				@play="onPlay"
+				@pause="onPause"
 				@ended="donePlaying"
 				@canplay="doneLoading"
 				@loadedmetadata="onLoadedMetadata">
@@ -182,7 +184,17 @@ export default {
 			this.updateHeightWidth()
 		},
 
+		onPlay() {
+			this.$emit('update:playing', true)
+		},
+
+		onPause() {
+			this.$emit('update:playing', false)
+		},
+
 		donePlaying() {
+			this.$emit('update:playing', false)
+
 			// reset and show poster after play
 			this.$refs.video.autoplay = false
 			this.$refs.video.load()
