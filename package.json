@@ -77,7 +77,7 @@
     "@nextcloud/sharing": "^0.2.5",
     "@nextcloud/stylelint-config": "^3.1.0",
     "@nextcloud/vite-config": "~1.6.0",
-    "@playwright/test": "^1.61.0",
+    "@playwright/test": "^1.63.0",
     "@vue/tsconfig": "^0.5.1",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
