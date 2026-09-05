@@ -55,6 +55,7 @@ export default class Viewer {
 		this._state.onNext = () => {}
 		this._state.onClose = () => {}
 		this._state.canLoop = true
+		this._state.startSlideshow = false
 		this._state.handlers = []
 		this._state.overrideHandlerId = null
 
@@ -259,6 +260,16 @@ export default class Viewer {
 	}
 
 	/**
+	 * Whether the slideshow start playing as soon as the viewer is opens
+	 *
+	 * @memberof Viewer
+	 * @return {boolean}
+	 */
+	get startSlideshow() {
+		return this._state.startSlideshow
+	}
+
+	/**
 	 * If this handler is set, it should be used for viewing the next file.
 	 *
 	 * @memberof Viewer
@@ -291,11 +302,23 @@ export default class Viewer {
 	 * @param {boolean} options.enableSidebar whether to enable the sidebar or not
 	 * @param {Function} options.loadMore callback for loading more files
 	 * @param {boolean} options.canLoop can the viewer loop over the array
+	 * @param {boolean} options.startSlideshow start playing the slideshow right away
 	 * @param {Function} options.onPrev callback when navigating back to previous file
 	 * @param {Function} options.onNext callback when navigation forward to next file
 	 * @param {Function} options.onClose callback when closing the viewer
 	 */
-	open({ path, fileInfo, list = [], enableSidebar = true, loadMore = () => ([]), canLoop = true, onPrev = () => {}, onNext = () => {}, onClose = () => {} } = {}) {
+	open({
+		path,
+		fileInfo,
+		list = [],
+		enableSidebar = true,
+		loadMore = () => [],
+		canLoop = true,
+		startSlideshow = false,
+		onPrev = () => {},
+		onNext = () => {},
+		onClose = () => {},
+	} = {}) {
 		if (typeof arguments[0] === 'string') {
 			throw new Error('Opening the viewer with a single string parameter is deprecated. Please use a destructuring object instead', `OCA.Viewer.open({ path: '${path}' })`)
 		}
@@ -330,6 +353,7 @@ export default class Viewer {
 			this._state.onNext = onNext
 			this._state.onClose = onClose
 			this._state.canLoop = canLoop
+			this._state.startSlideshow = startSlideshow
 		}
 	}
 
@@ -378,6 +402,7 @@ export default class Viewer {
 		this._state.files = []
 		this._state.enableSidebar = true
 		this._state.canLoop = true
+		this._state.startSlideshow = false
 		this._state.loadMore = () => ([])
 		this._state.overrideHandlerId = null
 	}

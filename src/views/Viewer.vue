@@ -29,6 +29,7 @@
 	<!-- Modal view rendering -->
 	<NcModal v-else-if="initiated || currentFile.modal"
 		id="viewer"
+		ref="modal"
 		:additional-trap-elements="trapElements"
 		:class="modalClass"
 		:clear-view-delay="-1 /* disable fade-out because of accessibility reasons */"
@@ -37,7 +38,7 @@
 		:light-backdrop="lightBackdrop"
 		:data-handler="handlerId"
 		:enable-slideshow="hasPrevious || hasNext"
-		:slideshow-paused="editing"
+		:slideshow-paused="editing || playingVideo"
 		:enable-swipe="canSwipe && !editing"
 		:has-next="hasNext"
 		:has-previous="hasPrevious"
@@ -150,6 +151,7 @@
 					:loaded.sync="currentFile.loaded"
 					class="viewer__file viewer__file--active"
 					@update:editing="toggleEditor"
+					@update:playing="playingVideo = $event"
 					@error="currentFailed" />
 				<Error v-else
 					:name="currentFile.basename" />
@@ -257,6 +259,8 @@ export default defineComponent({
 			isLoaded: false,
 			initiated: false,
 			editing: false,
+			slideshowStarted: false,
+			playingVideo: false,
 
 			// cancellable requests
 			cancelRequestFile: () => {},
@@ -312,6 +316,9 @@ export default defineComponent({
 		},
 		canLoop() {
 			return this.Viewer.canLoop
+		},
+		startSlideshow() {
+			return this.Viewer.startSlideshow
 		},
 		isStartOfList() {
 			return this.currentIndex === 0
@@ -428,6 +435,12 @@ export default defineComponent({
 	},
 
 	watch: {
+		fileList(fileList) {
+			if (fileList.length > 1) {
+				this.beginSlideshow()
+			}
+		},
+
 		el(element) {
 			logger.info(element)
 			this.$nextTick(() => {
@@ -620,6 +633,34 @@ export default defineComponent({
 				logger.debug('⚠️ Loading roboto font for visual regression tests')
 				import('@fontsource/roboto/index.css')
 				delete window.loadRoboto
+			}
+		},
+
+		async beginSlideshow() {
+			if (!this.startSlideshow || this.slideshowStarted) {
+				return
+			}
+			this.slideshowStarted = true
+
+			// Hack: NcModal is imported lazily, so its ref is only there once the chunk
+			// has resolved and it has been rendered.
+			await NcModal()
+			await this.$nextTick()
+			if (!this.$refs.modal) {
+				await this.$nextTick()
+			}
+
+			// const modal = this.$refs.modal;
+			if (!this.$refs.modal) {
+				logger.warn(
+					'Could not start the slideshow, the viewer this.$refs.modal is not mounted',
+				)
+				return
+			}
+			this.$refs.modal.togglePlayPause()
+
+			if (this.playingVideo) {
+				this.$refs.modal.slideshowTimeout?.pause()
 			}
 		},
 
@@ -1035,6 +1076,8 @@ export default defineComponent({
 			this.currentModal = null
 			this.fileList = []
 			this.initiated = false
+			this.slideshowStarted = false
+			this.playingVideo = false
 			this.theme = null
 
 			// cancel requests
