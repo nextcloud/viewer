@@ -133,6 +133,7 @@ OC.L10N.register(
     "No preview available for this crop item" : "Tidak ada pratinjau yang tersedia untuk item potong ini",
     "Play" : "Putar",
     "Pause" : "Jeda",
+    "{currentTime} of {duration}" : "{currentTime} dari {duration}",
     "Current time" : "Waktu saat ini",
     "Duration" : "Durasi",
     "Volume" : "Volume",
