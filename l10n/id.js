@@ -137,6 +137,7 @@ OC.L10N.register(
     "Current time" : "Waktu saat ini",
     "Duration" : "Durasi",
     "Volume" : "Volume",
+    "Mute" : "Bisukan",
     "Settings" : "Pengaturan",
     "Normal" : "Normal",
     "Start" : "Mulai",
