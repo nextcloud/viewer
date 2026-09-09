@@ -841,8 +841,12 @@ export default defineComponent({
 					sortingOrder: this.sortingConfig.asc ? 'asc' : 'desc',
 				})
 
+				const filesByPath = new Map(
+					filteredFiles.map(file => [file.filename, file]),
+				)
+
 				this.fileList = sortedNodes.map(node => {
-					return filteredFiles.find(file => file.filename === node.path)
+					return filesByPath.get(node.path)
 				})
 				// store current position
 				this.currentIndex = this.fileList.findIndex(file => file.filename === fileInfo.filename)
