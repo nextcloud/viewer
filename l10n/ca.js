@@ -128,6 +128,7 @@ OC.L10N.register(
     "Play" : "Joguina",
     "Pause" : "Posa en pausa",
     "{currentTime} of {duration}" : "{currentTime} de {duration}",
+    "Duration" : "Duració",
     "Volume" : "Volum",
     "Mute" : "Silencia",
     "Settings" : "Paràmetres",
