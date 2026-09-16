@@ -233,7 +233,7 @@ video {
 	}
 
 	.plyr {
-		@import '../mixins/Plyr';
+		@import '../mixins/Plyr.scss';
 
 		// Override server font style
 		button {
