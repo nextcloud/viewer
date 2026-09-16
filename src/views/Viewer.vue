@@ -1271,8 +1271,8 @@ export default defineComponent({
 		},
 
 		removeFullscreenEventListeners() {
-			document.addEventListener('fullscreenchange', this.onFullscreenchange)
-			document.addEventListener('webkitfullscreenchange', this.onFullscreenchange)
+			document.removeEventListener('fullscreenchange', this.onFullscreenchange)
+			document.removeEventListener('webkitfullscreenchange', this.onFullscreenchange)
 		},
 
 		onFullscreenchange() {
