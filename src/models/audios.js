@@ -6,18 +6,20 @@
 import Audios from '../components/Audios.vue'
 
 export default {
-	id: 'audios',
-	group: 'media',
-	mimes: [
-		'audio/aac',
-		'audio/aacp',
-		'audio/flac',
-		'audio/mp4',
-		'audio/mpeg',
-		'audio/ogg',
-		'audio/vorbis',
-		'audio/wav',
-		'audio/webm',
-	],
-	component: Audios,
+    id: 'audios',
+    group: 'media',
+    mimes: [
+        'audio/aac',
+        'audio/aacp',
+        'audio/flac',
+        'audio/mp4',
+        'audio/mpeg',
+        'audio/ogg',
+        'audio/vorbis',
+        'audio/vnd.wave',
+        'audio/wav',
+        'audio/webm',
+        'audio/x-wav',
+    ],
+    component: Audios,
 }
