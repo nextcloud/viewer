@@ -12,6 +12,9 @@ import svgEye from '@mdi/svg/svg/eye.svg?raw'
 
 import logger from '../services/logger.js'
 
+// TODO: provide API to let apps register their support for e2ee
+export const VIEWER_E2EE_SUPPORTED_MIMETYPES: RegExp[] = [/^audio\//i, /^image\//i, /^video\//i]
+
 /**
  * @param node The file to open
  * @param view any The files view
@@ -106,10 +109,20 @@ export function registerViewerAction() {
 				return false
 			}
 
-			return nodes.every((node) =>
-				Boolean(node.permissions & Permission.READ)
-				&& window.OCA.Viewer.mimetypes.includes(node.mime),
-			)
+			const canReadAllNodes = nodes.every((node) => Boolean(node.permissions & Permission.READ))
+			if (!canReadAllNodes) {
+				return false
+			}
+
+			const isEncrypted = nodes.some((node) => node.attributes['e2ee-is-encrypted'])
+			const isSupportedByCore = nodes.every((node) => VIEWER_E2EE_SUPPORTED_MIMETYPES.some((regex) => regex.test(node.mime)))
+			if (isEncrypted && !isSupportedByCore) {
+				// only allow encrypted files if they are supported by the core viewer (video and image)
+				return false
+			}
+
+			const isSupportedByViewer = nodes.every((node) => window.OCA.Viewer.mimetypes.includes(node.mime))
+			return isSupportedByViewer
 		},
 		exec: execAction,
 	})
