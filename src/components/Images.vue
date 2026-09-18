@@ -106,6 +106,10 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		rotation: {
+			type: Number,
+			default: 0,
+		},
 	},
 	data() {
 		return {
@@ -136,10 +140,12 @@ export default {
 			return this.basename
 		},
 		imgStyle() {
+			const transform = this.rotation !== 0 ? `rotate(${this.rotation}deg)` : undefined
 			if (this.zoomRatio === 1) {
 				return {
 					height: this.zoomHeight + 'px',
 					width: this.zoomWidth + 'px',
+					transform,
 				}
 			}
 			return {
@@ -147,6 +153,7 @@ export default {
 				marginLeft: Math.round(this.shiftX * 2) + 'px',
 				height: this.zoomHeight + 'px',
 				width: this.zoomWidth + 'px',
+				transform,
 			}
 		},
 		livePhoto() {
@@ -202,6 +209,9 @@ export default {
 		},
 	},
 	watch: {
+		rotation() {
+			this.resetZoom()
+		},
 		active(val, old) {
 			// the item was hidden before and is now the current view
 			if (val === true && old === false) {
