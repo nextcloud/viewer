@@ -90,11 +90,15 @@ export const getMenuItem = (page: Page, name: string | RegExp): Locator =>
 /**
  * Wait for the viewer to be open and finished loading.
  *
+ * Videos and audio in particular can take longer than the default 5s expect
+ * timeout to finish buffering in CI, so this mirrors the 10s timeout the
+ * previous Cypress suite used for the same assertion.
+ *
  * @param page the page
  */
 export async function expectViewerLoaded(page: Page): Promise<void> {
 	const viewer = getViewer(page)
 	await expect(viewer).toBeVisible()
 	await expect(viewer).toHaveClass(/modal-mask/)
-	await expect(viewer).not.toHaveClass(/icon-loading/)
+	await expect(viewer).not.toHaveClass(/icon-loading/, { timeout: 10000 })
 }

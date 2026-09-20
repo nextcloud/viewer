@@ -5,13 +5,15 @@
 
 import { oddnameTest } from '../../mixins/oddname.ts'
 
-const files: [string, string][] = [
+// [file, mimeType, decodable] — see mediaTest's `decodable` param in media.ts.
+// Ogg Theora isn't decodable by Chromium's open-source build.
+const files: [string, string, boolean?][] = [
 	['video1.mp4', 'video/mp4'],
 	['video.mkv', 'video/mkv'],
-	['video.ogv', 'video/ogv'],
+	['video.ogv', 'video/ogv', false],
 	['video.webm', 'video/webm'],
 ]
 
-for (const [file, mimeType] of files) {
-	oddnameTest(file, mimeType)
+for (const [file, mimeType, decodable] of files) {
+	oddnameTest(file, mimeType, false, decodable)
 }

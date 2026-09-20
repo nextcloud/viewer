@@ -5,4 +5,7 @@
 
 import { videoTest } from '../../mixins/media.ts'
 
-videoTest('video.ogv', 'video/ogv')
+// Ogg Theora isn't decodable by Chromium's open-source build (canPlayType
+// returns '' for `video/ogg; codecs="theora"`), unlike Electron's Cypress
+// browser which had it. See mediaTest's `decodable` param.
+videoTest('video.ogv', 'video/ogv', false)

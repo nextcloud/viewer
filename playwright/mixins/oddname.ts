@@ -45,8 +45,9 @@ function naughtyFileName(realName: string): string {
  * @param file the fixture file to upload
  * @param mimeType the fixture mime type
  * @param sidebar whether to also exercise the sidebar
+ * @param decodable whether the CI browser can decode this codec, see {@link mediaTest} in media.ts
  */
-export function oddnameTest(file: string, mimeType: string, sidebar = false) {
+export function oddnameTest(file: string, mimeType: string, sidebar = false, decodable = true) {
 	const placedName = naughtyFileName(file)
 	const folderName = 'Nextcloud "%27%22%60%25%21%23" >`⛰️<' + file + "><` e*'rocks!#?#%~"
 
@@ -89,7 +90,9 @@ export function oddnameTest(file: string, mimeType: string, sidebar = false) {
 		})
 
 		test('Does not see a loading animation', async () => {
-			await expectViewerLoaded(page)
+			if (decodable) {
+				await expectViewerLoaded(page)
+			}
 		})
 
 		test('See the menu icon and title on the viewer header', async () => {
@@ -121,7 +124,9 @@ export function oddnameTest(file: string, mimeType: string, sidebar = false) {
 		})
 
 		test('Does not see a loading animation (public)', async () => {
-			await expectViewerLoaded(page)
+			if (decodable) {
+				await expectViewerLoaded(page)
+			}
 		})
 
 		test('See the menu icon and title on the viewer header (public)', async () => {
