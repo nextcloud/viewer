@@ -1,11 +1,11 @@
 {
     "require-dev": {
         "vimeo/psalm": "^6.4",
-        "nextcloud/ocp": "dev-master"
+        "nextcloud/ocp": "dev-stable33"
     },
 	"config": {
 		"platform": {
-			"php": "8.1.17"
+			"php": "8.2.27"
 		}
 	}
 }
