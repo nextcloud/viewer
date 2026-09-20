@@ -7,6 +7,7 @@ import { configureVisualRegression } from 'cypress-visual-regression/dist/plugin
 import { defineConfig } from 'cypress'
 import cypressSplit from 'cypress-split'
 
+process.env.BROWSERSLIST ??= 'defaults'
 
 export default defineConfig({
 	projectId: 'xysa6x',
