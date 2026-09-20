@@ -22,12 +22,19 @@ Show your latest holiday photos and videos like in the movies. Show a glimpse of
 ### 🧙 Advanced development stuff
 To build the Javascript whenever you make changes, you can also run `npm run dev` for development builds.
 
-### 📷 Running cypress tests
-To run e2e cypress tests, execute `npm run cypress`.
+### 📷 Running Playwright tests
+The end-to-end tests use [Playwright](https://playwright.dev/) and a disposable Nextcloud Docker container.
 
-The `visual-regression` tests require additional care as they depend on installation of fonts in the application. To achieve repeatable results run the tests using `npm run cypress:visual-regression`. This will build the app with the required fonts and run the tests.
+Build the app once, then run the tests:
 
-If changes are required to the reference (base) screenshots used by the `visual-regression` tests, run `cypress:update-snapshots` and commit the updated screenshots.
+```sh
+npm ci
+npx playwright install chromium
+TESTING=true npm run build
+npm run test:e2e
+```
+
+`npm run test:e2e:ui` opens the interactive UI. The Nextcloud container is started automatically by `playwright/start-server.mjs` (port 8081) and reused between local runs; set `PLAYWRIGHT_BASE_URL` to target an existing instance instead.
 
 ## API
 
