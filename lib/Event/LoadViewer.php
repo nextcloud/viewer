@@ -14,5 +14,5 @@ use OCP\EventDispatcher\Event;
  *
  * @since 17.0.0
  */
-class LoadViewer extends Event {
+final class LoadViewer extends Event {
 }
