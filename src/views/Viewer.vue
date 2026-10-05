@@ -245,6 +245,7 @@ export default defineComponent({
 			components: {},
 			mimeGroups: {},
 			registeredHandlers: {},
+			registeredHandlersCount: 0,
 
 			// Files variables
 			currentIndex: 0,
@@ -532,27 +533,9 @@ export default defineComponent({
 		}
 
 		// register on load
+		// (openFileInfo also registers them if a file is opened before DOMContentLoaded)
 		document.addEventListener('DOMContentLoaded', () => {
-			// load all init handlers
-			if (window._oca_viewer_handlers) {
-				window._oca_viewer_handlers.forEach((handler) => {
-					OCA.Viewer.registerHandler(handler)
-				})
-			}
-
-			// register all primary components mimes
-			this.handlers.forEach(handler => {
-				this.registerHandler(handler)
-			})
-
-			// then register aliases. We need to have the components
-			// first so we can bind the alias to them.
-			this.handlers.forEach(handler => {
-				this.registerHandlerAlias(handler)
-			})
-			this.isLoaded = true
-
-			logger.info(`${this.handlers.length} viewer handlers registered`, { handlers: this.handlers })
+			this.registerNewHandlers()
 		})
 
 		window.addEventListener('resize', this.onResize)
@@ -754,6 +737,8 @@ export default defineComponent({
 				return
 			}
 
+			this.registerNewHandlers()
+
 			// get original mime and alias
 			const mime = fileInfo.mime
 			const alias = mime.split('/')[0]
@@ -917,6 +902,38 @@ export default defineComponent({
 
 		updateTitle(fileName) {
 			document.title = `${fileName} - ${OCA.Theming?.name ?? oc_defaults.name}`
+		},
+
+		registerNewHandlers() {
+			// load all init handlers
+			if (window._oca_viewer_handlers) {
+				window._oca_viewer_handlers.forEach((handler) => {
+					if (!this.handlers.some(h => h.id === handler.id)) {
+						OCA.Viewer.registerHandler(handler)
+					}
+				})
+			}
+
+			// handlers are only ever appended to the service
+			const newHandlers = this.handlers.slice(this.registeredHandlersCount)
+			if (newHandlers.length === 0) {
+				return
+			}
+			this.registeredHandlersCount = this.handlers.length
+
+			// register all primary components mimes
+			newHandlers.forEach(handler => {
+				this.registerHandler(handler)
+			})
+
+			// then register aliases. We need to have the components
+			// first so we can bind the alias to them.
+			newHandlers.forEach(handler => {
+				this.registerHandlerAlias(handler)
+			})
+			this.isLoaded = true
+
+			logger.info(`${newHandlers.length} viewer handlers registered`, { handlers: newHandlers })
 		},
 
 		/**
