@@ -79,3 +79,50 @@ describe('See shared folder with link share', function() {
 		cy.get('body > .viewer .modal-header button.header-close').should('be.visible')
 	})
 })
+
+describe('Open shared single file before the page finished loading', function() {
+	let imageToken
+
+	before(function() {
+		// Init user
+		cy.createRandomUser().then(user => {
+			cy.uploadFile(user, 'image1.jpg', 'image/jpeg')
+
+			cy.login(user)
+			cy.visit('/apps/files')
+			cy.createLinkShare('/image1.jpg').then(token => { imageToken = token })
+			cy.logout()
+		})
+	})
+
+	it('Opens the shared image', function() {
+		// Deferred scripts run in document order and DOMContentLoaded waits for all of them,
+		// so a slow last script lets the files app open the shared file before the event fires
+		cy.intercept('GET', '**/cypress-delay-dom-content-loaded.js', {
+			headers: { 'Content-Type': 'text/javascript' },
+			body: '',
+			delay: 3000,
+		})
+		cy.intercept('GET', `**/s/${imageToken}`, (req) => {
+			req.continue((res) => {
+				const nonce = res.body.match(/nonce="([^"]+)"/)?.[1] ?? ''
+				res.body = res.body.replace('</body>', `<script defer nonce="${nonce}" src="/cypress-delay-dom-content-loaded.js"></script></body>`)
+			})
+		})
+
+		cy.visit(`/s/${imageToken}`)
+
+		// Make sure loading is finished
+		cy.get('body > .viewer', { timeout: 10000 })
+			.should('be.visible')
+			.and('have.class', 'modal-mask')
+			.and('not.have.class', 'icon-loading')
+
+		// The image source is the preview url
+		cy.get('body > .viewer .modal-container .viewer__file.viewer__file--active img')
+			.should('have.attr', 'src')
+			.and('contain', '/apps/files_sharing/publicpreview/')
+
+		cy.contains('There is no plugin available to display this file type').should('not.exist')
+	})
+})
