@@ -85,6 +85,12 @@ export default class Viewer {
 	 * @param {Handler} handler a new unregistered handler
 	 */
 	registerHandler(handler) {
+		// Queued handlers are registered on init, and again on DOMContentLoaded
+		// for those queued in between: the second pass finds the first ones here
+		if (this._state.handlers.includes(handler)) {
+			return
+		}
+
 		const error = this.validateHandler(handler)
 		if (error) {
 			logger.error('Could not register handler', { error, handler })

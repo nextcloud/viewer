@@ -29,8 +29,11 @@ declare global {
 		OCA: {
 			Viewer: {
 				open: (options: ViewerOpenOptions) => void
+				availableHandlers: { id: string }[]
 			}
 		}
+		/** Handlers apps queue through @nextcloud/viewer for the viewer to register */
+		_oca_viewer_handlers: Map<string, { id: string, mimes: string[], component: object }>
 	}
 }
 
