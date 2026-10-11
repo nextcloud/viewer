@@ -116,8 +116,10 @@ export default {
 		defaultSavedImageName() {
 			return basename(this.decodedSourceName, extname(this.decodedSourceName))
 		},
+
 		defaultSavedImageType() {
-			return extname(this.decodedSourceName).slice(1) || 'jpeg'
+			const extension = extname(this.decodedSourceName).slice(1)
+			return extension ? extension.toLowerCase() : 'jpeg'
 		},
 
 		hasHighContrastEnabled() {
@@ -278,14 +280,25 @@ export default {
 			}
 
 			// toBlob is not very smart...
-			mimeType = mimeType.replace('jpg', 'jpeg')
+			mimeType = mimeType.toLowerCase().replace(/^image\/jpg$/, 'image/jpeg')
 
 			// Sanity check, 0 < quality < 1
 			quality = Math.max(Math.min(quality, 1), 0) || 1
 
 			try {
-				const blob = await new Promise(resolve => imageCanvas.toBlob(resolve, mimeType, quality))
-				const response = await axios.put(putUrl, new File([blob], fullName))
+				const blob = await new Promise(resolve => {
+					imageCanvas.toBlob(resolve, mimeType, quality)
+				})
+
+				if (!blob || blob.type !== mimeType) {
+					showError(t('viewer', 'Error saving image'))
+					return
+				}
+
+				const response = await axios.put(
+					putUrl,
+					new File([blob], fullName),
+				)
 				logger.info('Edited image saved!', { response })
 				showSuccess(t('viewer', 'Image saved'))
 				if (putUrl !== this.src) {
