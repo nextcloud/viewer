@@ -73,7 +73,7 @@
   "devDependencies": {
     "@nextcloud/browserslist-config": "^3.0.1",
     "@nextcloud/e2e-test-server": "^0.5.0",
-    "@nextcloud/eslint-config": "^8.4.2",
+    "@nextcloud/eslint-config": "^9.0.1",
     "@nextcloud/sharing": "^0.2.5",
     "@nextcloud/stylelint-config": "^3.1.0",
     "@nextcloud/vite-config": "~1.6.0",
