@@ -25,6 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         branches:
+          - 'stable35'
           - 'stable34'
           - 'stable33'
           - 'stable32'
