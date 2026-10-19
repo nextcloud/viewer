@@ -22,12 +22,14 @@ import {
 
 test.describe.serial('Open the sidebar from the viewer and open viewer with sidebar already opened', () => {
 	let page: Page
+	const pageErrors: string[] = []
 
 	test.beforeAll(async ({ browser }) => {
 		({ page } = await setupFilesPage(browser, [1, 2, 3, 4].map((i) => ({
 			fixture: `image${i}.jpg`,
 			mimeType: 'image/jpeg',
 		}))))
+		page.on('pageerror', (error) => pageErrors.push(error.message))
 	})
 
 	test.afterAll(async () => {
@@ -102,5 +104,11 @@ test.describe.serial('Open the sidebar from the viewer and open viewer with side
 		await closeSidebar(page)
 		await expect(getSidebar(page)).not.toBeVisible()
 		await expect(getMenuToggle(page)).toBeVisible()
+	})
+
+	test('Close the viewer without errors', async () => {
+		await getCloseButton(page).click()
+		await expect(getViewer(page)).toHaveCount(0)
+		expect(pageErrors).toEqual([])
 	})
 })

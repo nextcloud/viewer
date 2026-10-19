@@ -1034,7 +1034,7 @@ export default defineComponent({
 			// which then triggers cleanup.
 			OCA.Viewer.close()
 
-			if (OCA?.Files?.Sidebar) {
+			if (typeof OCA?.Files?.Sidebar?.setFullScreenMode === 'function') {
 				OCA.Files.Sidebar.setFullScreenMode(false)
 			}
 
@@ -1171,7 +1171,7 @@ export default defineComponent({
 
 				// some apps mocked the files api to allow their sidebar to be used with the viewer
 				// to not break them keep this at least until Nextcloud 34.
-				if (OCA?.Files?.Sidebar) {
+				if (typeof OCA?.Files?.Sidebar?.open === 'function') {
 					// TODO: also hide figure, needs a proper method for it in server Sidebar
 					await OCA.Files.Sidebar.open(this.sidebarOpenFilePath)
 				}
