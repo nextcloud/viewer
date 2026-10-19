@@ -50,4 +50,28 @@ test.describe('See shared single file with link share', () => {
 		await expect(getMenuToggle(page)).toBeVisible()
 		await expect(getCloseButton(page)).toBeVisible()
 	})
+
+	test('Opens the shared image before the page finished loading', async ({ page }) => {
+		// Deferred scripts run in document order and DOMContentLoaded waits for all of them,
+		// so a slow last script lets the files app open the shared file before the event fires
+		await page.route('**/playwright-delay-dom-content-loaded.js', async (route) => {
+			await new Promise((resolve) => setTimeout(resolve, 3000))
+			await route.fulfill({ contentType: 'text/javascript', body: '' })
+		})
+		await page.route(`**/s/${imageToken}`, async (route) => {
+			const response = await route.fetch()
+			const body = await response.text()
+			const nonce = body.match(/nonce="([^"]+)"/)?.[1] ?? ''
+			await route.fulfill({
+				response,
+				body: body.replace('</body>', `<script defer nonce="${nonce}" src="/playwright-delay-dom-content-loaded.js"></script></body>`),
+			})
+		})
+
+		await visitPublicShare(page, imageToken)
+
+		await expectViewerLoaded(page)
+		await expectActiveSource(page, 'img', '/apps/files_sharing/publicpreview/')
+		await expect(page.getByText('There is no plugin available to display this file type')).toHaveCount(0)
+	})
 })
