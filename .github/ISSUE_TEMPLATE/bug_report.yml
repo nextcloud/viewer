@@ -21,7 +21,6 @@ body:
         - '35'
         - '34'
         - '33'
-        - '32'
         - Older (no longer supported)
     validations:
       required: true
