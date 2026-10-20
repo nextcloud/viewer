@@ -277,8 +277,9 @@ export default {
 				}
 			}
 
-			// toBlob is not very smart...
-			mimeType = mimeType.replace('jpg', 'jpeg')
+			// toBlob is not very smart: it takes neither image/jpg nor an
+			// uppercase type like image/JPG, and silently falls back to PNG
+			mimeType = mimeType.toLowerCase().replace('jpg', 'jpeg')
 
 			// Sanity check, 0 < quality < 1
 			quality = Math.max(Math.min(quality, 1), 0) || 1

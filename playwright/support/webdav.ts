@@ -91,6 +91,23 @@ export async function uploadFile(
 }
 
 /**
+ * Download a file from the user's DAV root.
+ *
+ * @param user the file owner
+ * @param target the DAV path relative to the user root
+ */
+export async function getFileContents(user: User, target: string): Promise<Buffer> {
+	const api = await getUserApi(user)
+	try {
+		const response = await api.get(davPath(user, target))
+		expect(response.ok(), `download of ${target} expected 2xx, got ${response.status()}`).toBeTruthy()
+		return await response.body()
+	} finally {
+		await api.dispose()
+	}
+}
+
+/**
  * Create a folder in the user's DAV root (MKCOL).
  *
  * @param user the folder owner
