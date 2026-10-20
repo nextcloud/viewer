@@ -29,7 +29,15 @@ async function stop() {
 process.on('SIGTERM', stop)
 process.on('SIGINT', stop)
 
-const ip = await startNextcloud(process.env.BRANCH ?? 'master', undefined, { exposePort: 8081 })
+// The server branch matching this one: BRANCH when set, else the branch the
+// GitHub Actions run targets (base of a pull request, or the pushed branch).
+const ref = process.env.GITHUB_REF_NAME
+const branch = process.env.BRANCH
+	|| process.env.GITHUB_BASE_REF
+	|| (ref && /^(master|main|stable\d+)$/.test(ref) ? ref : undefined)
+	|| 'master'
+
+const ip = await startNextcloud(branch, undefined, { exposePort: 8081 })
 await waitOnNextcloud(ip)
 await configureNextcloud(['viewer'])
 // Cypress ran on Electron, whose user-agent passes Nextcloud's browserslist check.
