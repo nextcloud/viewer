@@ -78,6 +78,26 @@
         "vue"
       ],
       "allowedVersions": "<3"
+    },
+    {
+      "description": "@nextcloud/vite-config 1.7 requires vite 7",
+      "matchPackageNames": [
+        "@nextcloud/vite-config"
+      ],
+      "matchBaseBranches": [
+        "stable32"
+      ],
+      "allowedVersions": "<1.7"
+    },
+    {
+      "description": "@nextcloud/stylelint-config 3.2 requires stylelint 17",
+      "matchPackageNames": [
+        "@nextcloud/stylelint-config"
+      ],
+      "matchBaseBranches": [
+        "stable32"
+      ],
+      "allowedVersions": "<3.2"
     }
   ]
 }
