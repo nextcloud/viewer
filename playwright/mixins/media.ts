@@ -26,14 +26,11 @@ import {
  * @param type the media element to assert on
  * @param fileName the media file to upload and test against
  * @param mimeType the media mime type
- * @param decodable whether the CI browser can actually decode this codec. Set
- *   to false for formats Chromium's open-source build can't play (e.g. Ogg
- *   Theora): the loading spinner never clears since `canplay` never fires, so
- *   asserting on it would block every later test in this `describe.serial`
- *   block instead of just the one check that can't pass here.
  */
-function mediaTest(type: 'video' | 'audio', fileName: string, mimeType: string, decodable = true) {
+function mediaTest(type: 'video' | 'audio', fileName: string, mimeType: string, skipReason?: string) {
 	test.describe.serial(`Open ${fileName} in viewer`, () => {
+		test.skip(!!skipReason, skipReason)
+
 		let page: Page
 		let user: User
 
@@ -58,9 +55,7 @@ function mediaTest(type: 'video' | 'audio', fileName: string, mimeType: string, 
 			await expect(getViewer(page)).toBeVisible()
 
 			await sourceResponse
-			if (decodable) {
-				await expectViewerLoaded(page)
-			}
+			await expectViewerLoaded(page)
 		})
 
 		test('See the menu icon and title on the viewer header', async () => {
@@ -85,10 +80,10 @@ function mediaTest(type: 'video' | 'audio', fileName: string, mimeType: string, 
  *
  * @param fileName the video to upload and test against
  * @param mimeType the video mime type
- * @param decodable whether the CI browser can decode this codec, see {@link mediaTest}
+ * @param skipReason if set, the whole group is skipped with this reason
  */
-export function videoTest(fileName: string, mimeType: string, decodable = true) {
-	mediaTest('video', fileName, mimeType, decodable)
+export function videoTest(fileName: string, mimeType: string, skipReason?: string) {
+	mediaTest('video', fileName, mimeType, skipReason)
 }
 
 /**
