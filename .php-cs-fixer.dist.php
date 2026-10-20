@@ -16,6 +16,7 @@ $config
 	->getFinder()
 	->ignoreVCSIgnored(true)
 	->notPath('build')
+	->notPath('composer')
 	->notPath('tests/stubs')
 	->notPath('l10n')
 	->notPath('src')
