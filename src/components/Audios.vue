@@ -171,7 +171,7 @@ audio {
 	}
 
 	.plyr {
-		@import '../mixins/Plyr';
+		@import '../mixins/Plyr.scss';
 	}
 
 	// The settings menu (e.g. speed selection) is absolutely positioned and
