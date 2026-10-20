@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+blank_issues_enabled: false
+contact_links:
+  - name: Nextcloud 36 and newer
+    url: https://github.com/nextcloud-libraries/nextcloud-viewer/issues/new
+    about: The viewer is part of the server there. Bugs, ideas and file support requests go to @nextcloud/viewer.
+  - name: Feature or file support request
+    url: https://github.com/nextcloud-libraries/nextcloud-viewer/issues/new
+    about: New features and file types are only added to @nextcloud/viewer.

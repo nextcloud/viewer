@@ -1,0 +1,76 @@
+# SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: Bug report (Nextcloud 35 and older)
+description: Something is wrong with the viewer app on Nextcloud 35 or older
+labels: ['0. Needs triage', 'bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > [!IMPORTANT]
+        > **On Nextcloud 36 or newer?** The viewer is part of the server there, built on `@nextcloud/viewer`. Please report it in [nextcloud-libraries/nextcloud-viewer](https://github.com/nextcloud-libraries/nextcloud-viewer/issues/new) instead.
+
+        This repository only gets fixes for the Nextcloud releases that still ship the viewer as an app.
+  - type: dropdown
+    id: nextcloud-versions
+    attributes:
+      label: Nextcloud versions
+      description: Every version you've seen it on.
+      multiple: true
+      options:
+        - '35'
+        - '34'
+        - '33'
+        - '32'
+        - Older (no longer supported)
+    validations:
+      required: true
+  - type: input
+    id: exact-versions
+    attributes:
+      label: Exact versions
+      description: Nextcloud and viewer app versions, from Administration settings > Overview and the Apps page.
+      placeholder: Nextcloud 35.0.2, viewer 8.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened
+      description: What you did, and what you saw.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open a .jpg file in Files
+        2. Press the right arrow
+        3. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and operating system
+      placeholder: Firefox 152 on Ubuntu 26.04
+    validations:
+      required: true
+  - type: textarea
+    id: browser-log
+    attributes:
+      label: Browser console
+      description: Open the console (F12 or Ctrl+Shift+J, Cmd+Option+J on macOS), reproduce the issue, and paste what it shows.
+      render: shell
+  - type: textarea
+    id: additional
+    attributes:
+      label: Anything else
+      description: Screenshots, a sample file, the server log, or anything else that helps.
