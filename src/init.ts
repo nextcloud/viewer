@@ -17,5 +17,9 @@ window.OCA.Viewer.version = appVersion
 // This must happen synchronously so that OCA.Viewer.mimetypes is complete
 // before the file action's enabled() callback is evaluated by the files app.
 if (window._oca_viewer_handlers) {
-	window._oca_viewer_handlers.forEach(handler => window.OCA.Viewer.registerHandler(handler))
+	window._oca_viewer_handlers.forEach((handler) => {
+		if (!window.OCA.Viewer.availableHandlers.some((h) => h.id === handler.id)) {
+			window.OCA.Viewer.registerHandler(handler)
+		}
+	})
 }
