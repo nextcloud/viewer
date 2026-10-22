@@ -123,6 +123,7 @@ OC.L10N.register(
     "Restart" : "Käynnistä uudelleen",
     "Play" : "Esitys",
     "Pause" : "Keskeytä",
+    "{currentTime} of {duration}" : "{currentTime}/{duration}",
     "Duration" : "Kesto",
     "Volume" : "Äänenvoimakkuus",
     "Mute" : "Mykistä",
