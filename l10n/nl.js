@@ -139,6 +139,7 @@ OC.L10N.register(
     "Volume" : "Volume",
     "Mute" : "Dempen",
     "Exit fullscreen" : "Terug uit volledig scherm",
+    "Captions" : "Ondertiteling",
     "Settings" : "Instellingen",
     "Speed" : "Snelheid",
     "Normal" : "Normaal",
