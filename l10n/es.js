@@ -139,6 +139,7 @@ OC.L10N.register(
     "Volume" : "Volumen",
     "Mute" : "Silenciar",
     "Exit fullscreen" : "Salir de pantalla completa",
+    "Captions" : "Subtítulos",
     "Settings" : "Ajustes",
     "Speed" : "Velocidad",
     "Normal" : "Normal",
