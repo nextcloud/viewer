@@ -18,14 +18,12 @@ export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: BasicF
 }
 
 /**
- * Return the peer live photo from a list of files based on the original file name.
+ * Return the image associated with a live photo video using its DAV peer file ID.
  * @param referenceFile
  * @param fileList
  */
-export function findLivePhotoPeerFromName(referenceFile: BasicFileInfo, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
-	return fileList.find(comparedFile => {
-		// if same filename and extension is allowed
-		return comparedFile.filename !== referenceFile.filename
-				&& (comparedFile.basename.startsWith(referenceFile.name) && livePictureExtRegex.test(comparedFile.basename))
-	})
+export function findLivePhotoImageForVideo(referenceFile: BasicFileInfo, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
+	return fileList.find(comparedFile => comparedFile.metadataFilesLivePhoto !== undefined
+		&& Number(comparedFile.metadataFilesLivePhoto) === Number(referenceFile.fileid)
+		&& livePictureExtRegex.test(comparedFile.basename))
 }
