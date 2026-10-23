@@ -67,13 +67,14 @@ const davPath = (user: User, target: string) =>
  * @param fixture the fixture file name under playwright/fixtures
  * @param mimeType the content type to send
  * @param target the DAV target path relative to the user root (default `/<fixture>`)
+ * @return the numeric file id assigned by the server
  */
 export async function uploadFile(
 	user: User,
 	fixture: string,
 	mimeType: string,
 	target = `/${fixture}`,
-): Promise<void> {
+): Promise<number> {
 	const api = await getUserApi(user)
 	try {
 		const body = readFileSync(resolve(FIXTURES_DIR, fixture))
@@ -84,6 +85,41 @@ export async function uploadFile(
 		expect(
 			response.ok(),
 			`upload of ${fixture} expected 2xx, got ${response.status()}`,
+		).toBeTruthy()
+		// OC-FileId is the instance-prefixed object id (e.g. `00000030ocfjapzpzg4f`);
+		// its leading digits are the numeric fileid exposed as `oc:fileid`.
+		const fileId = response.headers()['oc-fileid']
+		expect(fileId, `upload of ${fixture} returned no OC-FileId header`).toBeTruthy()
+		const numericFileId = /^0*(\d+)/.exec(fileId!)
+		expect(numericFileId, `upload of ${fixture} returned a malformed OC-FileId: ${fileId}`).toBeTruthy()
+		return Number(numericFileId![1])
+	} finally {
+		await api.dispose()
+	}
+}
+
+/**
+ * Link a file to its live photo peer through the DAV
+ * `nc:metadata-files-live-photo` property.
+ *
+ * The value is the file id of the peer, and the relation is stored per file, so
+ * both directions of a pair need their own call.
+ *
+ * @param user the file owner
+ * @param target the DAV target path relative to the user root
+ * @param linkedFileId the file id of the live photo peer
+ */
+export async function setLivePhotoMetadata(user: User, target: string, linkedFileId: number): Promise<void> {
+	const api = await getUserApi(user)
+	try {
+		const response = await api.fetch(davPath(user, target), {
+			method: 'PROPPATCH',
+			headers: { 'Content-Type': 'application/xml; charset=utf-8' },
+			data: `<d:propertyupdate xmlns:d="DAV:" xmlns:nc="http://nextcloud.org/ns"><d:set><d:prop><nc:metadata-files-live-photo>${linkedFileId}</nc:metadata-files-live-photo></d:prop></d:set></d:propertyupdate>`,
+		})
+		expect(
+			response.ok(),
+			`PROPPATCH live photo metadata on ${target} expected 2xx, got ${response.status()}`,
 		).toBeTruthy()
 	} finally {
 		await api.dispose()
