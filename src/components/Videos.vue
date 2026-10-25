@@ -47,7 +47,7 @@ import '@skjnldsv/vue-plyr/dist/vue-plyr.css'
 import { imagePath } from '@nextcloud/router'
 
 import logger from '../services/logger.js'
-import { findLivePhotoPeerFromName } from '../utils/livePhotoUtils'
+import { findLivePhotoImageForVideo } from '../utils/livePhotoUtils'
 import { getPreviewIfAny } from '../utils/previewUtils'
 import { preloadMedia } from '../services/mediaPreloader.js'
 import { localizeSpeedLabels, plyrTranslations } from '../utils/plyrTranslations'
@@ -74,7 +74,7 @@ export default {
 
 	computed: {
 		livePhotoPath() {
-			const peerFile = findLivePhotoPeerFromName(this, this.fileList)
+			const peerFile = findLivePhotoImageForVideo(this, this.fileList)
 
 			if (peerFile === undefined) {
 				return undefined
