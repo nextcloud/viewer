@@ -29,3 +29,24 @@ export function findLivePhotoPeerFromName(referenceFile: BasicFileInfo, fileList
 				&& (comparedFile.basename.startsWith(referenceFile.name) && livePictureExtRegex.test(comparedFile.basename))
 	})
 }
+
+/**
+ * Return the image associated with a live photo video using its DAV peer file ID.
+ * @param referenceFile
+ * @param fileList
+ */
+export function findLivePhotoImageForVideo(referenceFile: BasicFileInfo, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
+	// Try metadata-based matching first
+	const byMetadata = fileList.find(comparedFile => comparedFile.metadataFilesLivePhoto !== undefined
+		&& Number(comparedFile.metadataFilesLivePhoto) === Number(referenceFile.fileid)
+		&& livePictureExtRegex.test(comparedFile.basename))
+	if (byMetadata) {
+		return byMetadata
+	}
+	// Fallback to name-based matching for compatibility
+	return fileList.find(comparedFile => {
+		return comparedFile.filename !== referenceFile.filename
+			&& (comparedFile.basename.startsWith(referenceFile.name) && livePictureExtRegex.test(comparedFile.basename))
+	})
+}
+
