@@ -1241,7 +1241,10 @@ export default defineComponent({
 			try {
 				const fileid = this.currentFile.fileid
 				const url = this.currentFile.source ?? this.currentFile.davPath
-				const isDavResource = url.includes('remote.php/dav')
+				// Public shares are served over the public.php dav endpoint
+				// (public.php/dav for the web UI, public.php/webdav for legacy clients),
+				// so they are dav resources as well and need a root path.
+				const isDavResource = /(remote|public)\.php\/(web)?dav/i.test(url)
 
 				// Fake node to emit the event until Viewer is migrated to the new Node API.
 				// The node source must stay un-encoded (like the nodes built elsewhere in
