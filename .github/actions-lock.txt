@@ -2,20 +2,20 @@
 # SPDX-License-Identifier: MIT
 acad44f3e99b665897766ce90374dd03 block-merge-freeze.yml
 19ab9c47c8d96de93f37fab242c398cc block-unconventional-commits.yml
-83fc862cd4312894dfd2be81fb88c0b5 command-compile.yml
+4fb9690e44e3728c1d21c9a34037e83c command-compile.yml
 4cb6e4935d3f2bc1e3c99c77739118ca cypress.yml
 e6351c608939c31ae1e32923aa82aa10 dependabot-approve-merge.yml
 2581a67c5bcdcd570427e6d51db767d7 fixup.yml
-92d7708f80f4e09d3aeb7d1d93168988 lint-eslint.yml
+4276208e79e34e2c23756469acecde13 lint-eslint.yml
 230493ed3855e3f7d9209cc63e9dbe13 lint-php-cs.yml
 994cce702e8c1ec02e45e113e48512b6 lint-php.yml
-ef5d06d720012cc3ea8fa9396682a133 lint-stylelint.yml
+99024d814801405672676fd03f57c2ce lint-stylelint.yml
 c965845a0def7b39d872e47e93dd1139 node.yml
-b7e9debcd278ab33bbe8e272e010d8e0 npm-audit-fix.yml
+f1909c78987565cb19a471c60dc53950 npm-audit-fix.yml
 2639f2b96989a4fcbb441ca8f1fecb2f pr-feedback.yml
 dc1f60c242a2377a0de26a521c68b49a psalm.yml
 2dbec18233063b42f4d8e03bbb43671c reuse.yml
-0bb535f552ee8f94dae6eeb16f7f4a4e sync-workflow-templates.yml
+3688c8c5aa6a98dcd3b5019dcecccddd sync-workflow-templates.yml
 22604c31b526de270a080eb19967a638 update-stable-titles.yml
-e93653cbfe2a909ca78415e656dbfa01 npm-build.yml
-24e22c1cb2f2b5797d64ff650dc762dc playwright.yml
+6e07ed85ca156b6bf121a50dc1af6712 npm-build.yml
+cc0602ed005f19639c69c0b975c9c84f playwright.yml
