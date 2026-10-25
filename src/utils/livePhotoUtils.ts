@@ -10,8 +10,8 @@ const livePictureExtRegex = new RegExp(`\\.(${livePictureExt.join('|')})$`, 'i')
 
 /**
  * Return the peer live photo from a list of files based on its fileId
- * @param peerFileId
- * @param fileList
+ * @param peerFileId - The fileId of the peer file
+ * @param fileList - The list of files to search within
  */
 export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
 	return fileList.find(file => file.fileid === peerFileId)
@@ -19,8 +19,8 @@ export function findLivePhotoPeerFromFileId(peerFileId: number, fileList: BasicF
 
 /**
  * Return the peer live photo from a list of files based on the original file name.
- * @param referenceFile
- * @param fileList
+ * @param referenceFile - The file whose peer should be found by name
+ * @param fileList - The list of files to search within
  */
 export function findLivePhotoPeerFromName(referenceFile: BasicFileInfo, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
 	return fileList.find(comparedFile => {
@@ -32,8 +32,8 @@ export function findLivePhotoPeerFromName(referenceFile: BasicFileInfo, fileList
 
 /**
  * Return the image associated with a live photo video using its DAV peer file ID.
- * @param referenceFile
- * @param fileList
+ * @param referenceFile - The video file whose poster should be found
+ * @param fileList - The list of files to search within
  */
 export function findLivePhotoImageForVideo(referenceFile: BasicFileInfo, fileList: BasicFileInfo[]): BasicFileInfo | undefined {
 	// Try metadata-based matching first
@@ -49,4 +49,3 @@ export function findLivePhotoImageForVideo(referenceFile: BasicFileInfo, fileLis
 			&& (comparedFile.basename.startsWith(referenceFile.name) && livePictureExtRegex.test(comparedFile.basename))
 	})
 }
-
