@@ -30,6 +30,7 @@
     "dev": "export NODE_ENV=development; vite --mode development build",
     "lint": "eslint playwright src",
     "lint:fix": "eslint playwright src --fix",
+    "playwright": "playwright test",
     "stylelint": "stylelint src",
     "stylelint:fix": "stylelint src --fix",
     "test:e2e": "playwright test",
