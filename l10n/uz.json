@@ -10,6 +10,7 @@
     "Back" : "Orqaga",
     "Loading …" : "Yuklanmoqda…",
     "Reset" : "Qayta tiklash",
+    "Apply" : "Qo'llash",
     "Warning" : "Ogohlantirish",
     "Confirm" : "Confirm",
     "Discard changes" : "O'zgarishlarni bekor qilish",
@@ -21,9 +22,11 @@
     "Size" : "Size",
     "Format" : "Formatlash",
     "Play" : "O'ynang",
+    "Current time" : "Joriy vaqt",
     "Duration" : "Davomiyligi",
     "Settings" : "Sozlamalar",
     "Normal" : "Oddiy",
-    "All" : "Barchasi"
+    "All" : "Barchasi",
+    "Enabled" : "Yoqilgan"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

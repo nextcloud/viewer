@@ -133,6 +133,7 @@ OC.L10N.register(
     "No preview available for this crop item" : "Nema dostupnog pregleda za ovu izrezanu stavku.",
     "Play" : "Reprodukcija",
     "Pause" : "Pauza",
+    "Current time" : "Trenutačno vrijeme",
     "Duration" : "Trajanje",
     "Mute" : "Utišaj",
     "Settings" : "Postavke",
