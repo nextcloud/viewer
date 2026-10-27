@@ -11,6 +11,7 @@ OC.L10N.register(
     "Name" : "Namn",
     "Save" : "Lagre",
     "Back" : "Tilbake",
+    "Reset" : "Tilbakestill",
     "Apply" : "Anvend",
     "Warning" : "Åtvaring",
     "Filters" : "Filter",
@@ -18,12 +19,16 @@ OC.L10N.register(
     "Value" : "Verdi",
     "Image" : "Bilete",
     "Upload image" : "Last opp bilete",
+    "Line" : "Linje",
     "Text" : "Tekst",
     "Size" : "Storleik",
+    "Format" : "Format",
     "Play" : "Spel",
     "Pause" : "Pause",
+    "Current time" : "Gjeldande tid",
     "Settings" : "Innstillingar",
     "All" : "Alle",
-    "Disabled" : "Deaktivert"
+    "Disabled" : "Deaktivert",
+    "Enabled" : "Aktivert"
 },
 "nplurals=2; plural=(n != 1);");

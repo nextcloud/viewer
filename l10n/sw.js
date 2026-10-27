@@ -133,6 +133,7 @@ OC.L10N.register(
     "Restart" : "Anza upya",
     "Play" : "Cheza",
     "Pause" : "Sitisha",
+    "Current time" : "Muda wa sasa",
     "Duration" : "Muda",
     "Volume" : "Sauti",
     "Mute" : "Zima",

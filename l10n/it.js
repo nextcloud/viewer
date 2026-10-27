@@ -134,6 +134,7 @@ OC.L10N.register(
     "Restart" : "Ricomincia",
     "Play" : "Gioca",
     "Pause" : "Pausa",
+    "Current time" : "Ora attuale",
     "Duration" : "Durata",
     "Volume" : "Volume",
     "Mute" : "Silenzia",

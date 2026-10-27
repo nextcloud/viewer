@@ -124,6 +124,7 @@ OC.L10N.register(
     "Play" : "Esitys",
     "Pause" : "Keskeytä",
     "{currentTime} of {duration}" : "{currentTime}/{duration}",
+    "Current time" : "Nykyinen aika",
     "Duration" : "Kesto",
     "Volume" : "Äänenvoimakkuus",
     "Mute" : "Mykistä",

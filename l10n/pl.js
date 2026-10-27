@@ -134,6 +134,7 @@ OC.L10N.register(
     "Restart" : "Restart",
     "Play" : "Odtwarzaj",
     "Pause" : "Wstrzymaj",
+    "Current time" : "Bieżący czas",
     "Duration" : "Czas trwania",
     "Volume" : "Głośność",
     "Mute" : "Wycisz",

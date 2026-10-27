@@ -32,6 +32,7 @@ OC.L10N.register(
     "Value" : "Значэнне",
     "Importing …" : "Імпарт …",
     "+ Add image" : "+ Дадаць выдарыс",
+    "Line" : "Лінія",
     "Text" : "Тэкст",
     "Size" : "Памер",
     "Shadow" : "Цень",
