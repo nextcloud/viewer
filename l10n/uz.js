@@ -12,6 +12,7 @@ OC.L10N.register(
     "Back" : "Orqaga",
     "Loading …" : "Yuklanmoqda…",
     "Reset" : "Qayta tiklash",
+    "Apply" : "Qo'llash",
     "Warning" : "Ogohlantirish",
     "Confirm" : "Confirm",
     "Discard changes" : "O'zgarishlarni bekor qilish",
@@ -23,9 +24,11 @@ OC.L10N.register(
     "Size" : "Size",
     "Format" : "Formatlash",
     "Play" : "O'ynang",
+    "Current time" : "Joriy vaqt",
     "Duration" : "Davomiyligi",
     "Settings" : "Sozlamalar",
     "Normal" : "Oddiy",
-    "All" : "Barchasi"
+    "All" : "Barchasi",
+    "Enabled" : "Yoqilgan"
 },
 "nplurals=1; plural=0;");

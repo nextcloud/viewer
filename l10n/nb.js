@@ -106,6 +106,7 @@ OC.L10N.register(
     "Stroke" : "Penselstrøk",
     "Save image as" : "Lagre bilde som",
     "Extension" : "Filetternavn",
+    "Format" : "Format",
     "Name is required." : "Navn er påkrevd.",
     "Quality" : "Kvalitet",
     "Saved image size (width x height)" : "Lagret bildestørrelse (bredde x høyde)",

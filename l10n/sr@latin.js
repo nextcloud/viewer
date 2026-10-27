@@ -11,10 +11,18 @@ OC.L10N.register(
     "Save" : "Sačuvaj",
     "Back" : "Nazad",
     "Loading …" : "Učitavanje...",
+    "Reset" : "Resetuj",
+    "Apply" : "Primeni",
     "Warning" : "Upozorenje",
     "Undo" : "Opozovi",
+    "Value" : "Vrednost",
+    "Line" : "Linija",
+    "Text" : "Tekst",
+    "Format" : "Format",
+    "Current time" : "Tekuće vreme",
     "Settings" : "Поставке",
     "Normal" : "Normalna",
-    "All" : "Sve"
+    "All" : "Sve",
+    "Enabled" : "Uključeno"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
