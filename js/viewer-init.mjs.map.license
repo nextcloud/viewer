@@ -5,6 +5,7 @@ SPDX-License-Identifier: BSD-3-Clause
 SPDX-License-Identifier: GPL-3.0-or-later
 SPDX-License-Identifier: ISC
 SPDX-License-Identifier: MIT
+SPDX-FileCopyrightText: @nextcloud/dialogs developers
 SPDX-FileCopyrightText: Andrea Giammarchi
 SPDX-FileCopyrightText: Andrey Sitnik <andrey@sitnik.ru>
 SPDX-FileCopyrightText: Anthony Fu <anthonyfu117@hotmail.com>
@@ -45,11 +46,23 @@ This file is generated from multiple sources. Included packages:
 - @mapbox/hast-util-table-cell-style
 	- version: 0.2.1
 	- license: BSD-2-Clause
+- @nextcloud/capabilities
+	- version: 1.2.1
+	- license: GPL-3.0-or-later
+- @nextcloud/dialogs
+	- version: 7.6.0
+	- license: AGPL-3.0-or-later
+- @nextcloud/initial-state
+	- version: 3.0.0
+	- license: GPL-3.0-or-later
 - @nextcloud/l10n
 	- version: 3.4.1
 	- license: GPL-3.0-or-later
 - @nextcloud/vue
 	- version: 8.42.0
+	- license: AGPL-3.0-or-later
+- @nextcloud/vue
+	- version: 9.14.1
 	- license: AGPL-3.0-or-later
 - @nextcloud/vue-select
 	- version: 3.26.0
@@ -271,7 +284,7 @@ This file is generated from multiple sources. Included packages:
 	- version: 2.1.2
 	- license: MIT
 - unist-util-visit-parents
-	- version: 6.0.2
+	- version: 6.1.0
 	- license: MIT
 - vfile
 	- version: 6.0.3
