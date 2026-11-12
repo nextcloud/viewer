@@ -123,7 +123,7 @@ OC.L10N.register(
     "Quality" : "Качество",
     "Saved image size (width x height)" : "Размер сохранённого изображения (ширина × высота)",
     "Note that the selected crop area is lower than the applied resize which might cause quality decrease" : "Выбранная область обрезки меньше нового размера изображения — качество может ухудшиться.",
-    "Actual size (100%)" : "Фактический размер (100%)",
+    "Actual size (100%)" : "Фактический размер (100 %)",
     "Fit size" : "По размеру окна",
     "Select image to add …" : "Выберите изображение для добавления…",
     "Failed to load image." : "Не удалось загрузить изображение.",
