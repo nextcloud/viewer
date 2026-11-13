@@ -134,6 +134,7 @@ OC.L10N.register(
     "Restart" : "Reiniciar",
     "Play" : "Reproducir",
     "Pause" : "Pausar",
+    "{currentTime} of {duration}" : "{currentTime} de {duration}",
     "Current time" : "Hora actual",
     "Duration" : "Duración",
     "Volume" : "Volumen",
