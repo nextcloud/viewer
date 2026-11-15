@@ -25,7 +25,13 @@ export const fixturePath = (fixture: string): string => resolve(FIXTURES_DIR, fi
 // Share constants, mirrored from @nextcloud/sharing (ShareType) and
 // @nextcloud/files (Permission) to avoid pulling browser-only deps into Node.
 export const ShareType = { User: 0, Link: 3 } as const
-export const Permission = { READ: 1 } as const
+export const Permission = {
+	READ: 1,
+	UPDATE: 2,
+	CREATE: 4,
+	DELETE: 8,
+	SHARE: 16,
+} as const
 
 export interface ShareOptions {
 	shareType: number
