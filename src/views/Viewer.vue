@@ -182,7 +182,7 @@ import Vue, { defineComponent } from 'vue'
 
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
 import { loadState } from '@nextcloud/initial-state'
-import { File as NcFile, Node, sortNodes } from '@nextcloud/files'
+import { getSidebar, File as NcFile, Node, sortNodes } from '@nextcloud/files'
 import { defaultRemoteURL, defaultRootPath, getRootPath } from '@nextcloud/files/dav'
 import { showError } from '@nextcloud/dialogs'
 import axios from '@nextcloud/axios'
@@ -606,8 +606,10 @@ export default defineComponent({
 				this.trapElements = []
 			}
 
-			if (OCA?.Files?.Sidebar?.setFullScreenMode) {
-				OCA.Files.Sidebar.setFullScreenMode(true)
+			// Let the Files sidebar take the full height next to the viewer
+			const filesSidebar = getSidebar()
+			if (filesSidebar.available) {
+				filesSidebar.setFullScreenMode(true)
 			}
 			this.sortingConfig = await getSortingConfig()
 
@@ -1055,8 +1057,9 @@ export default defineComponent({
 			// which then triggers cleanup.
 			OCA.Viewer.close()
 
-			if (typeof OCA?.Files?.Sidebar?.setFullScreenMode === 'function') {
-				OCA.Files.Sidebar.setFullScreenMode(false)
+			const filesSidebar = getSidebar()
+			if (filesSidebar.available) {
+				filesSidebar.setFullScreenMode(false)
 			}
 
 			if (this.isFullscreenMode) {
